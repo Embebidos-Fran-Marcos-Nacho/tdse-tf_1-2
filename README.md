@@ -50,17 +50,16 @@ Este proyecto implementa un módulo de control para **luces** y **ventilador** (
 - DIP2 a DIP4: seteo de canal bluetooth. 
 
 ## Tabla de Requerimientos de Entrega
+## Tabla de Requerimientos de Entrega
 
-| Nº  | Requerimiento                                                   | Estado* | Comentarios                        |
-|-----|-----------------------------------------------------------------|---------|------------------------------------|
-| 1   | Repositorio GitHub con proyecto completo                        |         |                                    |
-| 2   | README.md actualizado, documentando descripción, uso y funcionalidades |         |                                    |
-| 3   | Código fuente del firmware listo para compilar y subir           |         |                                    |
-| 4   | Carpeta `/app` con proyecto de la app MIT App Inventor 2 listo para ejecutarse |         |                                    |
-| 5   | Carpeta `/hardware` con esquemas eléctricos, diagramas de bloques, diagrama de Harel |         |                                    |
-| 6   | Carpeta `/docs` con datasheets de componentes y consideraciones de seguridad eléctrica |         |                                    |
-| 7   | Documentación de la configuración de DIP switch y Bluetooth      |         |                                    |
-| 8   | Inserción de test de funcionamiento: archivo de resultados o vídeo demostrativo |         |                                    |
-| 9   | Licencia del proyecto (`LICENSE`), preferiblemente MIT           |         |                                    |
-| 10  | Archivo de historial de versiones / changelog                   |         |                                    |
-
+| Nº | Grupo      | Requerimiento                                                                 |
+|----|------------|-------------------------------------------------------------------------------|
+| 1  | Control    | Repositorio GitHub con proyecto completo                                     |
+| 2  | Control    | README.md actualizado con descripción, uso y funcionalidades                  |
+| 3  | Control    | Código fuente del firmware listo para compilar                               |
+| 4  | Aplicación | Carpeta `/app` con proyecto de la app en MIT App Inventor 2                   |
+| 5  | Actuador   | Carpeta `/hardware` con esquemas eléctricos, diagramas de bloques, diagrama de Harel |
+| 6  | Sensor     | Carpeta `/docs` con datasheets de componentes y consideraciones de seguridad eléctrica |
+| 7  | Control    | Documentación de la configuración de DIP switch y Bluetooth                   |
+| 8  | Aplicación | Inserción de test de funcionamiento: archivo de resultados o vídeo demostrativo |
+| 9  | Control    | Licencia del proyecto (`LICENSE`), preferiblemente MIT                        |
