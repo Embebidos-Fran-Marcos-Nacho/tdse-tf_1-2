@@ -50,10 +50,11 @@ Este proyecto implementa un módulo de control para **luces** y **ventilador** (
 
 <div align="center">
 
-<img width="699" height="431" alt="image" src="diagrama en bloques.jpg" /> 
-
+<img src="diagrama en bloques.jpg" /> 
 
 </div>
+
+
 
 ## Diagrama de hardware
 
