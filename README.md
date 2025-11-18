@@ -48,6 +48,13 @@ Este proyecto implementa un módulo de control para **luces** y **ventilador** (
 
 ## Diagrama en bloques
 
+<div align="center">
+
+<img width="535" height="179" alt="image" src="diagrama en bloques.jpg" />
+
+
+</div>
+
 ## Diagrama de hardware
 
 ## Diagrama de Harel  
