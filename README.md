@@ -1,3 +1,7 @@
+<img width="1071" height="358" alt="image" src="https://github.com/user-attachments/assets/c504f104-30a7-43e1-9181-e95dde039c2c" />
+
+
+
 # Dimmer + Switch (Ventilador & Luces)  
 Control de ventilador y luces de línea (220 V) desde pared y vía Bluetooth
 
