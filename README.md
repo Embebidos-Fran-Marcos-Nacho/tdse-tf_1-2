@@ -1,6 +1,8 @@
-<img width="535" height="179" alt="image" src="https://github.com/user-attachments/assets/c504f104-30a7-43e1-9181-e95dde039c2c" />
 
 <div align="center">
+  
+<img width="535" height="179" alt="image" src="https://github.com/user-attachments/assets/c504f104-30a7-43e1-9181-e95dde039c2c" />
+
 
 **UNIVERSIDAD DE BUENOS AIRES**  
 
