@@ -1,14 +1,17 @@
 <img width="535" height="179" alt="image" src="https://github.com/user-attachments/assets/c504f104-30a7-43e1-9181-e95dde039c2c" />
 
-<center>  
-**UNIVERSIDAD DE BUENOS AIRES**
+<div align="center">
 
-**Facultad de Ingeniería**
+**UNIVERSIDAD DE BUENOS AIRES**  
 
-**TA134 Sistemas Embebidos**
+**Facultad de Ingeniería**  
+
+**TA134 Sistemas Embebidos**  
 
 Curso 1
-</center>
+
+</div>
+
 # Dimmer + Switch (Ventilador & Luces)  
 Control de ventilador y luces de línea (220 V) desde pared y vía Bluetooth
 
