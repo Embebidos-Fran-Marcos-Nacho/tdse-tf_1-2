@@ -2,22 +2,17 @@
 
 **UNIVERSIDAD DE BUENOS AIRES**
 
-
 **Facultad de Ingeniería**
-
 
 **TA134 Sistemas Embebidos**
 
-
 Curso 1
-
 
 # Dimmer + Switch (Ventilador & Luces)  
 Control de ventilador y luces de línea (220 V) desde pared y vía Bluetooth
 
 ### Autorres:
 Ingancio Ezequiel Cavicchioli, legajo: 109428
-
 
 Francisco Javier Moya, legajo: 109899
 <A chequear Marcos>
