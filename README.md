@@ -54,10 +54,6 @@ Este proyecto implementa un módulo de control para **luces** y **ventilador** (
 
 </div>
 
-
-
-## Diagrama de hardware
-
 ## Diagrama de Harel  
 
 
@@ -93,3 +89,7 @@ Este proyecto implementa un módulo de control para **luces** y **ventilador** (
 | 7  | Control    | Documentación de la configuración de DIP switch y Bluetooth                   |
 | 8  | Aplicación | Inserción de test de funcionamiento: archivo de resultados o vídeo demostrativo |
 | 9  | Control    | Licencia del proyecto (`LICENSE`), preferiblemente MIT                        |
+
+
+
+## Esquemático
