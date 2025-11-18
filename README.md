@@ -50,7 +50,7 @@ Este proyecto implementa un módulo de control para **luces** y **ventilador** (
 
 <div align="center">
 
-<img width="535" height="179" alt="image" src="[https://github.com/user-attachments/assets/c504f104-30a7-43e1-9181-e95dde039c2c](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-X/blob/aac22fe54834b5afa014ef8257d5dff4bf97c297/diagrama%20en%20bloques.jpg)" />
+<img width="535" height="179" alt="image" src="[https://github.com/user-attachments/assets/c504f104-30a7-43e1-9181-e95dde039c2c](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-X/blob/aac22fe54834b5afa014ef8257d5dff4bf97c297/diagrama%20en%20bloques.jpg" />
 
 
 </div>
