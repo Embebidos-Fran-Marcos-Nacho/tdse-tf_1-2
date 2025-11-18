@@ -1,9 +1,17 @@
-<img width="1071" height="358" alt="image" src="https://github.com/user-attachments/assets/c504f104-30a7-43e1-9181-e95dde039c2c" />
+<img width="535" height="179" alt="image" src="https://github.com/user-attachments/assets/c504f104-30a7-43e1-9181-e95dde039c2c" />
 
-
+**UNIVERSIDAD DE BUENOS AIRES**
+**Facultad de Ingeniería**
+**TA134 Sistemas Embebidos**
+Curso 1
 
 # Dimmer + Switch (Ventilador & Luces)  
 Control de ventilador y luces de línea (220 V) desde pared y vía Bluetooth
+
+### Autorres:
+Ingancio Ezequiel Cavicchioli, legajo: 109428
+Francisco Javier Moya, legajo: 109899
+<A chequear>
 
 ## Descripción  
 Este proyecto implementa un módulo de control para **luces** y **ventilador** (220 V línea) que permite:  
