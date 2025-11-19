@@ -11,6 +11,7 @@
 **TA134 Sistemas Embebidos**  
 
 Curso 1
+Grupo 2
 
 </div>
 
@@ -21,7 +22,7 @@ Control de ventilador y luces de línea (220 V) desde pared y vía Bluetooth
 Ingancio Ezequiel Cavicchioli, legajo: 109428
 
 Francisco Javier Moya, legajo: 109899
-<A chequear Marcos>
+
 
 ## Descripción  
 Este proyecto implementa un módulo de control para **luces** y **ventilador** (220 V línea) que permite:  
@@ -75,21 +76,7 @@ Este proyecto implementa un módulo de control para **luces** y **ventilador** (
 - DIP1: Habilitar bluetooth. 
 - DIP2 a DIP4: seteo de canal bluetooth. 
 
-## Tabla de Requerimientos de Entrega
-## Tabla de Requerimientos de Entrega
+## Cronograma estimado
 
-| Nº | Grupo      | Requerimiento                                                                 |
-|----|------------|-------------------------------------------------------------------------------|
-| 1  | Control    | Repositorio GitHub con proyecto completo                                     |
-| 2  | Control    | README.md actualizado con descripción, uso y funcionalidades                  |
-| 3  | Control    | Código fuente del firmware listo para compilar                               |
-| 4  | Aplicación | Carpeta `/app` con proyecto de la app en MIT App Inventor 2                   |
-| 5  | Actuador   | Carpeta `/hardware` con esquemas eléctricos, diagramas de bloques, diagrama de Harel |
-| 6  | Sensor     | Carpeta `/docs` con datasheets de componentes y consideraciones de seguridad eléctrica |
-| 7  | Control    | Documentación de la configuración de DIP switch y Bluetooth                   |
-| 8  | Aplicación | Inserción de test de funcionamiento: archivo de resultados o vídeo demostrativo |
-| 9  | Control    | Licencia del proyecto (`LICENSE`), preferiblemente MIT                        |
+No se prevee la terminación del TP para diciembre. Se estima que el primer avance se presentará en enero o febrero 2026 a más tardar. 
 
-
-
-## Esquemático
