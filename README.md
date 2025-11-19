@@ -23,7 +23,6 @@ Ingancio Ezequiel Cavicchioli, legajo: 109428
 
 Francisco Javier Moya, legajo: 109899
 
-
 ## Descripción  
 Este proyecto implementa un módulo de control para **luces** y **ventilador** (220 V línea) que permite:  
 - control manual desde la pared (botones y potenciómetro)  
