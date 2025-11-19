@@ -11,6 +11,7 @@
 **TA134 Sistemas Embebidos**  
 
 Curso 1
+Grupo 2
 
 </div>
 
@@ -21,7 +22,7 @@ Control de ventilador y luces de línea (220 V) desde pared y vía Bluetooth
 Ingancio Ezequiel Cavicchioli, legajo: 109428
 
 Francisco Javier Moya, legajo: 109899
-<A chequear Marcos>
+
 
 ## Descripción  
 Este proyecto implementa un módulo de control para **luces** y **ventilador** (220 V línea) que permite:  
