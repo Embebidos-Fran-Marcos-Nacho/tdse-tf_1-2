@@ -128,12 +128,10 @@ A continuación se presenta una tabla de requisitos:
 | Memoria | 4.1 | El sistema deberá guardar en **memoria flash interna** el último valor de PWM utilizado. |
 |  | 4.2 | El sistema deberá restaurar automáticamente el último valor guardado al encender. |
 | Seguridad | 5.1 | El sistema deberá operar de forma segura sobre cargas de **220 V**. |
-<!-- |  | 5.2 | El sistema deberá contar con mecanismos de protección ante **sobretemperatura**. | -->
 | Aplicación | 6.1 | La aplicación móvil deberá permitir realizar todas las acciones disponibles desde los controles físicos (encendido/apagado de luces y ajuste de velocidad del ventilador). |
 |  | 6.2 | El sistema deberá garantizar que el control físico y el control desde la aplicación sean intercambiables: cuando se utilice uno, el otro deberá quedar temporalmente inhabilitado para evitar conflictos de comando. |
-
-
 ---
+<!-- |  | 5.2 | El sistema deberá contar con mecanismos de protección ante **sobretemperatura**. | -->
 
 ## 2.2 Casos de uso
 
