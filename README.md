@@ -137,7 +137,6 @@ A continuación se presenta una tabla de requisitos:
 
 A continuación se presentan los casos de uso siguiendo el formato del archivo ejemplo.
 
----
 
 ### Caso de uso 1: Control manual desde la pared
 
@@ -158,7 +157,7 @@ A continuación se presentan los casos de uso siguiendo el formato del archivo e
 | **Flujos alternativos** | a) Si el sistema recibe un comando Bluetooth con un **formato inválido**, incompleto o con una estructura distinta a la esperada, el comando se **descarta** y el sistema mantiene el **último estado validado recibido por Bluetooth**.  <br> b) Si durante el funcionamiento se **pierde la conexión Bluetooth**, el sistema conserva el **último estado válido recibido** antes de la desconexión, sin restaurar el modo manual ni cambiar de fuente de control. <br> c) Si el Bluetooth está apagado por DIP switch al intentar conectar, la aplicación no podrá interactuar con el dispositivo. |
 
 
----
+
 
 ### Caso de uso 3: Restauración del último estado guardado
 
