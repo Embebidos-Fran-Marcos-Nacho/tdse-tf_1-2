@@ -103,7 +103,7 @@
         "padstack": "error",
         "pth_inside_courtyard": "ignore",
         "shorting_items": "error",
-        "silk_edge_clearance": "warning",
+        "silk_edge_clearance": "ignore",
         "silk_over_copper": "error",
         "silk_overlap": "error",
         "skew_out_of_range": "error",
@@ -194,10 +194,11 @@
       ],
       "track_widths": [
         0.0,
-        0.2,
         0.4,
         0.6,
-        1.27
+        0.8,
+        1.27,
+        2.0
       ],
       "tuning_pattern_settings": {
         "diff_pair_defaults": {
@@ -231,11 +232,7 @@
           "drill": 0.0
         },
         {
-          "diameter": 0.6,
-          "drill": 0.3
-        },
-        {
-          "diameter": 0.8,
+          "diameter": 1.2,
           "drill": 0.4
         }
       ],
