@@ -5,7 +5,9 @@
 	(uuid "e63e39d7-6ac0-4ffd-8aa3-1841a4541b55")
 	(paper "A4")
 	(title_block
-		(date "mar. 31 mars 2015")
+		(title "Dimmer PCB")
+		(date "2025-12-28")
+		(rev "V0")
 	)
 	(lib_symbols
 		(symbol "74xx:74HC14"
@@ -3376,16 +3378,15 @@
 		)
 		(uuid d8356bda-a239-499d-a7c6-15aa72795ef3)
 	)
-	(text "* Indicates a PWM-capable pin"
+	(text "CD40106"
 		(exclude_from_sim no)
-		(at 177.8 180.34 0)
+		(at 249.682 83.82 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify left bottom)
 		)
-		(uuid "c364973a-9a67-4667-8185-a3a5c6c6cbdf")
+		(uuid "860b5afd-e104-45e5-b435-4977e8bf10f7")
 	)
 	(junction
 		(at 106.68 102.87)
@@ -3787,7 +3788,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 76.2) (xy 130.81 76.2)
+			(xy 124.46 73.66) (xy 130.81 73.66)
 		)
 		(stroke
 			(width 0)
@@ -4717,7 +4718,7 @@
 	)
 	(wire
 		(pts
-			(xy 130.81 76.2) (xy 130.81 82.55)
+			(xy 130.81 73.66) (xy 130.81 82.55)
 		)
 		(stroke
 			(width 0)
@@ -5037,7 +5038,7 @@
 	)
 	(global_label "DIMMING_LINE"
 		(shape input)
-		(at 127 76.2 180)
+		(at 124.46 73.66 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -5047,7 +5048,7 @@
 		)
 		(uuid "20587985-db69-432d-9357-2345ad2f6f74")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 110.8568 76.2 0)
+			(at 108.3168 73.66 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5662,7 +5663,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "1758eda3-2b58-4f83-8950-a7f66cfcaabf")
 		(property "Reference" "TP11"
 			(at 227.33 17.272 0)
@@ -5729,7 +5730,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "1ac9ba81-6d10-4281-92c1-855b562c0be8")
 		(property "Reference" "TP5"
 			(at 82.042 99.06 0)
@@ -6713,7 +6714,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "3f74e22a-8b6c-4777-93f0-60d65c927bae")
 		(property "Reference" "TP10"
 			(at 110.49 55.118 0)
@@ -6941,8 +6942,8 @@
 				)
 			)
 		)
-		(property "Value" "2k"
-			(at 214.63 41.402 90)
+		(property "Value" "2k2"
+			(at 219.456 46.736 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7001,7 +7002,7 @@
 		(dnp no)
 		(uuid "561ad813-119d-49ad-aba1-715b803108af")
 		(property "Reference" "D5"
-			(at 214.63 41.148 0)
+			(at 217.678 41.148 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7009,7 +7010,7 @@
 			)
 		)
 		(property "Value" "1N4007"
-			(at 214.376 43.18 0)
+			(at 211.836 41.148 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7083,7 +7084,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "58575f51-c768-46d7-9a12-0a1a8384efce")
 		(property "Reference" "TP13"
 			(at 250.19 32.512 0)
@@ -7289,7 +7290,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "60cd307d-4b2d-49fd-a618-79d8fb4b7651")
 		(property "Reference" "TP3"
 			(at 105.41 76.962 0)
@@ -7917,7 +7918,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "7fd8b072-2b3a-4de6-88f1-057654caa94f")
 		(property "Reference" "TP6"
 			(at 87.63 76.962 0)
@@ -7984,7 +7985,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "82047844-7cff-4910-93cd-8cb2543f1bd1")
 		(property "Reference" "TP8"
 			(at 82.042 45.72 0)
@@ -8114,7 +8115,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "8a33906a-33e0-495c-b183-5234e082e7e1")
 		(property "Reference" "TP4"
 			(at 107.95 108.458 0)
@@ -8957,7 +8958,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "be7d9c78-498b-4f7f-b3ad-ddb83d702009")
 		(property "Reference" "TP12"
 			(at 229.87 50.038 0)
@@ -9024,7 +9025,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "c559a8ea-9587-4593-a4a1-f4a9596a74fe")
 		(property "Reference" "TP7"
 			(at 87.63 23.622 0)
@@ -9408,7 +9409,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "e037114b-7a19-4138-9076-e7696f30f3c9")
 		(property "Reference" "TP9"
 			(at 107.95 23.622 0)
@@ -9697,7 +9698,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "f12bb75d-6942-463c-90d3-236746dd4a63")
 		(property "Reference" "TP16"
 			(at 254.508 40.64 0)
@@ -10228,10 +10229,9 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "fe7bacff-790d-4bb1-83ec-92a730ba75a2")
 		(property "Reference" "F3"
-			(at 124.46 76.2 90)
+			(at 124.714 76.962 90)
 			(effects
 				(font
 					(size 1.27 1.27)

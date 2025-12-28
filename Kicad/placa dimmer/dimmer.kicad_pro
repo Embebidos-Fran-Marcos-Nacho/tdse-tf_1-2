@@ -487,7 +487,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "placa alta tension.kicad_pro",
+    "filename": "dimmer.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -523,7 +523,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "../../../../../Downloads/",
+      "plot": "planos/",
       "pos_files": "C:/Users/q/Downloads/",
       "specctra_dsn": "",
       "step": "placa alta tension.step",
@@ -547,7 +547,7 @@
     },
     "bom_presets": [],
     "bom_settings": {
-      "exclude_dnp": true,
+      "exclude_dnp": false,
       "fields_ordered": [
         {
           "group_by": false,
