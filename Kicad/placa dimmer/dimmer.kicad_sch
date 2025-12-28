@@ -4976,16 +4976,6 @@
 		)
 		(uuid "4e5059da-fac0-4109-9536-597731b3493f")
 	)
-	(label "HV[5..20]"
-		(at 184.15 16.51 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "5baf51c3-ad3e-4fe5-a390-f8ff8aca6d1b")
-	)
 	(label "ZCD"
 		(at 176.53 102.87 0)
 		(effects
