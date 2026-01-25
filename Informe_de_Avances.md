@@ -58,7 +58,7 @@ Se consideran "En proceso de implementación" aquellas _features_ que estén en 
 Por un lado, los ítems 1.1 y 1.2 se encuentran en proceso de desarrollo, y ya están implementados en el Hardware del proyecto. Por otro lado, por limitaciones de tiempo, el ítem 1.3 se deberá cambiar a lo siguiente: 
 - 1.3: "El sistema permitirá ver el estado del ventilador y las luces vía Bluetooth."
 
-Se espera que este cambio reduzca la dificultad/tiempo de la implementación de una aplicación en MIT app Inventor. 
+Se espera que este cambio reduzca la dificultad/tiempo de la implementación de una aplicación en MIT App Inventor. 
 
 ---
 
@@ -70,7 +70,7 @@ Se espera que este cambio reduzca la dificultad/tiempo de la implementación de 
 | 2.2 | El DIP switch permitirá seleccionar configuraciones o canales del módulo Bluetooth. | 🟢 | 🟡 |
 
 #### Comentarios:
-Se prevee el uso del dip switch como fue planteado inicialmente. 
+Se prevé el uso del dip switch como fue planteado inicialmente. 
 
 ---
 
@@ -82,7 +82,7 @@ Se prevee el uso del dip switch como fue planteado inicialmente.
 | 3.2 | El sistema contará con un buzzer para señalizar eventos del sistema. | 🟢 |🟡 |
 
 #### Comentarios:
-No se preveen cambios en esta sección. 
+No se prevén cambios en esta sección. 
 
 ---
 
@@ -102,7 +102,7 @@ El microprocesador ya dispone de su propia memoria flash, por lo que solo resta 
 
 | ID | Descripción | Estado de implementación - Hardware | Estado de implementación - Software |
 |------|-------------|--------|--------|
-| 5.1 | El sistema deberá operar de forma segura sobre cargas de 220 V. | 🟡 | N/A |
+| 5.1 | El sistema deberá operar de forma segura sobre cargas de 220 VAC. | 🟡 | N/A |
 
 #### Comentarios:
 Este ítem está en proceso de evaluación. 
@@ -119,7 +119,7 @@ Este ítem está en proceso de evaluación.
 #### Comentarios:
 
 Dados los cambios realizados sobre el ítem 1.3, se proponen las siguientes modificaciones:
-- 6.1: "La aplicación dará información sobre los estados disponibles, que incluyen la velocidad del ventilador, estado de luces, etc. ."
+- 6.1: "La aplicación dará información sobre los estados disponibles, que incluyen la velocidad del ventilador, estado de luces, etc.".
 - 6.2: "El sistema deberá evitar conflictos entre el control físico y la comunicación Bluetooth.". Esto abarca conflictos de _timings_. 
 
 ---
