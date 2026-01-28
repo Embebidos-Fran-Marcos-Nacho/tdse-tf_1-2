@@ -138,7 +138,7 @@ Actualmente se están terminando de diagramar los Diagramas de Harel. Una vez te
 
 ## 5. Observaciones importantes
 
-Ambos colaboradores, Francisco e Ignacio, nos encontramos realizando pasantías desde el cuatrimestre pasado, las cuales insumen una porción significativa del tiempo semanal y requieren un margen razonable de descanso, especialmente considerando que el año previo fue dedicado íntegramente al estudio y trabajo.
+Ambos estudiantes, Francisco e Ignacio, nos encontramos realizando pasantías desde el cuatrimestre pasado, las cuales insumen una porción significativa del tiempo semanal y requieren un margen razonable de descanso, especialmente considerando que el año previo fue dedicado íntegramente al estudio y trabajo.
 
 A ello se suma el inicio del período de evaluaciones de febrero/marzo, durante el cual debemos rendir finales de otras asignaturas y cumplir con la entrega de trabajos pendientes. En particular, Francisco debe rendir dos exámenes finales, mientras que Ignacio debe presentar una monografía y desarrollar el trabajo práctico profesional, aprovechando el receso del período lectivo.
 
