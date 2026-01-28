@@ -3,7 +3,7 @@ Control de ventilador y luces de línea (220 V) desde pared y vía Bluetooth
 
 <div align="center">
 
-<img width="535" height="179" alt="image" src="https://github.com/user-attachments/assets/c504f104-30a7-43e1-9181-e95dde039c2c" />
+<img width="535" height="179" alt="image" src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/08290a7a62c8a7d3fcd22fc57871dafbbf35ab15/logo-fiuba.png" />
 
 **UNIVERSIDAD DE BUENOS AIRES**  
 **Facultad de Ingeniería**  
