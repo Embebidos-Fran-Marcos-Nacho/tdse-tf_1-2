@@ -91,7 +91,8 @@ Esta es la referencia para el mapeo con el código C (`main.c` / `hardware.c`).
 
 | Evento/Variable | Tipo | Descripción |
 |-----------------|------|-------------|
-| `init_*_ok` | boolean | Flags de resultado de inicialización de periféricos. |
+| `ST_INIT_*_OK` | event | Flags de resultado positivo de inicialización de periféricos. |
+| `ST_INIT_*_NOT_OK` | event | Flags de resultado negativo de inicialización de periféricos. |
 | `EV_BTN_PRESSED` | event | Interrupción de flanco (ruidosa). |
 | `EV_POTE_CHANGED` | event | Notificación del ADC (cambio > umbral de histéresis). |
 | `EV_BT_CONNECTED` | event | Status del módulo HC-05 (actualmente solo informativo). |
@@ -115,79 +116,31 @@ Para validar la lógica sin hardware, sigue estos pasos en Itemis:
 ### Paso 1: Iniciar la Simulación
 
 1. **Run:** Click derecho en el canvas → **Run As** → **Statechart Simulation**.
-2. Verás el estado atrapado en `Init_ST`.
+2. Se verá el estado atrapado en `Init_ST`.
 
 ### Paso 2: Secuencia de Boot
 
-1. En la vista **Simulation** (derecha), busca las variables:
-   - `init_flash_ok`
-   - `init_dip_ok`
-   - `init_sensors_ok`
-   - `init_pwm_ok`
-   - `init_bt_ok`
+1. En la vista **Simulation** (derecha), buscar los eventos:
+   - `ST_INIT_*_OK`
+   - `ST_INIT_*_NOT_OK`
 
-2. Cámbialas a `true` una por una. Verás transicionar los estados hasta llegar a `Normal_ST`.
+2. Presionar `ST_INIT_*_OK` una por una y se transicionará por los estados hasta llegar a `Normal_ST`.
 
 ### Paso 3: Prueba de Botón (Debounce)
 
-1. En Simulation, haz clic repetidamente en `EV_BTN_PRESSED`.
-2. Observa la región `ST_BTN`: Verás el estado pasar a `FALLING` y el contador `tick` decrementarse.
-3. Necesitarás varios clics (simulando ruido/tiempo) para que se dispare finalmente `EV_SYS_PRESSED` y veas cambiar la variable `toggle_light` en la región superior.
+1. En Simulation, hacer clic repetidamente en `EV_BTN_PRESSED`.
+2. Observar la región `ST_BTN`: se verá el estado pasar a `FALLING` y el contador `tick` decrementarse.
+3. Se necestia de varios clics (simulando ruido/tiempo) para que se dispare finalmente `EV_SYS_PRESSED` y ver cambiar la variable `toggle_light` en la región superior.
 
 ### Paso 4: Prueba de Falla
 
-1. Reinicia la simulación.
-2. En medio del init, deja una variable en `false` o espera.
-3. Verifica que entre a `Fault_ST` y que las variables `led_on` / `buzzer_on` oscilen.
+1. Reiniciar la simulación.
+2. En medio del init, presionar un `ST_INIT_*_NOT_OK`.
+3. Verificar que entre a `Fault_ST` y que las variables `led_on` / `buzzer_on` oscilen.
 
 ---
 
-## 5. Notas de Implementación C
-
-Al generar el código (SCT Generator), presta atención a:
-
-### Timer Base
-
-El statechart requiere un timer base para los eventos `after X`. Asegúrate de configurar:
-
-- El **systick** o timer de hardware del microcontrolador.
-- Alimentar la función `runCycle()` del statechart en cada interrupción del timer.
-
-**Ejemplo (STM32):**
-```c
-void SysTick_Handler(void) {
-    statechart_runCycle(); // Ejecutar máquina de estados
-}
-```
-
-### Interrupciones
-
-Las ISR de los pines deben:
-
-1. Llamar a `statechart_raise_EV_BTN_PRESSED()`.
-2. **No ejecutar lógica dentro de la ISR**, solo levantar el evento.
-
-**Ejemplo (INT0 para botón):**
-```c
-void INT0_ISR(void) {
-    statechart_raise_EV_BTN_PRESSED();
-}
-```
-
-### Mapeo de Variables
-
-Después de generar el código, vincula las variables del statechart con los registros de hardware:
-
-```c
-// Pseudo-código para mapeo
-hwnd_led_relay = &statechart.toggle_light;
-hwnd_pwm_timer_ocr = &statechart.pwm_val;
-hwnd_power_enable = !statechart.cut_off_voltage;
-```
-
----
-
-## 6. Diagrama de Flujo de Estados
+## 5. Diagrama de Flujo de Estados
 
 ```
 ┌─────────────┐
@@ -219,20 +172,6 @@ hwnd_power_enable = !statechart.cut_off_voltage;
 ```
 
 ---
-
-## 7. Checklist de Integración
-
-- [ ] Configurar **Systick/Timer** para llamar a `runCycle()` periódicamente.
-- [ ] Configurar **ISR del botón** para llamar a `statechart_raise_EV_BTN_PRESSED()`.
-- [ ] Configurar **ADC/Potenciómetro** para generar eventos `EV_POTE_CHANGED`.
-- [ ] Mapear variables del statechart a registros de GPIO/PWM.
-- [ ] Validar que `cut_off_voltage` desactiva los triacs en fallo.
-- [ ] Probar secuencia de boot con variables `init_*_ok`.
-- [ ] Validar timeout de 10 segundos en `Fault_ST`.
-- [ ] Documentar pinouts y UART para Bluetooth.
-
----
-
 ## Referencias
 
 - **YAKINDU Statechart Tools:** https://www.itemis.com/en/yakindu/statechart-tools/
