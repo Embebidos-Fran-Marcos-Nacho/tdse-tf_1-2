@@ -1,6 +1,6 @@
 # Documentación Técnica: Statechart de Control (Luz/Ventilador)
 
-## Resumen Ejecutivo
+## Resumen
 
 Este documento detalla la implementación de la lógica de control para el módulo de **Dimmer + Switch (TA134)**. El sistema está modelado en Itemis CREATE (YAKINDU) utilizando un enfoque estrictamente orientado a eventos (`@EventDriven`) para minimizar el consumo de CPU y latencia.
 
@@ -20,11 +20,11 @@ Para reproducir el comportamiento en el target, el statechart utiliza las siguie
 
 ## 2. Arquitectura de Estados (Top-Level)
 
-El sistema se orquesta en un único estado raíz **Blink** que contiene tres sub-máquinas exclusivas.
+El sistema se orquesta en un único estado raíz "**Blink**" que contiene tres sub-máquinas exclusivas.
 
 ### 2.1. Secuencia de Boot (Init_ST)
 
-Estado compuesto secuencial. Actúa como un Self-Test de encendido. Bloquea la operación normal hasta que todos los periféricos reporten estado OK.
+Estado compuesto secuencial. Actúa como un Self-Test de encendido. Bloquea la operación normal hasta que todos los periféricos reporten estado OK. Los periféricos incluyen los estados iniciales de la memoria flash, el bluetooth, el PWM, etc.  
 
 #### Flujo de Validación:
 
