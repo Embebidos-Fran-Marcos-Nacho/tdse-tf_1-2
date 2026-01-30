@@ -1,240 +1,241 @@
-# Statechart System Explanation
+# Documentación Técnica: Statechart de Control (Luz/Ventilador)
 
-## Overview
+## Resumen Ejecutivo
 
-This statechart implements an embedded systems controller using YAKINDU Statechart Tools. It's an event-driven system designed to manage hardware initialization, fault handling, and normal operation with interactive button and potentiometer controls. The system employs hierarchical state decomposition to handle multiple operational modes.
+Este documento detalla la implementación de la lógica de control para el módulo de **Dimmer + Switch (TA134)**. El sistema está modelado en Itemis CREATE (YAKINDU) utilizando un enfoque estrictamente orientado a eventos (`@EventDriven`) para minimizar el consumo de CPU y latencia.
 
-## Execution Model
-
-- **Event-driven architecture**: The system responds to asynchronous events rather than polling
-- **Super steps disabled**: Standard state execution semantics (no zero-time transitions)
-- **Interfaces**: Comprehensive event and variable definitions for hardware abstraction
-
-## Top-Level Architecture
-
-The system is structured around a single parent state called **Blink** containing three main substates:
-
-### 1. **Init_ST** (Initialization State)
-
-A composite state responsible for system startup verification. It validates hardware components sequentially before transitioning to normal operation or fault handling.
-
-#### Initialization Sequence:
-```
-Entry → ST_READ_FLASH → ST_READ_DIP → ST_CHECK_SENSORS → ST_RESTORE_PWM → ST_CONFG_BT → Exit
-```
-
-**States and Transitions:**
-
-| State | Purpose | Events |
-|-------|---------|--------|
-| **ST_READ_FLASH** | Validate flash memory | `EV_INIT_FLASH_OK` → ST_READ_DIP<br/>`EV_INIT_FLASH_NOT_OK` → FAULT_EXIT |
-| **ST_READ_DIP** | Read DIP switches (configuration) | `EV_INIT_DIP_OK` → ST_CHECK_SENSORS<br/>`EV_INIT_DIP_NOT_OK` → FAULT_EXIT |
-| **ST_CHECK_SENSORS** | Verify sensor hardware | `EV_INIT_SENSORS_OK` → ST_RESTORE_PWM<br/>`EV_INIT_SENSORS_NOT_OK` → FAULT_EXIT |
-| **ST_RESTORE_PWM** | Restore PWM configuration from storage | `EV_INIT_PWM_OK` → ST_CONFG_BT<br/>`EV_INIT_PWM_NOT_OK` → FAULT_EXIT |
-| **ST_CONFG_BT** | Configure Bluetooth interface | `EV_INIT_BT_OK` → NORMAL_EXIT<br/>`EV_INIT_BT_NOT_OK` → FAULT_EXIT |
-
-**Exit Conditions:**
-- **NORMAL_EXIT**: Successfully triggered by `EV_INIT_BT_OK` → transitions to `Normal_ST`
-- **FAULT_EXIT**: Triggered by any initialization failure → transitions to `Fault_ST`
+La arquitectura desacopla la lógica de negocio (máquina de estados) de los drivers de hardware (C/C++) mediante una interfaz abstracta de eventos y operaciones.
 
 ---
 
-### 2. **Fault_ST** (Fault/Error Handling State)
+## 1. Configuración del Modelo de Ejecución
 
-Handles system errors with an alert mechanism combining visual and audio feedback.
+Para reproducir el comportamiento en el target, el statechart utiliza las siguientes directivas:
 
-**Entry Action:**
-```
-entry / cut_off_voltage = true
-```
-Sets the cut-off voltage flag when entering, preventing normal operation.
-
-#### Alert Sub-state Machine:
-
-Two alternating states create a blinking/buzzing effect:
-
-| State | Entry Action | Triggered By | Next State |
-|-------|--------------|--------------|-----------|
-| **ST_ALERT_ON** | `led_on = true; buzzer_on = true` | System entry / after 1s timeout from OFF | ST_ALERT_OFF |
-| **ST_ALERT_OFF** | `led_on = false; buzzer_on = false` | after 1s timeout from ON | ST_ALERT_ON |
-
-**Recovery:**
-- After 10 seconds in `Fault_ST`: transitions back to `Init_ST` with `cut_off_voltage = false`
-- This allows the system to attempt re-initialization
+- **`@EventDriven`**: La máquina reacciona asincrónicamente a interrupciones y eventos de hardware.
+- **`@SuperSteps(no)`**: Se deshabilita la semántica de "run-to-completion" infinita para evitar bucles de ejecución bloqueantes.
+- **Gestión de Tiempo**: Se utilizan timers internos (`after 1s`) para timeouts de seguridad (Watchdog lógico).
 
 ---
 
-### 3. **Normal_ST** (Normal Operation State)
+## 2. Arquitectura de Estados (Top-Level)
 
-The operational state where the system responds to user input and manages normal functionality. It uses **parallel regions** to handle multiple concurrent concerns:
+El sistema se orquesta en un único estado raíz **Blink** que contiene tres sub-máquinas exclusivas.
 
-#### Region 1: Manual Light Control (ST_IDLE_MANUAL)
+### 2.1. Secuencia de Boot (Init_ST)
 
-**Self-loop transitions (state remains active):**
+Estado compuesto secuencial. Actúa como un Self-Test de encendido. Bloquea la operación normal hasta que todos los periféricos reporten estado OK.
 
-1. **Button Press Event:**
-   - Event: `EV_SYS_PRESSED`
-   - Action: `toggle_light = true; raise EV_SEND_BT_UPDATE_LIGHT`
-   - Effect: Toggles light and sends Bluetooth update notification
+#### Flujo de Validación:
 
-2. **Potentiometer Change Event:**
-   - Event: `EV_POTE_CHANGED`
-   - Action: `pwm_val++; raise EV_SEND_BT_UPDATE_POTE`
-   - Effect: Increments PWM value and sends Bluetooth update
+El sistema espera eventos de confirmación (true) de las siguientes banderas para transicionar:
 
-#### Region 2: Button Debouncing (ST_BTN)
+| Paso | Estado | Señal Esperada (Input) | Acción en Falla |
+|------|--------|------------------------|-----------------|
+| 1 | ST_READ_FLASH | `init_flash_ok` | Salto a Fault_ST |
+| 2 | ST_READ_DIP | `init_dip_ok` | Salto a Fault_ST |
+| 3 | ST_CHECK_SENSORS | `init_sensors_ok` | Salto a Fault_ST |
+| 4 | ST_RESTORE_PWM | `init_pwm_ok` | Salto a Fault_ST |
+| 5 | ST_CONFG_BT | `init_bt_ok` | Salto a Normal_ST |
 
-Implements a state machine to debounce the physical button input, filtering noise and providing clean button press/release events.
-
-**Debouncer States:**
-
-```
-       [ST_BTN_UNPRESSED] ←→ [ST_BTN_FALLING] ←→ [ST_BTN_PRESSED] ←→ [ST_BTN_RISING]
-```
-
-**State Descriptions:**
-
-| State | Purpose | Transitions |
-|-------|---------|-----------|
-| **ST_BTN_UNPRESSED** | Button released state | `EV_BTN_PRESSED [tick=50]` → ST_BTN_FALLING |
-| **ST_BTN_FALLING** | Falling edge (press) debounce | Counts down via `tick--` until stable<br/>`tick==0` raises `EV_SYS_PRESSED` → ST_BTN_PRESSED |
-| **ST_BTN_PRESSED** | Button depressed state | `EV_BTN_UNPRESSED [tick=50]` → ST_BTN_RISING |
-| **ST_BTN_RISING** | Rising edge (release) debounce | Counts down via `tick--` until stable<br/>`tick==0` raises `EV_SYS_UNPRESSED` → ST_BTN_UNPRESSED |
-
-**Debouncing Logic:**
-- Counter `tick` initialized to 50 on each edge detection
-- Each event during edge decrements counter (if not at edge): `EV_BTN_PRESSED [tick>0] / tick--`
-- When counter reaches 0, the edge is confirmed and appropriate event (`EV_SYS_PRESSED`/`EV_SYS_UNPRESSED`) is raised
-- This filters out electrical noise on the button line
+**Nota para Simulación:** Debes forzar estas variables a `true` secuencialmente para salir del boot.
 
 ---
 
-## Interface Definition
+### 2.2. Modo Seguro (Fault_ST)
 
-### Input Events
+Estado de error recuperable.
 
-**Initialization Events:**
-- `EV_INIT_FLASH_OK`, `EV_INIT_FLASH_NOT_OK`
-- `EV_INIT_DIP_OK`, `EV_INIT_DIP_NOT_OK`
-- `EV_INIT_SENSORS_OK`, `EV_INIT_SENSORS_NOT_OK`
-- `EV_INIT_PWM_OK`, `EV_INIT_PWM_NOT_OK`
-- `EV_INIT_BT_OK`, `EV_INIT_BT_NOT_OK`
+**Safety First:** Al entrar (entry), se ejecuta `cut_off_voltage = true` para desenergizar triacs y relés inmediatamente.
 
-**Bluetooth Events:**
-- `EV_BT_CONNECTED`, `EV_BT_DISCONNECTED`
+**Feedback:** Loop infinito de 1Hz (500ms ON / 500ms OFF) activando LED y Buzzer.
 
-**Button Input:**
-- `EV_BTN_PRESSED`, `EV_BTN_UNPRESSED` (raw input signals)
-
-**Control Input:**
-- `EV_POTE_CHANGED` (potentiometer change)
-
-### Output Events
-
-- `EV_SYS_PRESSED` (debounced button press)
-- `EV_SYS_UNPRESSED` (debounced button release)
-- `EV_SEND_BT_UPDATE_LIGHT` (light status update via Bluetooth)
-- `EV_SEND_BT_UPDATE_POTE` (potentiometer value update via Bluetooth)
-
-### State Variables
-
-| Variable | Type | Initial Value | Purpose |
-|----------|------|---------------|---------|
-| `cut_off_voltage` | boolean | false | Fault state indicator; cuts power when true |
-| `led_on` | boolean | false | LED feedback in fault mode |
-| `buzzer_on` | boolean | false | Buzzer feedback in fault mode |
-| `toggle_light` | boolean | false | Light state toggle flag |
-| `tick` | integer | - | Debounce counter (0-50) |
-| `pwm_val` | integer | 0 | PWM duty cycle value |
+**Watchdog Lógico:** Tras 10 segundos (`after 10s`) sin intervención, el sistema intenta un Soft Reset volviendo a Init_ST.
 
 ---
 
-## State Flow Summary
+### 2.3. Runtime (Normal_ST)
+
+Aquí reside la lógica principal. Se implementa mediante **Regiones Ortogonales (Paralelismo)** para separar el debounce del control lógico.
+
+#### Región A: Lógica de Control (Main Loop)
+
+Estado simple `ST_IDLE_MANUAL`. Implementa el patrón **Local-First con Notificación**:
+
+- El sistema siempre prioriza la entrada física.
+- El Bluetooth es pasivo: solo recibe notificaciones de cambio de estado.
+
+**Transiciones (Self-Transitions):**
+
+1. **Toggle Luz:** Al recibir `EV_SYS_PRESSED` (evento limpio), invierte el estado y dispara `EV_SEND_BT_UPDATE`.
+2. **Ajuste PWM:** Al recibir `EV_POTE_CHANGED` (evento de cambio en ADC), actualiza el valor y dispara `EV_SEND_BT_UPDATE`.
+
+#### Región B: Driver de Botón (Software Debounce)
+
+Máquina de estados dedicada para filtrar ruido mecánico.
+
+**Algoritmo:** Contador de histéresis (`tick`).
+
+- **Input:** Eventos crudos `EV_BTN_PRESSED` (interrupción pin change).
+- **Output:** Evento limpio `EV_SYS_PRESSED` (solo se dispara cuando `tick` llega a 0).
+
+**Ventaja:** Permite ajustar la sensibilidad del botón sin tocar la lógica de control de la luz.
+
+---
+
+## 3. Definición de Interfaz (API)
+
+Esta es la referencia para el mapeo con el código C (`main.c` / `hardware.c`).
+
+### Inputs (Hardware → Statechart)
+
+| Evento/Variable | Tipo | Descripción |
+|-----------------|------|-------------|
+| `init_*_ok` | boolean | Flags de resultado de inicialización de periféricos. |
+| `EV_BTN_PRESSED` | event | Interrupción de flanco (ruidosa). |
+| `EV_POTE_CHANGED` | event | Notificación del ADC (cambio > umbral de histéresis). |
+| `EV_BT_CONNECTED` | event | Status del módulo HC-05 (actualmente solo informativo). |
+
+### Outputs (Statechart → Hardware)
+
+| Evento/Operación | Tipo | Acción Requerida en C |
+|------------------|------|----------------------|
+| `EV_SYS_PRESSED` | event | Evento interno (generalmente no requiere acción externa salvo debug). |
+| `EV_SEND_BT_UPDATE` | out event | Trigger para enviar trama por UART. |
+| `cut_off_voltage` | var | Si es `true`, poner pines de potencia en LOW. |
+| `toggle_light` | var | Mapear al GPIO del Relé. |
+| `pwm_val` | var | Mapear al registro OCR del Timer (PWM). |
+
+---
+
+## 4. Workflow de Simulación (How-To)
+
+Para validar la lógica sin hardware, sigue estos pasos en Itemis:
+
+### Paso 1: Iniciar la Simulación
+
+1. **Run:** Click derecho en el canvas → **Run As** → **Statechart Simulation**.
+2. Verás el estado atrapado en `Init_ST`.
+
+### Paso 2: Secuencia de Boot
+
+1. En la vista **Simulation** (derecha), busca las variables:
+   - `init_flash_ok`
+   - `init_dip_ok`
+   - `init_sensors_ok`
+   - `init_pwm_ok`
+   - `init_bt_ok`
+
+2. Cámbialas a `true` una por una. Verás transicionar los estados hasta llegar a `Normal_ST`.
+
+### Paso 3: Prueba de Botón (Debounce)
+
+1. En Simulation, haz clic repetidamente en `EV_BTN_PRESSED`.
+2. Observa la región `ST_BTN`: Verás el estado pasar a `FALLING` y el contador `tick` decrementarse.
+3. Necesitarás varios clics (simulando ruido/tiempo) para que se dispare finalmente `EV_SYS_PRESSED` y veas cambiar la variable `toggle_light` en la región superior.
+
+### Paso 4: Prueba de Falla
+
+1. Reinicia la simulación.
+2. En medio del init, deja una variable en `false` o espera.
+3. Verifica que entre a `Fault_ST` y que las variables `led_on` / `buzzer_on` oscilen.
+
+---
+
+## 5. Notas de Implementación C
+
+Al generar el código (SCT Generator), presta atención a:
+
+### Timer Base
+
+El statechart requiere un timer base para los eventos `after X`. Asegúrate de configurar:
+
+- El **systick** o timer de hardware del microcontrolador.
+- Alimentar la función `runCycle()` del statechart en cada interrupción del timer.
+
+**Ejemplo (STM32):**
+```c
+void SysTick_Handler(void) {
+    statechart_runCycle(); // Ejecutar máquina de estados
+}
+```
+
+### Interrupciones
+
+Las ISR de los pines deben:
+
+1. Llamar a `statechart_raise_EV_BTN_PRESSED()`.
+2. **No ejecutar lógica dentro de la ISR**, solo levantar el evento.
+
+**Ejemplo (INT0 para botón):**
+```c
+void INT0_ISR(void) {
+    statechart_raise_EV_BTN_PRESSED();
+}
+```
+
+### Mapeo de Variables
+
+Después de generar el código, vincula las variables del statechart con los registros de hardware:
+
+```c
+// Pseudo-código para mapeo
+hwnd_led_relay = &statechart.toggle_light;
+hwnd_pwm_timer_ocr = &statechart.pwm_val;
+hwnd_power_enable = !statechart.cut_off_voltage;
+```
+
+---
+
+## 6. Diagrama de Flujo de Estados
 
 ```
 ┌─────────────┐
-│   Entry     │
+│   ENTRADA   │
 └──────┬──────┘
        │
        ▼
 ┌──────────────────────────────────────┐
-│         Init_ST (Composite)          │
+│         Init_ST (Secuencial)         │
 │  ┌────────────────────────────────┐  │
-│  │ Flash → DIP → Sensors →        │  │
-│  │ PWM → BT (sequential checks)   │  │
+│  │ Flash → DIP → Sensores →       │  │
+│  │ PWM → BT (validaciones)        │  │
 │  └────────────────────────────────┘  │
 └──────┬───────────────┬────────────────┘
-       │ All OK        │ Any Failure
+       │ Todo OK       │ Cualquier Fallo
        │               │
        ▼               ▼
 ┌─────────────┐  ┌─────────────────────┐
 │ Normal_ST   │  │  Fault_ST           │
 │ ┌─────────┐ │  │  ┌───────────────┐  │
-│ │ Control ├─┼──┼──┤ Alert Loop    │  │
-│ │ & Button│ │  │  │ (1s on/off)   │  │
+│ │ Control ├─┼──┼──┤ Bucle Alerta  │  │
+│ │ & Botón │ │  │  │ (1Hz toggle)  │  │
 │ └─────────┘ │  │  └───────────────┘  │
-└─────────────┘  │ (after 10s → Init) │
-                 └─────────────────────┘
+└─────────────┘  │                      │
+                 │ (10s timeout)       │
+                 └──────────┬───────────┘
+                            │
+                            └─→ Init_ST (reintentar)
 ```
 
 ---
 
-## Key Design Patterns
+## 7. Checklist de Integración
 
-### 1. **Hierarchical Decomposition**
-- Top-level `Blink` state contains all functionality
-- Multiple substates handle different operational phases
-- Parallel regions in `Normal_ST` allow concurrent operations
-
-### 2. **Debouncing State Machine**
-- Dedicated state machine for button input filtering
-- Adaptive counter mechanism prevents false triggers
-- Clean separation of raw input from debounced output
-
-### 3. **Sequential Validation**
-- Initialization follows strict ordering
-- Single point of failure transitions to Fault_ST
-- No skipping stages prevents cascading failures
-
-### 4. **Timeout-Based Recovery**
-- 10-second timeout in Fault_ST attempts recovery
-- No manual intervention required for transient faults
-- Self-healing capability built into design
-
-### 5. **Event-Driven Communication**
-- Raised internal events (`EV_SYS_PRESSED`, `EV_SEND_BT_UPDATE_*`) decouple handlers
-- Clean abstraction layer between hardware and application logic
-- Supports asynchronous Bluetooth updates without blocking
+- [ ] Configurar **Systick/Timer** para llamar a `runCycle()` periódicamente.
+- [ ] Configurar **ISR del botón** para llamar a `statechart_raise_EV_BTN_PRESSED()`.
+- [ ] Configurar **ADC/Potenciómetro** para generar eventos `EV_POTE_CHANGED`.
+- [ ] Mapear variables del statechart a registros de GPIO/PWM.
+- [ ] Validar que `cut_off_voltage` desactiva los triacs en fallo.
+- [ ] Probar secuencia de boot con variables `init_*_ok`.
+- [ ] Validar timeout de 10 segundos en `Fault_ST`.
+- [ ] Documentar pinouts y UART para Bluetooth.
 
 ---
 
-## Practical Operation Example
+## Referencias
 
-**Scenario: User presses button in normal mode**
-
-1. Raw `EV_BTN_PRESSED` signal arrives (noisy, bouncing)
-2. **ST_BTN_UNPRESSED** → receives event, initializes counter `tick=50` → **ST_BTN_FALLING**
-3. While bouncing, additional `EV_BTN_PRESSED` events decrement `tick` (50→49→48→...)
-4. When electrical noise settles, `tick` reaches 0
-5. Debouncer raises `EV_SYS_PRESSED` → **ST_BTN_PRESSED**
-6. In parallel region, `EV_SYS_PRESSED` triggers: `toggle_light = true; raise EV_SEND_BT_UPDATE_LIGHT`
-7. Button release starts rising edge debouncing similarly
-8. After 50 events or 50ms settling time, `EV_SYS_UNPRESSED` is raised
-
-**Safety:** Even with contact bounce lasting milliseconds, the system recognizes only one clean press/release event pair.
-
----
-
-## Hardware Dependencies
-
-The statechart assumes these hardware components:
-
-- **Flash Memory**: Persistent configuration storage
-- **DIP Switches**: Hardware configuration selectors
-- **Sensors**: Input devices (validated during init)
-- **PWM Controller**: Duty cycle output (restored from flash)
-- **Bluetooth Module**: Wireless communication interface
-- **LED**: Visual feedback for alerts
-- **Buzzer**: Audible feedback for alerts
-- **Button**: User input with debouncing via this state machine
+- **YAKINDU Statechart Tools:** https://www.itemis.com/en/yakindu/statechart-tools/
+- **Itemis CREATE:** Entorno integrado para modelado y generación de código.
+- **SCT Code Generator:** Convierte modelos a C/C++/Java.
 
