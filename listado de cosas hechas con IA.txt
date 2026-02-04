@@ -2,4 +2,8 @@ Ignacio:
 1. Le pasamos una memoria técnica de las de ejemplo y le pedimos que extraiga el esqueleto de secciones y subsecciones para poder empezar a completar nuestro documento.
 2. Lo ya discutido sobre el readMe
 3. En el hardware se usó como asesor de buenas prácticas y para elección de componentes, siendo el uso de triacs algo nuevo. No ayudó demaasiaado con los snubbers, todavía le cuesta eso 
-4. Informe de avences genérico en base a los de ejemplo, luego se ajustó a nuestros avances y proyecto. 
+4. Informe de avences genérico en base a los de ejemplo, luego se ajustó a nuestros avances y proyecto.
+
+Francisco:
+1. Se utilizó Gemini 3.0 como soporte técnico para el manejo de Itemis Create y para optimizar la eficiencia de los flujos del diagrama.
+2. Se empleó Claude para generar la estructura base del archivo STATECHART_EXPLANATION.md, la cual fue revisada y corregida manualmente por nosotros.
