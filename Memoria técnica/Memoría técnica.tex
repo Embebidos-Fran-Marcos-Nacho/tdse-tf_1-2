@@ -1,0 +1,228 @@
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% This is a simple template for a LaTeX document using the ``article'' class.
+% See ``book'', ``report'', ``letter'' for other types of document.
+
+\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+%%% PAGE DIMENSIONS
+\usepackage{geometry} % to change the page dimensions
+\geometry{a4paper} % or letterpaper (US) or a5paper or....
+\geometry{margin=1in} % for example, change the margins to 2 inches all round
+% \geometry{landscape} % set up the page for landscape
+%   read geometry.pdf for detailed page layout information
+
+\usepackage{graphicx} % support the \includegraphics command and options
+
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+% These packages are all incorporated in the memoir class to one degree or another...
+\usepackage{enumitem}
+\usepackage{amsmath}
+
+% para los cuadritos en links
+%\usepackage[linkbordercolor={0 0 1}, citebordercolor={0 1 0}, urlbordercolor={1 0 0}]{hyperref}
+\usepackage[colorlinks=true, linkcolor=black, citecolor=green, urlcolor=red]{hyperref} % solo resalta
+\usepackage[spanish]{babel}
+
+
+
+%%% HEADERS & FOOTERS
+\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+\pagestyle{fancy} % options: empty , plain , fancy
+\renewcommand{\headrulewidth}{0pt} % customise the layout...
+\lhead{}\chead{}\rhead{}
+\lfoot{}\cfoot{\thepage}\rfoot{}
+
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+%%% END Article customizations
+
+%%% The ``real'' document content comes below...
+
+
+
+\title{memoria técnica\\ Taller de Sistemas Embebidos}
+
+
+\author{Ignacio Ezequiel Cavicchioli\\Padrón 109428\\icavicchioli@fi.uba.ar \and
+Francisco Javier Moya\\Padrón 109899\\fjmoya@fi.uba.ar}
+% \date{} % Activate to display a given date or no date (if empty),
+         % otherwise the current date is printed
+
+\begin{document}
+
+
+%--------------------------------------------------------------------
+\section*{Resumen}
+%no se usó IA acá, redactado a mano como desafio
+En este documento se detalla el desarrollo, resultados y futuros pasos del trabajo práctico integrador de la materia \textbf{Taller de Sistemas Embebidos}. El proyecto elegido es un controlador de ventilador de techo y luces de línea (220 VAC) por medio de un control físico dedicado y una aplicación de celular conectada por \textit{bluetooth}.
+
+El sistema es una propuesta propia inspirada en otros productos que ya cumplen esta función. Por un lado, integra un control físico, indispensable para la experiencia del usuario debido a que sería absurdo que tenga que usar el celular cada vez que quiere prender una luz. Por otro, le da la libertad al usuario a controlar el celular de forma remota, para esas situaciones donde uno no puede o quiere acercarse a los controles de pared, como bien podría ser alguien acostado en la cama.
+
+Otra parte importante es que el proyecto nos permite a los alumnos practicar con sistemas de control de potencia con tensión de línea, una habilidad demandada en la industria pero que no es parte del currículo universitario actual.
+
+Ahora bien, la implementación de todo lo recién enunciado se realizó siguiendo los preceptos enseñados a lo largo de la materia, partiendo de diagramas de estados y luego construyendo un código limpio, entendible y funcional. La base de \textit{hardware} es un núcleo F103RB junto con 2 placas de desarrollo propio: un \textit{shield} con el control físico y una placa con el control de potencia.
+
+
+
+
+
+
+\section*{Índice General}
+
+\tableofcontents
+%--------------------------------------------------------------------
+\section*{Registro de versiones}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|}
+		\hline
+		Revisión & Cambios realizados     & Fecha     \\ \hline
+		1.0      & Creación del documento & 9/12/2025 \\ \hline
+	\end{tabular}
+\end{table}
+
+
+%--------------------------------------------------------------------
+\section{Introducción general}
+% copiado del readme
+
+Recordando del resumen, este proyecto implementa un módulo de control de ventilador y luces de línea (220 V) que permite operar:
+
+- Desde la pared, por medio de un **botón físico** y un **potenciómetro**
+- Desde un dispositivo móvil mediante \textbf{Bluetooth (MIT App Inventor)}
+
+Resultados esperados:
+
+- Control de velocidad del ventilador.
+- Encendido/apagado de luces y ventilador.
+- Feedback mediante LEDs y buzzer para estados y alertas.
+- Permitir deshabilitar o configurar el BT mediante un DIP switch.
+- Guardado en memoria del último estado usado.
+- Funcionamiento seguro sobre cargas de 220 VAC.
+
+
+\subsection{Análisis de necesidad y objetivos}
+% sin ia todavía
+Un controlador de ventilador cubre la necesidad básica de controlar un ventilador y, opcionalmente, sus luces, valga la redundancia. Es decir, todos los controladores buscan satisfacer el mismo requisito, pero lo interesante es cómo encaran esto, y qe canales de control le ofrecen al usuairo.
+
+En este proyecto se eligieron dos avenidas de control contrastantes, derivadas de haber estudiado otros dispositivos comercialmente disponibles. Estas son el control físico y el control por \textit{bluetooth}.
+
+El control físico, que estaría en la pared, es, de cierta manera, lo mínimo que espera el cliente con una instalación domiciliaria típica (ej.: un dormitorio). Cuando ingresa o egresa a una habitación tiene la oportunidad de ejercer control sobre el ventilador y sus luces, sin mayor esfuerzo que acercar la mano y girar una perilla, o tocar un botón. Es la mínima expresión de lo que entendemos como un control, y es sorprendente que ciertas alternativas comerciales no lo integren. Es evidente que tienen otra necesidad en mente, como que el control esté oculto por razones estéticas o de la propia instalación.
+
+
+Este último punto nos lleva al segundo modo de control implementado: el \textit{bluetooth}. Con el auge de el IOT y domótica, cada vez más gente quiere sentir el poder de controlar un dispositivo desde la palma de su mano, i.e. su celular. En el caso del ventilador, hemos identificado una verdadera necesidad de un control a distancia, que es el caso en el que el usuario no se quiere acercar al control físico. Esto sucede cuando: está sentado lejos o está en la cama descansando. Afortunadamente, la gente interesada en la domótica tiende a ser proficiente con el celular, y esta misma población generalmente lo lleva con su persona. Dada esta serie de postulados, es natural decidir integrar el control en el celular de forma inalámbrica.
+
+
+Ahora bien,¿Por qué \textit{bluetooth} y no otro método? La realidad es que se eligió este por sobre WI-FI o un control RF dedicado debido a que existía un requerimiento del proyecto de integrar este método en la solución. En una solución real y no condicionada, se elegiría un \textit{framework} armado por WI-FI que conecte con alguna aplicación de domótica (ej.: \textit{Google Home}) o, para no alienar a aquellos menos tecnológicamente dispuestos, un control RF con los mismos controles que el físico.
+
+En otros documentos se entra en detalle de puntos en contra del uso de WI-FI, que incluyen:
+
+\begin{enumerate}
+	\item WI-FI presenta mayor complejidad en configuración, seguridad y mantenimiento de la conexión.
+	\item Requiere infraestructura adicional (router, red doméstica).
+	\item Demanda más recursos del microcontrolador.
+	\item Implica un ciclo de desarrollo más largo.
+	\item Un dispositivo mal diseñado podría volverse una vulnerabilidad en la red.
+\end{enumerate}
+
+Estos son válidos pero completamente resolubles por un equipo preparado.
+
+% nada de ia hasta ahora
+\subsection{Módulos e Interfaces}
+
+%--------------------------------------------------------------------
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=1\linewidth]{imgs/diagrama en bloques}
+	\caption{Diagrama en bloques de módulos e interfaces}
+	\label{fig:diagrama-en-bloques}
+\end{figure}
+
+
+
+
+\section{Introducción específica}
+
+\subsection{Requisitos}
+\subsection{Casos de uso}
+
+\subsection{Descripción de los Módulos del sistema}
+\subsubsection{Alimentación}
+\subsubsection{Microcontrolador}
+\subsubsection{Motor}
+\subsubsection{Lector RFID}
+\subsubsection{Teclado Matricial}
+\subsubsection{Sensor Magnético}
+\subsubsection{Parlante}
+\subsubsection{Comunicación Wi-Fi}
+
+%--------------------------------------------------------------------
+\section{Diseño e Implementación}
+
+\subsection{Diseño del Hardware}
+\subsubsection{Diseño de la alimentación}
+\subsubsection{Diseño de los indicadores e interruptores}
+\subsubsection{Diseño del lector RFID}
+\subsubsection{Diseño del circuito para controlar el parlante}
+\subsubsection{Diseño del circuito para controlar el motor}
+\subsubsection{Diseño del circuito para controlar el teclado matricial}
+\subsubsection{Diseño del circuito para controlar el Módulo Wi-Fi}
+\subsubsection{Diseño del hardware con la placa NUCLEO-F429ZI}
+
+\subsection{Firmware del Smartlock}
+\subsubsection{Módulo Access Keys}
+\subsubsection{Módulo Keypad}
+\subsubsection{Módulo Motors}
+\subsubsection{Módulo MQTT}
+\subsubsection{Módulo RFID}
+\subsubsection{Módulo Speaker}
+\subsubsection{Módulo System}
+\subsubsection{Módulo UART Communications}
+
+\subsection{Firmware del ESP32 DEVKIT V1}
+\subsection{Mosquitto broker}
+\subsection{Diseño de la aplicación y manejo de paquetes}
+
+%--------------------------------------------------------------------
+\section{Ensayos y Resultados}
+
+\subsection{Pruebas funcionales de funcionamiento}
+\subsection{Cumplimiento de requisitos}
+\subsection{Comparación con otros sistemas similares}
+\subsection{Documentación del desarrollo realizado}
+
+%--------------------------------------------------------------------
+\section{Conclusiones}
+
+\subsection{Resultados obtenidos}
+\subsection{Próximos pasos}
+
+%--------------------------------------------------------------------
+\section*{Bibliografía}
+
+\end{document}

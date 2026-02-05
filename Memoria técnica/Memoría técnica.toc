@@ -1,0 +1,46 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Introducción general}{2}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Análisis de necesidad y objetivos}{2}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Módulos e Interfaces}{5}{subsection.1.2}%
+\contentsline {section}{\numberline {2}Introducción específica}{5}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Requisitos}{5}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Casos de uso}{5}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Descripción de los Módulos del sistema}{5}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Alimentación}{5}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}Microcontrolador}{5}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.3}Motor}{5}{subsubsection.2.3.3}%
+\contentsline {subsubsection}{\numberline {2.3.4}Lector RFID}{5}{subsubsection.2.3.4}%
+\contentsline {subsubsection}{\numberline {2.3.5}Teclado Matricial}{5}{subsubsection.2.3.5}%
+\contentsline {subsubsection}{\numberline {2.3.6}Sensor Magnético}{5}{subsubsection.2.3.6}%
+\contentsline {subsubsection}{\numberline {2.3.7}Parlante}{5}{subsubsection.2.3.7}%
+\contentsline {subsubsection}{\numberline {2.3.8}Comunicación Wi-Fi}{5}{subsubsection.2.3.8}%
+\contentsline {section}{\numberline {3}Diseño e Implementación}{5}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Diseño del Hardware}{5}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}Diseño de la alimentación}{5}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}Diseño de los indicadores e interruptores}{5}{subsubsection.3.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.3}Diseño del lector RFID}{5}{subsubsection.3.1.3}%
+\contentsline {subsubsection}{\numberline {3.1.4}Diseño del circuito para controlar el parlante}{5}{subsubsection.3.1.4}%
+\contentsline {subsubsection}{\numberline {3.1.5}Diseño del circuito para controlar el motor}{5}{subsubsection.3.1.5}%
+\contentsline {subsubsection}{\numberline {3.1.6}Diseño del circuito para controlar el teclado matricial}{5}{subsubsection.3.1.6}%
+\contentsline {subsubsection}{\numberline {3.1.7}Diseño del circuito para controlar el Módulo Wi-Fi}{5}{subsubsection.3.1.7}%
+\contentsline {subsubsection}{\numberline {3.1.8}Diseño del hardware con la placa NUCLEO-F429ZI}{5}{subsubsection.3.1.8}%
+\contentsline {subsection}{\numberline {3.2}Firmware del Smartlock}{5}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Módulo Access Keys}{5}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}Módulo Keypad}{5}{subsubsection.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.3}Módulo Motors}{5}{subsubsection.3.2.3}%
+\contentsline {subsubsection}{\numberline {3.2.4}Módulo MQTT}{5}{subsubsection.3.2.4}%
+\contentsline {subsubsection}{\numberline {3.2.5}Módulo RFID}{5}{subsubsection.3.2.5}%
+\contentsline {subsubsection}{\numberline {3.2.6}Módulo Speaker}{5}{subsubsection.3.2.6}%
+\contentsline {subsubsection}{\numberline {3.2.7}Módulo System}{5}{subsubsection.3.2.7}%
+\contentsline {subsubsection}{\numberline {3.2.8}Módulo UART Communications}{5}{subsubsection.3.2.8}%
+\contentsline {subsection}{\numberline {3.3}Firmware del ESP32 DEVKIT V1}{5}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Mosquitto broker}{5}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Diseño de la aplicación y manejo de paquetes}{5}{subsection.3.5}%
+\contentsline {section}{\numberline {4}Ensayos y Resultados}{5}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Pruebas funcionales de funcionamiento}{5}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Cumplimiento de requisitos}{5}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Comparación con otros sistemas similares}{5}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Documentación del desarrollo realizado}{5}{subsection.4.4}%
+\contentsline {section}{\numberline {5}Conclusiones}{5}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Resultados obtenidos}{5}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Próximos pasos}{5}{subsection.5.2}%
