@@ -1,0 +1,24 @@
+PA0   -> Potenciómetro (ADC1_IN0)
+PA1   -> Detector cruce por cero (EXTI1)
+
+PA6   -> Trigger TRIAC 1 (TIM3_CH1)
+PA7   -> Trigger TRIAC 2 (TIM3_CH2)
+
+PA8   -> Buzzer (TIM1_CH1, vía transistor)
+
+PA9   -> Bluetooth RX (USART1_TX)
+PA10  -> Bluetooth TX (USART1_RX)
+
+PB0   -> DIP 1
+PB1   -> DIP 2
+PB2   -> DIP 3
+PB10  -> DIP 4
+
+PB11  -> Bluetooth KEY / EN (opcional)
+PB12  -> Bluetooth STATE (opcional)
+
+PC13  -> LED
+PC14  -> Pulsador 1 (EXTI14)
+PC15  -> Pulsador 2 (EXTI15)
+
+¿Necesitás transistor para el buzzer? → Sí, casi seguro
