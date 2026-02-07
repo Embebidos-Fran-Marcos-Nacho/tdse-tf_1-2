@@ -8,3 +8,7 @@ Francisco:
 1. Se utilizó Gemini 3.0 como soporte técnico para el manejo de Itemis Create y para optimizar la eficiencia de los flujos del diagrama.
 2. Se empleó Claude para generar la estructura base del archivo STATECHART_EXPLANATION.md, la cual fue revisada y corregida manualmente por nosotros.
 4. Informe de avences genérico en base a los de ejemplo, luego se ajustó a nuestros avances y proyecto. 
+
+Común:
+1. Memoria técnica - usandoe l modo agente del repositorio se armó la memoria técnica que cumpla con todos los requerimientos. 
+2. código del stm32

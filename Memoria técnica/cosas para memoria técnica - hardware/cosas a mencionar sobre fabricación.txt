@@ -7,3 +7,4 @@
 - 1ero se probó el ZCD, luego se soldadron los de triacs y se probó todo con 24VAC
 - proxima versión podría tener el usb C uart module removible (solo los pines) con un micro tipo attiny en la misma placa para directamente hacer todo dimming ahí, luego solo se habla con la placa con una tensión analógica o algo así
 - proxima versión debe tener los agujeros de diametro correcto para los varistores y componentes más grades, todo mal excepto para las resistencias chicas de 1/4 o 1/2 de watt. 
+- prox versión solo 1 triac y 1 zcd o por separado, algo más económico, seguramente 1 optoacomplador mas simple que de triac y el triac de potencia, se debe investigar. 
