@@ -1,24 +1,30 @@
-PA0   -> Potenciómetro (ADC1_IN0)
-PA1   -> Detector cruce por cero (EXTI1)
+PC0 -> potenciometro
+PC1, PB0, PA4 y PA1 -> dip switch
+PC12 -> btn 1
+PC9 -> btn2
+PC2 -> interrupcion ZCS exti2
+PA9, PA10 -> serial bluetooth que no se pise con el del usb
+PB13 -> led
+PA8 -> buzzer con timer
 
-PA6   -> Trigger TRIAC 1 (TIM3_CH1)
-PA7   -> Trigger TRIAC 2 (TIM3_CH2)
 
-PA8   -> Buzzer (TIM1_CH1, vía transistor)
+PC0   -> Potenciómetro (ADC)
 
-PA9   -> Bluetooth RX (USART1_TX)
-PA10  -> Bluetooth TX (USART1_RX)
+PC1   -> DIP switch 1
+PB0   -> DIP switch 2
+PA4   -> DIP switch 3
+PA1   -> DIP switch 4
 
-PB0   -> DIP 1
-PB1   -> DIP 2
-PB2   -> DIP 3
-PB10  -> DIP 4
+PC12  -> Botón 1
+PC9   -> Botón 2
 
-PB11  -> Bluetooth KEY / EN (opcional)
-PB12  -> Bluetooth STATE (opcional)
+PC2   -> ZCS – cruce por cero (EXTI2)
 
-PC13  -> LED
-PC14  -> Pulsador 1 (EXTI14)
-PC15  -> Pulsador 2 (EXTI15)
+PA9   -> USART1_TX  → conectar al RX del Bluetooth
+PA10  -> USART1_RX  → conectar al TX del Bluetooth
 
-¿Necesitás transistor para el buzzer? → Sí, casi seguro
+PB13  -> LED
+
+PA8   -> Buzzer (TIM1_CH1, salida por timer)
+
+Bluetooth y potenciómetro usan 3.3V

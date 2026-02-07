@@ -1,0 +1,20 @@
+Inicia con una estructura con punteros a funciones y un puntero a parámetros. Se encarga de configurar al sensor, al sistema y al actuador.
+Aparte tiene otra estructura con el peor tiempo de ejecución.
+
+Define un array lleno de las estructuras con las tareas de sensor, sistema y actuador. 
+Declara y define el app_init() que recorre 1 vez las tareas y las ejecuta.
+
+
+Declara y define el app_update(), que recorre las tasks definidas en orden y las va ejecutando según un contador de ticks de cada task en particular. 
+Va sumando cuantas veces ejecutó una tarea. 
+
+Al final hace un HAL_SYSTICK_Callback() que aumenta los ticks de cada tarea cada vez que hay un tick. 
+
+
+SysTick: STCVR aumenta cada ciclo de ejecución. 
+
+SystemCoreClock arranca en 8000000 y pasa a 64000000, cambiando la frecuencia del clock de 8MHz a 64MHz. 
+
+G_app_runtime_us: Es una variable global que mide el tiempo total que tarda en ejecutarse un ciclo completo de app_update(), microsegundos.
+
+WCET: Mide el peor tiempo de ejecución de cada tarea (Worst Case Execution Time) en microsegundos.
