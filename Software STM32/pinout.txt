@@ -1,24 +1,17 @@
-PC0 -> potenciometro
-PC1, PB0, PA4 y PA1 -> dip switch
-PC12 -> btn 1
-PC9 -> btn2
-PC2 -> interrupcion ZCS exti2
-PA9, PA10 -> serial bluetooth que no se pise con el del usb
-PB13 -> led
-PA8 -> buzzer con timer
+PA0   -> Potenciómetro (ADC)
 
-
-PC0   -> Potenciómetro (ADC)
-
-PC1   -> DIP switch 1
-PB0   -> DIP switch 2
-PA4   -> DIP switch 3
-PA1   -> DIP switch 4
+PC0   -> DIP switch 1
+PC1   -> DIP switch 2
+PB0   -> DIP switch 3
+PA4   -> DIP switch 4
 
 PC12  -> Botón 1
 PC9   -> Botón 2
 
 PC2   -> ZCS – cruce por cero (EXTI2)
+
+PB3 -> TRIAC 1 (GPIO Output)
+PB4 -> TRIAC 2 (GPIO Output)
 
 PA9   -> USART1_TX  → conectar al RX del Bluetooth
 PA10  -> USART1_RX  → conectar al TX del Bluetooth
@@ -27,4 +20,8 @@ PB13  -> LED
 
 PA8   -> Buzzer (TIM1_CH1, salida por timer)
 
-Bluetooth y potenciómetro usan 3.3V
+
+
+potenciómetro usa 3.3V
+GW040 VCC  -> +5V
+GW040 GND  -> GND

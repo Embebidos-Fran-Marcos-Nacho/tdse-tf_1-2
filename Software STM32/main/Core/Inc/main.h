@@ -59,6 +59,26 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define DIP3_Pin GPIO_PIN_0
+#define DIP3_GPIO_Port GPIOC
+#define DIP4_Pin GPIO_PIN_1
+#define DIP4_GPIO_Port GPIOC
+#define ZCD_INT_Pin GPIO_PIN_2
+#define ZCD_INT_GPIO_Port GPIOC
+#define POTENTIOMETER_Pin GPIO_PIN_0
+#define POTENTIOMETER_GPIO_Port GPIOA
+#define DIP1_Pin GPIO_PIN_4
+#define DIP1_GPIO_Port GPIOA
+#define DIP2_Pin GPIO_PIN_0
+#define DIP2_GPIO_Port GPIOB
+#define LED_Pin GPIO_PIN_13
+#define LED_GPIO_Port GPIOB
+#define BUT2_Pin GPIO_PIN_9
+#define BUT2_GPIO_Port GPIOC
+#define BUZZER_Pin GPIO_PIN_8
+#define BUZZER_GPIO_Port GPIOA
+#define BOT1_Pin GPIO_PIN_12
+#define BOT1_GPIO_Port GPIOC
 
 /* USER CODE BEGIN Private defines */
 
