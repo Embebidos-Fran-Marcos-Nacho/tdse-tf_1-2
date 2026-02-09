@@ -190,25 +190,6 @@ void task_system_statechart(void)
 
 			break;
 
-		case ST_SYS_ACTIVE_02:
-
-			break;
-
-		case ST_SYS_ACTIVE_03:
-
-			break;
-
-		case ST_SYS_ACTIVE_04:
-
-			break;
-
-		case ST_SYS_ACTIVE_05:
-
-			break;
-
-		case ST_SYS_ACTIVE_06:
-
-			break;
 
 		default:
 

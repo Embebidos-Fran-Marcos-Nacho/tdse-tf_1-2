@@ -1,108 +1,157 @@
-/*
- * Copyright (c) 2023 Juan Manuel Cruz <jcruz@fi.uba.ar> <jcruz@frba.utn.edu.ar>.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * 3. Neither the name of the copyright holder nor the names of its
- *    contributors may be used to endorse or promote products derived from
- *    this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *
- * @file   : task_adc.c
- * @date   : Set 26, 2023
- * @author : Juan Manuel Cruz <jcruz@fi.uba.ar> <jcruz@frba.utn.edu.ar>
- * @version	v1.0.0
- */
-
-/********************** inclusions *******************************************/
 /* Project includes. */
 #include "main.h"
 
 /* Demo includes. */
 #include "logger.h"
-#include "dwt.h"
 
 /* Application & Tasks includes. */
-#include "board.h"
 #include "app.h"
 
 /********************** macros and definitions *******************************/
+#define ADC_PERIOD_MS           50u
+#define BTN_DEBOUNCE_TICKS      50u
+#define BUTTON_PRESSED_LEVEL    GPIO_PIN_RESET
 
-
-/********************** internal data declaration ****************************/
-
+typedef enum {
+    ST_BTN_UNPRESSED = 0,
+    ST_BTN_FALLING,
+    ST_BTN_PRESSED,
+    ST_BTN_RISING
+} button_state_t;
 
 /********************** internal functions declaration ***********************/
-HAL_StatusTypeDef ADC_Poll_Read(uint16_t *value);
+static HAL_StatusTypeDef adc_poll_read(uint16_t *value);
+static void update_button_fsm(shared_data_type *shared_data);
 
 /********************** internal data definition *****************************/
-const char *p_task_adc 		= "Task ADC";
+const char *p_task_adc = "Task Sensor";
 
 /********************** external data declaration *****************************/
-
 extern ADC_HandleTypeDef hadc1;
 
 /********************** external functions definition ************************/
 void task_adc_init(void *parameters)
 {
-	shared_data_type *shared_data = (shared_data_type *) parameters;
+    shared_data_type *shared_data = (shared_data_type *)parameters;
 
-	/* Print out: Task Initialized */
-	LOGGER_LOG("  %s is running - %s\r\n", GET_NAME(task_adc_init), p_task_adc);
+    LOGGER_LOG("  %s is running - %s\r\n", GET_NAME(task_adc_init), p_task_adc);
 
-	shared_data->adc_end_of_conversion = false;
+    shared_data->adc_raw = 0u;
+    shared_data->adc_percent = 0u;
+    shared_data->fan_delay_us = 0u;
+    shared_data->ev_sys_pressed = false;
+    shared_data->ev_pote_changed = false;
 }
 
 void task_adc_update(void *parameters)
 {
+    static uint32_t adc_tick = 0u;
+    static uint8_t last_percent = 0u;
 
-	shared_data_type *shared_data = (shared_data_type *) parameters;
+    shared_data_type *shared_data = (shared_data_type *)parameters;
+    uint16_t adc_value = 0u;
+    uint8_t adc_percent = 0u;
 
-	if (HAL_OK==ADC_Poll_Read(&shared_data->adc_value)) {
-		shared_data->adc_end_of_conversion = true;
-	}
-	else {
-		LOGGER_LOG("error\n");
-	}
+    /* Lee el estado instantáneo de los 4 DIP switches. */
+    shared_data->dip_value =
+        ((HAL_GPIO_ReadPin(DIP1_GPIO_Port, DIP1_Pin) == GPIO_PIN_SET) ? (1u << 0) : 0u) |
+        ((HAL_GPIO_ReadPin(DIP2_GPIO_Port, DIP2_Pin) == GPIO_PIN_SET) ? (1u << 1) : 0u) |
+        ((HAL_GPIO_ReadPin(DIP3_GPIO_Port, DIP3_Pin) == GPIO_PIN_SET) ? (1u << 2) : 0u) |
+        ((HAL_GPIO_ReadPin(DIP4_GPIO_Port, DIP4_Pin) == GPIO_PIN_SET) ? (1u << 3) : 0u);
+
+    /* Debounce por máquina de estados del botón de luz. */
+    update_button_fsm(shared_data);
+
+    /* Muestreo periódico del potenciómetro (ADC). */
+    adc_tick++;
+    if (adc_tick >= ADC_PERIOD_MS) {
+        adc_tick = 0u;
+
+        if (HAL_OK == adc_poll_read(&adc_value)) {
+            shared_data->adc_raw = adc_value;
+            shared_data->fan_delay_us = (uint16_t)((adc_value * 7500u) / 4095u);
+
+            adc_percent = (uint8_t)((adc_value * 100u) / 4095u);
+            shared_data->adc_percent = adc_percent;
+
+            /* Solo levanta evento si hubo cambio real en el valor mapeado. */
+            if (adc_percent != last_percent) {
+                last_percent = adc_percent;
+                shared_data->ev_pote_changed = true;
+            }
+        }
+    }
 }
 
+/********************** internal functions definition ************************/
+static HAL_StatusTypeDef adc_poll_read(uint16_t *value)
+{
+    HAL_StatusTypeDef res = HAL_ADC_Start(&hadc1);
 
+    if (HAL_OK == res) {
+        res = HAL_ADC_PollForConversion(&hadc1, 0u);
+        if (HAL_OK == res) {
+            *value = (uint16_t)HAL_ADC_GetValue(&hadc1);
+        }
+        (void)HAL_ADC_Stop(&hadc1);
+    }
 
-//	Requests start of conversion, waits until conversion done
-HAL_StatusTypeDef ADC_Poll_Read(uint16_t *value) {
-	HAL_StatusTypeDef res;
-
-	res=HAL_ADC_Start(&hadc1);
-	if ( HAL_OK==res ) {
-		res=HAL_ADC_PollForConversion(&hadc1, 0);
-		if ( HAL_OK==res ) {
-			*value = HAL_ADC_GetValue(&hadc1);
-		}
-	}
-	return res;
+    return res;
 }
 
+static void update_button_fsm(shared_data_type *shared_data)
+{
+    static button_state_t state = ST_BTN_UNPRESSED;
+    static uint8_t tick = 0u;
 
+    bool btn_pressed = (HAL_GPIO_ReadPin(BOT1_GPIO_Port, BOT1_Pin) == BUTTON_PRESSED_LEVEL);
+
+    /* FSM de debounce estilo Harel: UNPRESSED/FALLING/PRESSED/RISING. */
+    switch (state) {
+    case ST_BTN_UNPRESSED:
+        if (btn_pressed) {
+            tick = BTN_DEBOUNCE_TICKS;
+            state = ST_BTN_FALLING;
+        }
+        break;
+
+    case ST_BTN_FALLING:
+        if (btn_pressed) {
+            if (tick > 0u) {
+                tick--;
+            } else {
+                /* Evento limpio de pulsación confirmada. */
+                shared_data->ev_sys_pressed = true;
+                state = ST_BTN_PRESSED;
+            }
+        } else {
+            state = ST_BTN_UNPRESSED;
+        }
+        break;
+
+    case ST_BTN_PRESSED:
+        if (!btn_pressed) {
+            tick = BTN_DEBOUNCE_TICKS;
+            state = ST_BTN_RISING;
+        }
+        break;
+
+    case ST_BTN_RISING:
+        if (!btn_pressed) {
+            if (tick > 0u) {
+                tick--;
+            } else {
+                state = ST_BTN_UNPRESSED;
+            }
+        } else {
+            state = ST_BTN_PRESSED;
+        }
+        break;
+
+    default:
+        state = ST_BTN_UNPRESSED;
+        break;
+    }
+}
 
 /********************** end of file ******************************************/

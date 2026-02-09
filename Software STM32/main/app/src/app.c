@@ -1,40 +1,7 @@
 /*
  * Copyright (c) 2023 Juan Manuel Cruz <jcruz@fi.uba.ar> <jcruz@frba.utn.edu.ar>.
  * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * 3. Neither the name of the copyright holder nor the names of its
- *    contributors may be used to endorse or promote products derived from
- *    this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *
- * @file   : app.c
- * @date   : Set 26, 2023
- * @author : Juan Manuel Cruz <jcruz@fi.uba.ar> <jcruz@frba.utn.edu.ar>
- * @version	v1.0.0
  */
-
 
 /* Project includes. */
 #include "main.h"
@@ -45,55 +12,38 @@
 
 /* Application & Tasks includes. */
 #include "app.h"
-#include "board.h"
 #include "task_adc.h"
+#include "task_system.h"
 #include "task_pwm.h"
 
-
 /********************** macros and definitions *******************************/
-
-
-#define G_APP_CNT_INI		0ul
-#define G_APP_TICK_CNT_INI	0ul
-
-#define TASK_X_WCET_INI		0ul
+#define G_APP_CNT_INI       0ul
+#define G_APP_TICK_CNT_INI  0ul
+#define TASK_X_WCET_INI     0ul
+#define ZC_HOLDOFF_US       2000ul
 
 typedef struct {
-	void (*task_init)(void *);		// Pointer to task (must be a
-									// 'void (void *)' function)
-	void (*task_update)(void *);	// Pointer to task (must be a
-									// 'void (void *)' function)
-	void *parameters;				// Pointer to parameters
+    void (*task_init)(void *);
+    void (*task_update)(void *);
+    void *parameters;
 } task_cfg_t;
 
 typedef struct {
-    uint32_t WCET;			// Worst-case execution time (microseconds)
+    uint32_t WCET;
 } task_dta_t;
 
 /********************** internal data declaration ****************************/
-
-
 shared_data_type shared_data;
 
-const task_cfg_t task_cfg_list[]	= {
-		{task_adc_init, task_adc_update, &shared_data},
-		{task_pwm_init,	task_pwm_update, &shared_data},
+const task_cfg_t task_cfg_list[] = {
+    {task_adc_init, task_adc_update, &shared_data},
+    {task_system_init, task_system_update, &shared_data},
+    {task_pwm_init, task_pwm_update, &shared_data},
 };
 
-#define TASK_QTY (sizeof(task_cfg_list)/sizeof(task_cfg_t))
-
-/********************** internal functions declaration ***********************/
-
-/********************** internal data definition *****************************/
-
-
-const char *p_sys	= " Bare Metal - Event-Triggered Systems (ETS)\n";
-const char *p_app	= " ADC + PWM\n";
-
+#define TASK_QTY (sizeof(task_cfg_list) / sizeof(task_cfg_t))
 
 /********************** external data declaration *****************************/
-
-
 uint32_t g_app_cnt;
 uint32_t g_app_time_us;
 
@@ -101,104 +51,93 @@ volatile uint32_t g_app_tick_cnt;
 task_dta_t task_dta_list[TASK_QTY];
 
 /********************** external functions definition ************************/
-
 void app_init(void)
 {
-	uint32_t index;
+    uint32_t index;
 
-	/* Print out: Application Initialized */
-	LOGGER_LOG("\n");
-	LOGGER_LOG("%s is running - Tick [mS] = %lu\r\n", GET_NAME(app_init), HAL_GetTick());
+    LOGGER_LOG("\n");
+    LOGGER_LOG("%s is running - Tick [mS] = %lu\r\n", GET_NAME(app_init), HAL_GetTick());
 
-	LOGGER_LOG(p_sys);
-	LOGGER_LOG(p_app);
+    g_app_cnt = G_APP_CNT_INI;
+    g_app_tick_cnt = G_APP_TICK_CNT_INI;
 
-	g_app_cnt = G_APP_CNT_INI;
+    shared_data.zc_event_pending = false;
+    shared_data.zc_timestamp_us = 0u;
+    shared_data.last_zc_timestamp_us = 0u;
+    shared_data.adc_raw = 0u;
+    shared_data.fan_delay_us = 0u;
+    shared_data.adc_percent = 0u;
+    shared_data.fan_enabled = true;
+    shared_data.light_enabled = false;
+    shared_data.dip_value = 0u;
+    shared_data.bt_enabled = false;
+    shared_data.buzzer_enabled = false;
+    shared_data.led_enabled = false;
+    shared_data.ev_sys_pressed = false;
+    shared_data.ev_pote_changed = false;
+    shared_data.ev_send_bt_update_light = false;
+    shared_data.ev_send_bt_update_pote = false;
+    shared_data.fault_mode = false;
+    shared_data.cut_off_voltage = false;
+    shared_data.alarm_on = false;
+    shared_data.flash_save_light_request = false;
 
-	/* Print out: Application execution counter */
-	LOGGER_LOG(" %s = %lu\n", GET_NAME(g_app_cnt), g_app_cnt);
+    /* Inicializa todas las tareas registradas en el scheduler. */
+    for (index = 0; TASK_QTY > index; index++) {
+        (*task_cfg_list[index].task_init)(task_cfg_list[index].parameters);
+        task_dta_list[index].WCET = TASK_X_WCET_INI;
+    }
 
-	/* Go through the task arrays */
-	for (index = 0; TASK_QTY > index; index++)
-	{
-
-		/* Run task_x_init */
-		(*task_cfg_list[index].task_init)(task_cfg_list[index].parameters);
-
-		/* Init variables */
-		task_dta_list[index].WCET = TASK_X_WCET_INI;
-	}
-
-	cycle_counter_init();
+    cycle_counter_init();
 }
 
 void app_update(void)
 {
+    uint32_t index;
 
-	uint32_t index;
-	//uint32_t cycle_counter;
-	uint32_t cycle_counter_time_us;
+    /* Ejecuta un ciclo del scheduler cada tick de SysTick (1 ms). */
+    if (G_APP_TICK_CNT_INI < g_app_tick_cnt) {
+        g_app_tick_cnt--;
+        g_app_cnt++;
+        g_app_time_us = 0u;
 
-	/* Check if it's time to run tasks */
-	if (G_APP_TICK_CNT_INI < g_app_tick_cnt)
-    {
+        /* Recorre las tareas en orden fijo: sensor -> sistema -> actuador. */
+        for (index = 0; TASK_QTY > index; index++) {
+            uint32_t start_cycles = DWT->CYCCNT;
+            (*task_cfg_list[index].task_update)(task_cfg_list[index].parameters);
+            uint32_t elapsed_us = (DWT->CYCCNT - start_cycles) / cycles_per_us;
 
-    	g_app_tick_cnt--;
+            g_app_time_us += elapsed_us;
 
-    	/* Update App Counter */
-    	g_app_cnt++;
-    	g_app_time_us = 0;
-
-		/* Print out: Application execution counter */
-		//LOGGER_LOG(" %s = %lu\r\n", GET_NAME(g_app_cnt), g_app_cnt);
-
-		/* Go through the task arrays */
-		for (index = 0; TASK_QTY > index; index++)
-		{
-
-			cycle_counter_reset();
-
-			/* Run task_x_update */
-			(*task_cfg_list[index].task_update)(task_cfg_list[index].parameters);
-
-
-			//cycle_counter = cycle_counter_get();
-			cycle_counter_time_us = cycle_counter_time_us();
-
-			/* Update variables */
-			g_app_time_us += cycle_counter_time_us;
-
-			if (task_dta_list[index].WCET < cycle_counter_time_us)
-			{
-				task_dta_list[index].WCET = cycle_counter_time_us;
-			}
-
-
-			/* Print out: Cycle Counter */
-			//LOGGER_LOG(" %s: %lu - %s: %lu uS\r\n", GET_NAME(cycle_counter), cycle_counter, GET_NAME(cycle_counter_time_us), cycle_counter_time_us);
-			//LOGGER_LOG(" %s: %lu uS\r\n", GET_NAME(g_app_time_us), g_app_time_us);
-		}
-
-		LOGGER_LOG("%d,%d\n", shared_data.pwm_active, shared_data.adc_value);
+            if (task_dta_list[index].WCET < elapsed_us) {
+                task_dta_list[index].WCET = elapsed_us;
+            }
+        }
     }
 }
 
-/* Callbacks in C (https://www.geeksforgeeks.org/) */
-/*
- * A callback is any executable code that is passed as an argument to another
- * code, which is expected to call back (execute) the argument at a given time.
- * In simple language, If a reference of a function is passed to another
- * function as an argument to call it, then it will be called a Callback
- * function.
- */
+uint32_t app_get_time_us(void)
+{
+    return (DWT->CYCCNT / cycles_per_us);
+}
 
 void HAL_SYSTICK_Callback(void)
 {
-	g_app_tick_cnt++;
+    g_app_tick_cnt++;
+}
 
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    if (GPIO_Pin == ZCD_INT_Pin) {
+        uint32_t now_us = app_get_time_us();
 
-
-	//HAL_GPIO_TogglePin(LED_A_PORT, LED_A_PIN);
+        /* Filtro anti-rebote/ruido del detector de cruce por cero. */
+        if ((uint32_t)(now_us - shared_data.last_zc_timestamp_us) > ZC_HOLDOFF_US) {
+            shared_data.last_zc_timestamp_us = now_us;
+            shared_data.zc_timestamp_us = now_us;
+            shared_data.zc_event_pending = true;
+        }
+    }
 }
 
 /********************** end of file ******************************************/

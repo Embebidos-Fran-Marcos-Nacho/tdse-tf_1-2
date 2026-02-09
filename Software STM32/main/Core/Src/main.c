@@ -330,10 +330,10 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, LED_Pin|GPIO_PIN_3|GPIO_PIN_4, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, LED_Pin|TRIAC1_Pin|TRIAC2_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : DIP3_Pin DIP4_Pin BUT2_Pin BOT1_Pin */
-  GPIO_InitStruct.Pin = DIP3_Pin|DIP4_Pin|BUT2_Pin|BOT1_Pin;
+  /*Configure GPIO pins : DIP1_Pin DIP2_Pin BUT2_Pin BOT1_Pin */
+  GPIO_InitStruct.Pin = DIP1_Pin|DIP2_Pin|BUT2_Pin|BOT1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
@@ -344,24 +344,28 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(ZCD_INT_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : DIP1_Pin */
-  GPIO_InitStruct.Pin = DIP1_Pin;
+  /*Configure GPIO pin : DIP4_Pin */
+  GPIO_InitStruct.Pin = DIP4_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(DIP1_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(DIP4_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : DIP2_Pin */
-  GPIO_InitStruct.Pin = DIP2_Pin;
+  /*Configure GPIO pin : DIP3_Pin */
+  GPIO_InitStruct.Pin = DIP3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(DIP2_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(DIP3_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED_Pin PB3 PB4 */
-  GPIO_InitStruct.Pin = LED_Pin|GPIO_PIN_3|GPIO_PIN_4;
+  /*Configure GPIO pins : LED_Pin TRIAC1_Pin TRIAC2_Pin */
+  GPIO_InitStruct.Pin = LED_Pin|TRIAC1_Pin|TRIAC2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI2_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI2_IRQn);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
