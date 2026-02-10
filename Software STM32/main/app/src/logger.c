@@ -70,6 +70,15 @@ void logger_log_print_(char* const msg)
 	printf(msg);
 	fflush(stdout);
 }
+#elif 1 == LOGGER_CONFIG_USE_UART
+extern UART_HandleTypeDef huart2;
+void logger_log_print_(char* const msg)
+{
+    (void)HAL_UART_Transmit(&huart2,
+                            (uint8_t *)msg,
+                            (uint16_t)strlen(msg),
+                            LOGGER_CONFIG_UART_TIMEOUT_MS);
+}
 #else
 void logger_log_print_(char* const msg)
 {
