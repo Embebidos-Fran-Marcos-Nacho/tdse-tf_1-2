@@ -31,6 +31,12 @@ extern "C" {
  */
 #define APP_TEST_SIMULATE_ZC (1)
 
+/* Señal cuadrada de prueba en pin libre (PC8).
+ * 1 = genera 100 Hz (toggle cada 5 ms)
+ * 0 = pin fijo en bajo
+ */
+#define APP_TEST_WAVE_100HZ_PIN (1)
+
 /********************** typedef **********************************************/
 
 typedef struct {

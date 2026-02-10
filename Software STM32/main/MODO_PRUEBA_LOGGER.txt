@@ -19,6 +19,7 @@ Archivo:
 Macro:
   #define APP_TEST_MODE (1)
   #define APP_TEST_SIMULATE_ZC (1)
+  #define APP_TEST_WAVE_100HZ_PIN (1)
 
 Valores:
   1 = logs de prueba activados
@@ -27,6 +28,10 @@ Valores:
 Simulación de ZCD:
   APP_TEST_SIMULATE_ZC = 1 -> genera cruces por cero internos (100 Hz)
   APP_TEST_SIMULATE_ZC = 0 -> usa únicamente la interrupción real en PC2
+
+Onda cuadrada en pin libre:
+  APP_TEST_WAVE_100HZ_PIN = 1 -> genera 100 Hz en PC8
+  APP_TEST_WAVE_100HZ_PIN = 0 -> PC8 queda en nivel bajo
 
 Prueba de falla:
   En APP_TEST_MODE, poner DIP4 = 1 fuerza entrada a ST_FAULT.
@@ -103,16 +108,19 @@ Importante:
 5) Prueba rápida sugerida (sin 220V)
 ------------------------------------
 1. APP_TEST_MODE = 1.
-2. Si APP_TEST_SIMULATE_ZC = 1, no hace falta cablear nada:
+2. Si APP_TEST_WAVE_100HZ_PIN = 1, medir PC8:
+   - Debe verse cuadrada de ~100 Hz.
+   - Podés puentear PC8 -> PC2 para excitar ZCD sin placa externa.
+3. Si APP_TEST_SIMULATE_ZC = 1, no hace falta cablear nada:
    - Debe aparecer [PWM] ZC event + schedule + FIRE ON/OFF.
    Si APP_TEST_SIMULATE_ZC = 0, entonces simular ZC con pulsador en PC2.
-3. Forzar ADC a 0V y 3.3V.
+4. Forzar ADC a 0V y 3.3V.
    - Debe cambiar adc% y delay del fan.
-4. Presionar botón de luz.
+5. Presionar botón de luz.
    - Debe aparecer EV_SYS_PRESSED y toggle light.
-5. Probar BT.
+6. Probar BT.
    - Debe aparecer [BT] TX en cambios de luz/pote.
-6. Probar estado Fault (LED/Buzzer):
+7. Probar estado Fault (LED/Buzzer):
    - Poner DIP4 = 1 (solo APP_TEST_MODE).
    - Debe aparecer log: [SYS] test: DIP4=1 -> force ST_FAULT
    - Si DIP3=1, LED parpadea a 1 Hz en Fault.

@@ -365,6 +365,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, LED_Pin|TRIAC1_Pin|TRIAC2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(TEST_WAVE_100HZ_GPIO_Port, TEST_WAVE_100HZ_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : DIP1_Pin DIP2_Pin BUT2_Pin BOT1_Pin */
   GPIO_InitStruct.Pin = DIP1_Pin|DIP2_Pin|BUT2_Pin|BOT1_Pin;
@@ -396,6 +397,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : TEST_WAVE_100HZ_Pin */
+  GPIO_InitStruct.Pin = TEST_WAVE_100HZ_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(TEST_WAVE_100HZ_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI2_IRQn, 0, 0);

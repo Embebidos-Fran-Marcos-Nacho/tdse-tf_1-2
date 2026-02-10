@@ -104,6 +104,10 @@ void app_update(void)
 #if APP_TEST_MODE && APP_TEST_SIMULATE_ZC
     static uint32_t last_simulated_zc_ms = 0u;
 #endif
+#if APP_TEST_MODE && APP_TEST_WAVE_100HZ_PIN
+    static uint32_t last_wave_toggle_ms = 0u;
+    static bool wave_state = false;
+#endif
 
     /* Ejecuta un ciclo del scheduler cada tick de SysTick (1 ms). */
     if (G_APP_TICK_CNT_INI < g_app_tick_cnt) {
@@ -119,6 +123,19 @@ void app_update(void)
             shared_data.zc_timestamp_us = app_get_time_us();
             shared_data.zc_event_pending = true;
         }
+#endif
+
+#if APP_TEST_MODE && APP_TEST_WAVE_100HZ_PIN
+        /* Genera onda cuadrada de 100 Hz en PC8 (toggle cada 5 ms). */
+        if ((HAL_GetTick() - last_wave_toggle_ms) >= 5u) {
+            last_wave_toggle_ms = HAL_GetTick();
+            wave_state = !wave_state;
+            HAL_GPIO_WritePin(TEST_WAVE_100HZ_GPIO_Port,
+                              TEST_WAVE_100HZ_Pin,
+                              wave_state ? GPIO_PIN_SET : GPIO_PIN_RESET);
+        }
+#else
+        HAL_GPIO_WritePin(TEST_WAVE_100HZ_GPIO_Port, TEST_WAVE_100HZ_Pin, GPIO_PIN_RESET);
 #endif
 
         /* Recorre las tareas en orden fijo: sensor -> sistema -> actuador. */

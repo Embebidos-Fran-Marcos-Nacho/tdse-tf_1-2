@@ -83,6 +83,8 @@ void Error_Handler(void);
 #define TRIAC1_GPIO_Port GPIOB
 #define TRIAC2_Pin GPIO_PIN_4
 #define TRIAC2_GPIO_Port GPIOB
+#define TEST_WAVE_100HZ_Pin GPIO_PIN_8
+#define TEST_WAVE_100HZ_GPIO_Port GPIOC
 
 /* USER CODE BEGIN Private defines */
 
