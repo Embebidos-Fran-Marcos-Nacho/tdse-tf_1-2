@@ -22,7 +22,7 @@ extern "C" {
  * 0 = desactivado (normal)
  * 1 = activado (debug de recorrido de tareas/estados/eventos)
  */
-#define APP_TEST_MODE (1)
+#define APP_TEST_MODE (0)
 
 /********************** typedef **********************************************/
 

@@ -61,8 +61,8 @@ void app_init(void)
 {
     uint32_t index;
 
-    LOGGER_LOG("\n");
-    LOGGER_LOG("%s is running - Tick [mS] = %lu\r\n", GET_NAME(app_init), HAL_GetTick());
+    TEST_LOG("\n");
+    TEST_LOG("%s is running - Tick [mS] = %lu\r\n", GET_NAME(app_init), HAL_GetTick());
 
     g_app_cnt = G_APP_CNT_INI;
     g_app_tick_cnt = G_APP_TICK_CNT_INI;

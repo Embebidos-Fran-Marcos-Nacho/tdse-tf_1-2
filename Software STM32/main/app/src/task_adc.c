@@ -40,7 +40,7 @@ void task_adc_init(void *parameters)
 {
     shared_data_type *shared_data = (shared_data_type *)parameters;
 
-    LOGGER_LOG("  %s is running - %s\r\n", GET_NAME(task_adc_init), p_task_adc);
+    TEST_LOG("  %s is running - %s\r\n", GET_NAME(task_adc_init), p_task_adc);
 
     shared_data->adc_raw = 0u;
     shared_data->adc_percent = 0u;

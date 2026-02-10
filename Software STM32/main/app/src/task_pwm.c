@@ -63,7 +63,7 @@ void task_pwm_init(void *parameters)
 {
     (void)parameters;
 
-    LOGGER_LOG("  %s is running - %s\r\n", GET_NAME(task_pwm_init), p_task_pwm);
+    TEST_LOG("  %s is running - %s\r\n", GET_NAME(task_pwm_init), p_task_pwm);
 
     HAL_GPIO_WritePin(TRIAC1_GPIO_Port, TRIAC1_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(TRIAC2_GPIO_Port, TRIAC2_Pin, GPIO_PIN_RESET);

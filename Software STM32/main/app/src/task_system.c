@@ -45,7 +45,7 @@ void task_system_init(void *parameters)
 {
     shared_data_type *shared_data = (shared_data_type *)parameters;
 
-    LOGGER_LOG("  %s is running - %s\r\n", GET_NAME(task_system_init), p_task_system);
+    TEST_LOG("  %s is running - %s\r\n", GET_NAME(task_system_init), p_task_system);
 
     shared_data->fault_mode = false;
     shared_data->cut_off_voltage = false;
