@@ -14,6 +14,12 @@
 /* Application & Tasks includes. */
 #include "app.h"
 
+#if APP_TEST_MODE
+#define TEST_LOG(...) LOGGER_LOG(__VA_ARGS__)
+#else
+#define TEST_LOG(...)
+#endif
+
 /********************** macros and definitions *******************************/
 #define ZC_OFFSET_US        600ul
 #define TRIAC_PULSE_US      300ul
@@ -28,6 +34,7 @@
 #define TRIAC_FAN_PORT       TRIAC1_GPIO_Port
 
 typedef struct {
+    const char *name;
     uint16_t pin;
     GPIO_TypeDef *port;
     bool armed;
@@ -65,8 +72,8 @@ void task_pwm_init(void *parameters)
 
 void task_pwm_update(void *parameters)
 {
-    static triac_channel_t triac_fan = {TRIAC_FAN_PIN, TRIAC_FAN_PORT, false, false, 0u, 0u};
-    static triac_channel_t triac_light = {TRIAC_LIGHT_PIN, TRIAC_LIGHT_PORT, false, false, 0u, 0u};
+    static triac_channel_t triac_fan = {"FAN", TRIAC_FAN_PIN, TRIAC_FAN_PORT, false, false, 0u, 0u};
+    static triac_channel_t triac_light = {"LIGHT", TRIAC_LIGHT_PIN, TRIAC_LIGHT_PORT, false, false, 0u, 0u};
     static bool buzzer_running = false;
 
     shared_data_type *shared_data = (shared_data_type *)parameters;
@@ -83,6 +90,10 @@ void task_pwm_update(void *parameters)
     __enable_irq();
 
     if (zc_pending) {
+        TEST_LOG("[PWM] ZC event t_zc=%lu us, t_now=%lu us\r\n",
+                 zc_timestamp_us,
+                 app_get_time_us());
+
         if (shared_data->fan_enabled) {
             /* Fan: disparo con dimming (offset fijo + delay del pote). */
             triac_schedule(&triac_fan, zc_timestamp_us, shared_data->fan_delay_us);
@@ -162,6 +173,10 @@ static void triac_schedule(triac_channel_t *channel, uint32_t zc_time_us, uint32
     channel->fire_at_us = zc_time_us + ZC_OFFSET_US + delay_us;
     channel->armed = true;
     channel->pulsing = false;
+    TEST_LOG("[PWM] %s schedule fire_at=%lu us (delay=%lu)\r\n",
+             channel->name,
+             channel->fire_at_us,
+             delay_us);
 }
 
 static void triac_update_channel(triac_channel_t *channel, bool enabled)
@@ -189,12 +204,17 @@ static void triac_update_channel(triac_channel_t *channel, bool enabled)
             channel->pulse_off_us = channel->fire_at_us + TRIAC_PULSE_US;
             channel->armed = false;
             channel->pulsing = true;
+            TEST_LOG("[PWM] %s FIRE ON at=%lu us OFF_at=%lu us\r\n",
+                     channel->name,
+                     now_us,
+                     channel->pulse_off_us);
         }
     }
 
     if (channel->pulsing && time_reached(now_us, channel->pulse_off_us)) {
         HAL_GPIO_WritePin(channel->port, channel->pin, GPIO_PIN_RESET);
         channel->pulsing = false;
+        TEST_LOG("[PWM] %s FIRE OFF at=%lu us\r\n", channel->name, now_us);
     }
 }
 
@@ -211,6 +231,7 @@ static void bt_send_status(const shared_data_type *shared_data)
 
     if (len > 0) {
         (void)HAL_UART_Transmit(&huart1, (uint8_t *)tx, (uint16_t)strlen(tx), UART_TX_TIMEOUT_MS);
+        TEST_LOG("[BT] TX %s", tx);
     }
 }
 

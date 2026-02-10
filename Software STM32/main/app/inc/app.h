@@ -18,6 +18,12 @@ extern "C" {
 
 #define TEST_X (TEST_0)
 
+/* Modo de prueba general para trazas por LOGGER_LOG.
+ * 0 = desactivado (normal)
+ * 1 = activado (debug de recorrido de tareas/estados/eventos)
+ */
+#define APP_TEST_MODE (1)
+
 /********************** typedef **********************************************/
 
 typedef struct {

@@ -7,6 +7,12 @@
 /* Application & Tasks includes. */
 #include "app.h"
 
+#if APP_TEST_MODE
+#define TEST_LOG(...) LOGGER_LOG(__VA_ARGS__)
+#else
+#define TEST_LOG(...)
+#endif
+
 /********************** macros and definitions *******************************/
 #define FLASH_MAGIC_WORD             0xA5A55A5Au
 #define FLASH_LIGHT_STATE_ADDR       0x0801FC00u
@@ -50,12 +56,18 @@ void task_system_init(void *parameters)
 void task_system_update(void *parameters)
 {
     static system_state_t state = ST_INIT_READ_FLASH;
+    static system_state_t last_state = ST_FAULT;
     static uint32_t fault_elapsed_ms = 0u;
     static uint32_t fault_blink_ms = 0u;
     static bool fault_led_on = false;
 
     shared_data_type *shared_data = (shared_data_type *)parameters;
     bool ok = true;
+
+    if (state != last_state) {
+        TEST_LOG("[SYS] state -> %lu t=%lu ms\r\n", (uint32_t)state, HAL_GetTick());
+        last_state = state;
+    }
 
     /* FSM principal del sistema: Init -> Normal o Fault. */
     switch (state) {
@@ -108,11 +120,17 @@ void task_system_update(void *parameters)
             shared_data->light_enabled = !shared_data->light_enabled;
             shared_data->ev_send_bt_update_light = true;
             shared_data->flash_save_light_request = true;
+            TEST_LOG("[SYS] toggle light=%u t=%lu ms\r\n",
+                     shared_data->light_enabled ? 1u : 0u,
+                     HAL_GetTick());
         }
 
         if (shared_data->ev_pote_changed) {
             shared_data->ev_pote_changed = false;
             shared_data->ev_send_bt_update_pote = true;
+            TEST_LOG("[SYS] pote changed adc=%u%% delay=%u us\r\n",
+                     shared_data->adc_percent,
+                     shared_data->fan_delay_us);
         }
 
         if (shared_data->flash_save_light_request) {
@@ -124,6 +142,9 @@ void task_system_update(void *parameters)
                 fault_led_on = true;
                 shared_data->alarm_on = true;
                 state = ST_FAULT;
+            } else {
+                TEST_LOG("[SYS] flash save light=%u OK\r\n",
+                         shared_data->light_enabled ? 1u : 0u);
             }
         }
         break;

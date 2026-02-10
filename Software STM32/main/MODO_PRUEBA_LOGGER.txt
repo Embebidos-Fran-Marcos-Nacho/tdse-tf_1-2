@@ -1,0 +1,99 @@
+MODO DE PRUEBA + LOGGER (TA134)
+================================
+
+Objetivo
+--------
+Este modo permite verificar por consola que el firmware:
+1) recorre todas las tareas del scheduler,
+2) atraviesa los estados principales (Init/Normal/Fault),
+3) procesa eventos de botón/ADC,
+4) detecta cruces por cero y dispara TRIACs en el tiempo esperado,
+5) transmite tramas por Bluetooth.
+
+
+1) Como activar/desactivar el modo prueba
+-----------------------------------------
+Archivo:
+  Software STM32/main/app/inc/app.h
+
+Macro:
+  #define APP_TEST_MODE (1)
+
+Valores:
+  1 = logs de prueba activados
+  0 = logs de prueba desactivados (modo normal)
+
+
+2) Archivos instrumentados
+--------------------------
+- Software STM32/main/app/src/app.c
+  - Heartbeat del scheduler cada 1 s:
+    [APP] t=... cnt=... runtime=... wcet={...}
+
+- Software STM32/main/app/src/task_adc.c
+  - Evento de boton debounced:
+    [ADC] EV_SYS_PRESSED ...
+  - Evento de cambio de pote:
+    [ADC] EV_POTE_CHANGED ...
+  - Heartbeat de sensores:
+    [ADC] heartbeat dip=... adc=... btn_ev=...
+
+- Software STM32/main/app/src/task_system.c
+  - Transicion de estado:
+    [SYS] state -> ...
+  - Toggle de luz:
+    [SYS] toggle light=...
+  - Persistencia en flash:
+    [SYS] flash save light=... OK
+
+- Software STM32/main/app/src/task_pwm.c
+  - Recepcion de cruce por cero:
+    [PWM] ZC event ...
+  - Programacion de disparo:
+    [PWM] FAN/LIGHT schedule fire_at=...
+  - Pulso de TRIAC ON/OFF:
+    [PWM] FAN/LIGHT FIRE ON/OFF ...
+  - Trama enviada por BT:
+    [BT] TX {"adc":...,"light":...,"btCfg":...}
+
+
+3) Configuracion del logger (SEMlHOSTING) en CubeIDE
+-----------------------------------------------------
+El logger actual usa semihosting (no UART de debug):
+  Software STM32/main/app/inc/logger.h
+  LOGGER_CONFIG_USE_SEMIHOSTING = 1
+
+Pasos recomendados:
+1. Abrir "Debug Configurations..." de tu proyecto.
+2. En la pestaña del debugger (ST-LINK), habilitar "Semihosting".
+3. Iniciar debug (no solo Run).
+4. Abrir la vista "Console" de CubeIDE.
+5. Verificar que en main.c se llama:
+     initialise_monitor_handles();
+   (ya esta en tu proyecto).
+
+Notas:
+- Si corres fuera de debug, no vas a ver semihosting.
+- Si semihosting no esta habilitado, la consola queda vacia.
+- El baudrate UART (9600/115200) NO afecta estos logs de semihosting.
+- LOGGER_CONFIG_MAXLEN esta en 64 bytes; mensajes largos pueden truncarse.
+
+
+4) Prueba rapida sugerida (sin conectar 220 V)
+----------------------------------------------
+1. APP_TEST_MODE = 1.
+2. Simular ZC con pulsador en pin ZCD_INT (PC2):
+   - Deberias ver [PWM] ZC event + schedule + FIRE ON/OFF.
+3. Forzar ADC a 0V y 3.3V:
+   - Deberias ver cambios en adc% y delay del fan.
+4. Presionar boton de luz:
+   - Deberias ver EV_SYS_PRESSED y toggle light.
+5. Probar BT con HC-05:
+   - Deberias ver [BT] TX ... cuando cambian luz o pote.
+
+
+5) Volver a modo normal
+-----------------------
+1. Poner APP_TEST_MODE = 0.
+2. Mantener LOGGER_CONFIG_ENABLE = 1 o 0 segun necesidad.
+3. Recompilar.

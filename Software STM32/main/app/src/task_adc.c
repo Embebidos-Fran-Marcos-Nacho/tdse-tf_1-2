@@ -7,6 +7,12 @@
 /* Application & Tasks includes. */
 #include "app.h"
 
+#if APP_TEST_MODE
+#define TEST_LOG(...) LOGGER_LOG(__VA_ARGS__)
+#else
+#define TEST_LOG(...)
+#endif
+
 /********************** macros and definitions *******************************/
 #define ADC_PERIOD_MS           50u
 #define BTN_DEBOUNCE_TICKS      50u
@@ -47,6 +53,7 @@ void task_adc_update(void *parameters)
 {
     static uint32_t adc_tick = 0u;
     static uint8_t last_percent = 0u;
+    static uint32_t last_sensor_log_ms = 0u;
 
     shared_data_type *shared_data = (shared_data_type *)parameters;
     uint16_t adc_value = 0u;
@@ -78,8 +85,20 @@ void task_adc_update(void *parameters)
             if (adc_percent != last_percent) {
                 last_percent = adc_percent;
                 shared_data->ev_pote_changed = true;
+                TEST_LOG("[ADC] EV_POTE_CHANGED adc=%u%% delay=%u us t=%lu ms\r\n",
+                         shared_data->adc_percent,
+                         shared_data->fan_delay_us,
+                         HAL_GetTick());
             }
         }
+    }
+
+    if ((HAL_GetTick() - last_sensor_log_ms) >= 1000u) {
+        last_sensor_log_ms = HAL_GetTick();
+        TEST_LOG("[ADC] heartbeat dip=0x%X adc=%u%% btn_ev=%u\r\n",
+                 shared_data->dip_value,
+                 shared_data->adc_percent,
+                 shared_data->ev_sys_pressed ? 1u : 0u);
     }
 }
 
@@ -122,6 +141,7 @@ static void update_button_fsm(shared_data_type *shared_data)
             } else {
                 /* Evento limpio de pulsación confirmada. */
                 shared_data->ev_sys_pressed = true;
+                TEST_LOG("[ADC] EV_SYS_PRESSED t=%lu ms\r\n", HAL_GetTick());
                 state = ST_BTN_PRESSED;
             }
         } else {

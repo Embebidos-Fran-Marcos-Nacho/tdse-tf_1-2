@@ -16,6 +16,12 @@
 #include "task_system.h"
 #include "task_pwm.h"
 
+#if APP_TEST_MODE
+#define TEST_LOG(...) LOGGER_LOG(__VA_ARGS__)
+#else
+#define TEST_LOG(...)
+#endif
+
 /********************** macros and definitions *******************************/
 #define G_APP_CNT_INI       0ul
 #define G_APP_TICK_CNT_INI  0ul
@@ -94,6 +100,7 @@ void app_init(void)
 void app_update(void)
 {
     uint32_t index;
+    static uint32_t last_health_log_ms = 0u;
 
     /* Ejecuta un ciclo del scheduler cada tick de SysTick (1 ms). */
     if (G_APP_TICK_CNT_INI < g_app_tick_cnt) {
@@ -112,6 +119,17 @@ void app_update(void)
             if (task_dta_list[index].WCET < elapsed_us) {
                 task_dta_list[index].WCET = elapsed_us;
             }
+        }
+
+        if ((HAL_GetTick() - last_health_log_ms) >= 1000u) {
+            last_health_log_ms = HAL_GetTick();
+            TEST_LOG("[APP] t=%lu ms cnt=%lu runtime=%lu us wcet={%lu,%lu,%lu}\r\n",
+                     HAL_GetTick(),
+                     g_app_cnt,
+                     g_app_time_us,
+                     task_dta_list[0].WCET,
+                     task_dta_list[1].WCET,
+                     task_dta_list[2].WCET);
         }
     }
 }
