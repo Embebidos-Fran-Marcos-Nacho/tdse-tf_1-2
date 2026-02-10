@@ -18,10 +18,19 @@ Archivo:
 
 Macro:
   #define APP_TEST_MODE (1)
+  #define APP_TEST_SIMULATE_ZC (1)
 
 Valores:
   1 = logs de prueba activados
   0 = logs de prueba desactivados
+
+Simulación de ZCD:
+  APP_TEST_SIMULATE_ZC = 1 -> genera cruces por cero internos (100 Hz)
+  APP_TEST_SIMULATE_ZC = 0 -> usa únicamente la interrupción real en PC2
+
+Prueba de falla:
+  En APP_TEST_MODE, poner DIP4 = 1 fuerza entrada a ST_FAULT.
+  Esto permite validar LED/Buzzer de alarma sin provocar una falla real.
 
 
 2) Logger: semihosting eliminado
@@ -94,14 +103,20 @@ Importante:
 5) Prueba rápida sugerida (sin 220V)
 ------------------------------------
 1. APP_TEST_MODE = 1.
-2. Simular ZC con pulsador en PC2 (ZCD_INT).
+2. Si APP_TEST_SIMULATE_ZC = 1, no hace falta cablear nada:
    - Debe aparecer [PWM] ZC event + schedule + FIRE ON/OFF.
+   Si APP_TEST_SIMULATE_ZC = 0, entonces simular ZC con pulsador en PC2.
 3. Forzar ADC a 0V y 3.3V.
    - Debe cambiar adc% y delay del fan.
 4. Presionar botón de luz.
    - Debe aparecer EV_SYS_PRESSED y toggle light.
 5. Probar BT.
    - Debe aparecer [BT] TX en cambios de luz/pote.
+6. Probar estado Fault (LED/Buzzer):
+   - Poner DIP4 = 1 (solo APP_TEST_MODE).
+   - Debe aparecer log: [SYS] test: DIP4=1 -> force ST_FAULT
+   - Si DIP3=1, LED parpadea a 1 Hz en Fault.
+   - Si DIP2=1, buzzer suena por PWM (~2 kHz) durante fase ON.
 
 
 6) Volver a modo normal

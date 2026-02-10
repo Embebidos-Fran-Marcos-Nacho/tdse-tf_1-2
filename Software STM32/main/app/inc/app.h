@@ -22,7 +22,14 @@ extern "C" {
  * 0 = desactivado (normal)
  * 1 = activado (debug de recorrido de tareas/estados/eventos)
  */
-#define APP_TEST_MODE (0)
+#define APP_TEST_MODE (1)
+
+/* Simulación de cruce por cero para pruebas sin cableado externo.
+ * Solo se usa si APP_TEST_MODE == 1.
+ * 1 = genera eventos ZCD periódicos por software (100 Hz)
+ * 0 = usa únicamente la interrupción real de ZCD (PC2)
+ */
+#define APP_TEST_SIMULATE_ZC (1)
 
 /********************** typedef **********************************************/
 

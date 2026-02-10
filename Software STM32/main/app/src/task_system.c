@@ -115,6 +115,19 @@ void task_system_update(void *parameters)
         /* Modo operativo normal: procesa eventos limpios de sensor. */
         apply_dip_roles(shared_data);
 
+#if APP_TEST_MODE
+        /* Prueba: DIP4 en 1 fuerza entrada a estado Fault. */
+        if ((shared_data->dip_value & (1u << 3)) != 0u) {
+            fault_elapsed_ms = 0u;
+            fault_blink_ms = 0u;
+            fault_led_on = true;
+            shared_data->alarm_on = true;
+            TEST_LOG("[SYS] test: DIP4=1 -> force ST_FAULT\r\n");
+            state = ST_FAULT;
+            break;
+        }
+#endif
+
         if (shared_data->ev_sys_pressed) {
             shared_data->ev_sys_pressed = false;
             shared_data->light_enabled = !shared_data->light_enabled;

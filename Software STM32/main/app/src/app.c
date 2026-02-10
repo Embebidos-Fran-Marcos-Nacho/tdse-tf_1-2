@@ -101,12 +101,25 @@ void app_update(void)
 {
     uint32_t index;
     static uint32_t last_health_log_ms = 0u;
+#if APP_TEST_MODE && APP_TEST_SIMULATE_ZC
+    static uint32_t last_simulated_zc_ms = 0u;
+#endif
 
     /* Ejecuta un ciclo del scheduler cada tick de SysTick (1 ms). */
     if (G_APP_TICK_CNT_INI < g_app_tick_cnt) {
         g_app_tick_cnt--;
         g_app_cnt++;
         g_app_time_us = 0u;
+
+#if APP_TEST_MODE && APP_TEST_SIMULATE_ZC
+        /* Simula cruces por cero a 100 Hz (cada 10 ms) para pruebas en banco. */
+        if ((HAL_GetTick() - last_simulated_zc_ms) >= 10u) {
+            last_simulated_zc_ms = HAL_GetTick();
+            shared_data.last_zc_timestamp_us = shared_data.zc_timestamp_us;
+            shared_data.zc_timestamp_us = app_get_time_us();
+            shared_data.zc_event_pending = true;
+        }
+#endif
 
         /* Recorre las tareas en orden fijo: sensor -> sistema -> actuador. */
         for (index = 0; TASK_QTY > index; index++) {
