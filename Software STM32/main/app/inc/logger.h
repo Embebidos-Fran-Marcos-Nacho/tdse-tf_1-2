@@ -58,11 +58,12 @@ extern "C" {
 #define LOGGER_CONFIG_UART_TIMEOUT_MS           (20)
 
 #if 1 == LOGGER_CONFIG_ENABLE
-#define LOGGER_LOG(...)\
-    {\
-        logger_msg_len = snprintf(logger_msg, (LOGGER_CONFIG_MAXLEN - 1), __VA_ARGS__);\
-        logger_log_print_(logger_msg);\
-    }\
+#define LOGGER_LOG(...)                                                      \
+    do {                                                                     \
+        logger_msg_len = snprintf(logger_msg, (LOGGER_CONFIG_MAXLEN - 1),    \
+                                  __VA_ARGS__);                              \
+        logger_log_print_(logger_msg);                                       \
+    } while (0)
 #else
 #define LOGGER_LOG(...)
 #endif
