@@ -27,7 +27,7 @@ void setup() {
   while (!Serial) {}
 
   // Baud ACTUAL del HC-06 (config histórica)
-  bt.begin(57600);
+  bt.begin(115200);
 
   Serial.println("=== Configuracion HC-06 ===");
   Serial.println("IMPORTANTE: el modulo NO debe estar conectado al celular");
@@ -39,12 +39,13 @@ void setup() {
   // Configuracion
   sendAT("AT+NAMEDimmer_BL");  // Nombre del dispositivo
   sendAT("AT+PIN1111");        // PIN
+  
 
   // Si quisieras cambiar baud, por ejemplo a 115200:
-  // sendAT("AT+BAUD8");
-  // delay(1000);
-  // bt.end();
-  // bt.begin(115200);
+  sendAT("AT+BAUD8");
+  delay(1000);
+  bt.end();
+  bt.begin(115200);
 
   Serial.println("=== Configuracion finalizada ===");
   Serial.println("Apagar y prender el modulo para usarlo en modo DATA");
