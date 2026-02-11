@@ -78,9 +78,9 @@ Pasos:
 5. Resetear la placa y observar logs.
 
 Importante:
-- `USART1` queda libre para HC-05 (Bluetooth), por lo que logs y BT ya no se mezclan.
+- `USART1` queda libre para HC-06 (Bluetooth), por lo que logs y BT ya no se mezclan.
 - Si no ves COM en PC, revisar drivers ST-Link y cable USB de datos.
-- Nota: en algunos HC-05 el comando "AT" responde solo en modo AT (KEY/EN alto).
+- Nota: en algunos HC-06 el comando "AT" responde solo en modo AT (sin enlace activo).
   Si no responde en modo datos, el probe puede dar FAIL aunque el módulo esté alimentado.
 
 

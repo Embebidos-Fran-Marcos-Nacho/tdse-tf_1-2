@@ -37,7 +37,7 @@ static bool flash_load_light_state(bool *light_on);
 static bool flash_store_light_state(bool light_on);
 static uint16_t build_fan_delay_from_adc(uint16_t adc_raw);
 static void apply_dip_roles(shared_data_type *shared_data);
-static bool bt_probe_hc05_at(void);
+static bool bt_probe_hc06_at(void);
 
 /********************** internal data definition *****************************/
 const char *p_task_system = "Task System";
@@ -112,7 +112,7 @@ void task_system_update(void *parameters)
         apply_dip_roles(shared_data);
 #if APP_BT_AT_PROBE_ON_INIT
         if (shared_data->bt_enabled) {
-            bool bt_ok = bt_probe_hc05_at();
+            bool bt_ok = bt_probe_hc06_at();
             TEST_LOG("[SYS] BT probe AT -> %s\r\n", bt_ok ? "OK" : "FAIL");
 #if APP_BT_AT_PROBE_STRICT
             if (!bt_ok) {
@@ -277,7 +277,7 @@ static void apply_dip_roles(shared_data_type *shared_data)
     shared_data->led_enabled = ((shared_data->dip_value & (1u << 2)) != 0u);
 }
 
-static bool bt_probe_hc05_at(void)
+static bool bt_probe_hc06_at(void)
 {
     static const uint8_t cmd[] = "AT";
     uint8_t ch = 0u;

@@ -1,0 +1,67 @@
+RESUMEN DE PINES Y ESTADOS LOGICOS (STM32F103RB)
+=================================================
+
+Entradas DIP
+------------
+PC0 (DIP1) - Habilitacion Bluetooth
+- 0: Bluetooth deshabilitado
+- 1: Bluetooth habilitado
+
+PC1 (DIP2) - Habilitacion Buzzer
+- 0: buzzer deshabilitado
+- 1: buzzer habilitado
+
+PB0 (DIP3) - Habilitacion LED
+- 0: LED deshabilitado (forzado apagado)
+- 1: LED habilitado
+
+PA4 (DIP4) - Reservado / prueba
+- 0: normal
+- 1: en APP_TEST_MODE fuerza entrada a estado FAULT
+
+Entradas de usuario/sensores
+----------------------------
+PC12 (BOT1) - Boton principal (debounced)
+- activo en 0 (presionado)
+- suelto en 1
+
+PC9 (BUT2) - Boton auxiliar
+- definido como entrada (sin logica activa en firmware actual)
+
+PC2 (ZCD_INT) - Detector de cruce por cero (EXTI)
+- flanco ascendente = evento de cruce por cero
+
+PA0 (POTENTIOMETER) - ADC de potenciómetro
+- 0..4095 (0 a 3.3V)
+
+Salidas
+-------
+PB3 (TRIAC1) - Gate TRIAC (fan)
+- 0: gate apagado
+- 1: pulso de disparo
+
+PB4 (TRIAC2) - Gate TRIAC (luz)
+- 0: gate apagado
+- 1: pulso de disparo
+
+PB13 (LED)
+- 0: apagado
+- 1: encendido
+
+PA8 (BUZZER / TIM1_CH1)
+- PWM ~2 kHz en estado FAULT (si DIP2=1)
+- 0% duty: sin sonido
+
+Comunicacion
+------------
+PA9 (USART1_TX) / PA10 (USART1_RX) - Modulo Bluetooth HC-06
+- UART de datos BT
+
+PA2 (USART2_TX) / PA3 (USART2_RX) - ST-Link VCP (consola USB a PC)
+- UART de logs / serial console
+
+Pin de prueba
+-------------
+PC8 (TEST_WAVE_100HZ)
+- APP_TEST_WAVE_100HZ_PIN=1: cuadrada de 100 Hz
+- APP_TEST_WAVE_100HZ_PIN=0: nivel bajo fijo
