@@ -37,6 +37,15 @@ extern "C" {
  */
 #define APP_TEST_WAVE_100HZ_PIN (1)
 
+/* Verificación simple de vida del módulo BT al iniciar (USART1).
+ * Envía "AT" (sin CR/LF) y espera "OK".
+ * APP_BT_AT_PROBE_STRICT:
+ *   1 -> si falla, entra a ST_FAULT
+ *   0 -> si falla, solo loguea y continúa
+ */
+#define APP_BT_AT_PROBE_ON_INIT (1)
+#define APP_BT_AT_PROBE_STRICT  (0)
+
 /********************** typedef **********************************************/
 
 typedef struct {

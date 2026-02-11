@@ -20,6 +20,8 @@ Macro:
   #define APP_TEST_MODE (1)
   #define APP_TEST_SIMULATE_ZC (1)
   #define APP_TEST_WAVE_100HZ_PIN (1)
+  #define APP_BT_AT_PROBE_ON_INIT (1)
+  #define APP_BT_AT_PROBE_STRICT (0)
 
 Valores:
   1 = logs de prueba activados
@@ -32,6 +34,14 @@ Simulación de ZCD:
 Onda cuadrada en pin libre:
   APP_TEST_WAVE_100HZ_PIN = 1 -> genera 100 Hz en PC8
   APP_TEST_WAVE_100HZ_PIN = 0 -> PC8 queda en nivel bajo
+
+Chequeo de vida Bluetooth (AT):
+  APP_BT_AT_PROBE_ON_INIT = 1 -> en ST_INIT_CONFIG_BT manda "AT" (sin CR/LF) por USART1
+                               y espera "OK" (~250 ms)
+  APP_BT_AT_PROBE_ON_INIT = 0 -> no hace verificación AT
+
+  APP_BT_AT_PROBE_STRICT = 1 -> si falla el AT, entra a ST_FAULT
+  APP_BT_AT_PROBE_STRICT = 0 -> si falla el AT, solo loguea y continúa
 
 Prueba de falla:
   En APP_TEST_MODE, poner DIP4 = 1 fuerza entrada a ST_FAULT.
@@ -70,6 +80,8 @@ Pasos:
 Importante:
 - `USART1` queda libre para HC-05 (Bluetooth), por lo que logs y BT ya no se mezclan.
 - Si no ves COM en PC, revisar drivers ST-Link y cable USB de datos.
+- Nota: en algunos HC-05 el comando "AT" responde solo en modo AT (KEY/EN alto).
+  Si no responde en modo datos, el probe puede dar FAIL aunque el módulo esté alimentado.
 
 
 4) Logs instrumentados

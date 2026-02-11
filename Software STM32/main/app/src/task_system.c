@@ -1,5 +1,6 @@
 /* Project includes. */
 #include "main.h"
+#include <string.h>
 
 /* Demo includes. */
 #include "logger.h"
@@ -36,9 +37,13 @@ static bool flash_load_light_state(bool *light_on);
 static bool flash_store_light_state(bool light_on);
 static uint16_t build_fan_delay_from_adc(uint16_t adc_raw);
 static void apply_dip_roles(shared_data_type *shared_data);
+static bool bt_probe_hc05_at(void);
 
 /********************** internal data definition *****************************/
 const char *p_task_system = "Task System";
+
+/********************** external data declaration *****************************/
+extern UART_HandleTypeDef huart1;
 
 /********************** external functions definition ************************/
 void task_system_init(void *parameters)
@@ -105,6 +110,22 @@ void task_system_update(void *parameters)
     case ST_INIT_CONFIG_BT:
         /* Etapa 5: configuración lógica final y entrada a modo normal. */
         apply_dip_roles(shared_data);
+#if APP_BT_AT_PROBE_ON_INIT
+        if (shared_data->bt_enabled) {
+            bool bt_ok = bt_probe_hc05_at();
+            TEST_LOG("[SYS] BT probe AT -> %s\r\n", bt_ok ? "OK" : "FAIL");
+#if APP_BT_AT_PROBE_STRICT
+            if (!bt_ok) {
+                fault_elapsed_ms = 0u;
+                fault_blink_ms = 0u;
+                fault_led_on = true;
+                shared_data->alarm_on = true;
+                state = ST_FAULT;
+                break;
+            }
+#endif
+        }
+#endif
         state = ST_NORMAL;
         shared_data->fault_mode = false;
         shared_data->cut_off_voltage = false;
@@ -254,6 +275,38 @@ static void apply_dip_roles(shared_data_type *shared_data)
     shared_data->bt_enabled = ((shared_data->dip_value & (1u << 0)) != 0u);
     shared_data->buzzer_enabled = ((shared_data->dip_value & (1u << 1)) != 0u);
     shared_data->led_enabled = ((shared_data->dip_value & (1u << 2)) != 0u);
+}
+
+static bool bt_probe_hc05_at(void)
+{
+    static const uint8_t cmd[] = "AT";
+    uint8_t ch = 0u;
+    uint8_t rx[32];
+    uint16_t idx = 0u;
+    uint32_t t0 = HAL_GetTick();
+
+    /* Limpia posible basura previa en el RX. */
+    while (HAL_UART_Receive(&huart1, &ch, 1u, 1u) == HAL_OK) {
+    }
+
+    if (HAL_UART_Transmit(&huart1, (uint8_t *)cmd, sizeof(cmd) - 1u, 50u) != HAL_OK) {
+        return false;
+    }
+
+    while ((HAL_GetTick() - t0) < 250u) {
+        if (HAL_UART_Receive(&huart1, &ch, 1u, 10u) == HAL_OK) {
+            if (idx < (sizeof(rx) - 1u)) {
+                rx[idx++] = ch;
+                rx[idx] = '\0';
+            }
+
+            if (strstr((const char *)rx, "OK") != NULL) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 /********************** end of file ******************************************/
