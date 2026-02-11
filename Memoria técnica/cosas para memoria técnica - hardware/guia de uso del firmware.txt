@@ -1,0 +1,68 @@
+GUIA RAPIDA DE USO DEL FIRMWARE
+===============================
+
+1) Antes de correr
+------------------
+- Placa objetivo: NUCLEO-F103RB.
+- Bluetooth: HC-06 en USART1 (PA9/PA10).
+- Consola de logs por USB ST-Link (USART2 VCP).
+- Revisar pinout en:
+  - Software STM32/pinout.txt
+  - Memoria técnica/cosas para memoria técnica - hardware/resumen pines y estados logicos.txt
+
+
+2) Modos principales
+--------------------
+- Modo normal:
+  - APP_TEST_MODE = 0
+  - Sin trazas de prueba, comportamiento de producto.
+
+- Modo prueba:
+  - APP_TEST_MODE = 1
+  - Activa logs y utilidades de test (ZC simulado, onda 100 Hz, fault forzado por DIP4).
+
+Las macros se configuran en:
+  Software STM32/main/app/inc/app.h
+
+
+3) Funcionamiento de los DIP
+----------------------------
+- DIP1 (PC0): habilita Bluetooth.
+- DIP2 (PC1): habilita buzzer.
+- DIP3 (PB0): habilita LED.
+- DIP4 (PA4): selector demo/falla:
+  - 0: normal
+  - 1: fuerza estado FAULT (útil para demo)
+
+
+4) Flujo de demo recomendado
+----------------------------
+1. Flashear firmware.
+2. Abrir consola serial del ST-Link VCP (USART2, 115200 8N1).
+3. Poner APP_TEST_MODE = 1 para ver trazas.
+4. Probar:
+   - Botón de luz (PC12): debe togglear estado de luz.
+   - Potenciómetro (PA0): debe cambiar adc% y delay del fan.
+   - Bluetooth (DIP1=1): deben aparecer TX JSON en logs.
+   - Falla (DIP4=1): LED/Buzzer de alarma según DIP3/DIP2.
+
+
+5) Prueba sin hardware de cruce por cero
+----------------------------------------
+- Opción A (software): APP_TEST_SIMULATE_ZC = 1.
+- Opción B (señal física): APP_TEST_WAVE_100HZ_PIN = 1 para generar 100 Hz en PC8
+  y puentear PC8 -> PC2 (ZCD_INT).
+
+
+6) Bluetooth AT (vivo del módulo)
+---------------------------------
+- En init puede enviar "AT" (sin CR/LF) y esperar "OK".
+- Configurable en app.h:
+  - APP_BT_AT_PROBE_ON_INIT
+  - APP_BT_AT_PROBE_STRICT
+
+
+7) Para entrega final
+---------------------
+- Dejar APP_TEST_MODE = 0.
+- Mantener DIP4 en 0 para operación normal.
