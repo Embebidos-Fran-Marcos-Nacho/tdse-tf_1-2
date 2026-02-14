@@ -48,9 +48,9 @@ extern "C" {
 
 /* Temporización de control por cruce por cero (50 Hz -> 10 ms por semiciclo). */
 #define APP_ZC_HALF_CYCLE_US       (10000u)
-#define APP_TRIAC_FIXED_WAIT_US    (600u)
+#define APP_TRIAC_FIXED_WAIT_US    (500u)
 #define APP_TRIAC_PULSE_US         (300u)
-#define APP_FAN_DIM_DELAY_MIN_US   (0u)
+#define APP_FAN_DIM_DELAY_MIN_US   (100u)
 #define APP_FAN_DIM_DELAY_MAX_US   (7500u)
 
 /********************** typedef **********************************************/
