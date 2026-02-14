@@ -21,14 +21,14 @@
 #endif
 
 /********************** macros and definitions *******************************/
-#define TRIAC_FIXED_WAIT_US 500ul
+#define TRIAC_FIXED_WAIT_US 0ul
 #define TRIAC_DELAY_MIN_US  0ul
-#define TRIAC_DELAY_MAX_US  7500ul
-#define TRIAC_PULSE_US      300ul
+#define TRIAC_DELAY_MAX_US  8000ul
+#define TRIAC_PULSE_US      400ul
 #define WAIT_SPIN_US        200ul
 #define UART_TX_TIMEOUT_MS  20u
 #define BUZZER_FREQ_HZ      2000u
-#define BUZZER_DUTY_PERCENT 20u
+#define BUZZER_DUTY_PERCENT 30u
 
 /* Role mapping: swap these two pairs if board wiring is opposite. */
 #define TRIAC_LIGHT_PIN      TRIAC2_Pin
