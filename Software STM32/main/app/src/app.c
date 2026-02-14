@@ -74,6 +74,9 @@ void app_init(void)
     shared_data.adc_raw = 0u;
     shared_data.fan_delay_us = 0u;
     shared_data.adc_percent = 0u;
+    shared_data.adc_calib_min = 0u;
+    shared_data.adc_calib_max = 4095u;
+    shared_data.adc_calib_valid = false;
     shared_data.fan_enabled = true;
     shared_data.light_enabled = false;
     shared_data.dip_value = 0u;
@@ -90,6 +93,7 @@ void app_init(void)
     shared_data.cut_off_voltage = false;
     shared_data.alarm_on = false;
     shared_data.flash_save_light_request = false;
+    shared_data.flash_save_adc_calib_request = false;
 
     /* Inicializa todas las tareas registradas en el scheduler. */
     for (index = 0; TASK_QTY > index; index++) {
@@ -106,6 +110,9 @@ void app_update(void)
     static uint32_t last_health_log_ms = 0u;
 #if APP_TEST_MODE && APP_TEST_SIMULATE_ZC
     static uint32_t last_simulated_zc_ms = 0u;
+#endif
+#if APP_ZC_FAILSAFE_ENABLE
+    static uint32_t last_failsafe_zc_ms = 0u;
 #endif
 #if APP_TEST_MODE && APP_TEST_WAVE_100HZ_PIN
     static uint32_t last_wave_toggle_ms = 0u;
@@ -127,6 +134,25 @@ void app_update(void)
             shared_data.zc_period_us = APP_ZC_HALF_CYCLE_US;
             shared_data.zc_event_pending = true;
             task_pwm_on_zero_crossing_isr(&shared_data);
+        }
+#endif
+
+#if APP_ZC_FAILSAFE_ENABLE
+        {
+            uint32_t now_ms = HAL_GetTick();
+            uint32_t last_zc_ms = shared_data.last_zc_timestamp_us / 1000u;
+
+            /* Si no hay ZCD real por un tiempo, fuerza ZC periódico para mantener control. */
+            if ((now_ms - last_zc_ms) >= APP_ZC_FAILSAFE_TIMEOUT_MS) {
+                if ((now_ms - last_failsafe_zc_ms) >= APP_ZC_FAILSAFE_PERIOD_MS) {
+                    last_failsafe_zc_ms = now_ms;
+                    shared_data.last_zc_timestamp_us = shared_data.zc_timestamp_us;
+                    shared_data.zc_timestamp_us = app_get_time_us();
+                    shared_data.zc_period_us = APP_ZC_HALF_CYCLE_US;
+                    shared_data.zc_event_pending = true;
+                    task_pwm_on_zero_crossing_isr(&shared_data);
+                }
+            }
         }
 #endif
 

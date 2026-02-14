@@ -17,6 +17,9 @@
 #define ADC_PERIOD_MS           50u
 #define BTN_DEBOUNCE_TICKS      50u
 #define BUTTON_PRESSED_LEVEL    GPIO_PIN_RESET
+#define ADC_FULL_SCALE_COUNTS   4095u
+#define ADC_CALIB_SAVE_DELTA    16u
+#define ADC_CALIB_SAVE_PERIOD_MS 5000u
 
 typedef enum {
     ST_BTN_UNPRESSED = 0,
@@ -35,6 +38,9 @@ typedef struct {
 /********************** internal functions declaration ***********************/
 static HAL_StatusTypeDef adc_poll_read(uint16_t *value);
 static bool update_button_fsm(button_ctx_t *ctx);
+static uint16_t clamp_u16(uint16_t value, uint16_t min, uint16_t max);
+static uint16_t u16_abs_diff(uint16_t a, uint16_t b);
+static uint8_t adc_to_percent(uint16_t raw, uint16_t min, uint16_t max);
 
 /********************** internal data definition *****************************/
 const char *p_task_adc = "Task Sensor";
@@ -63,6 +69,10 @@ void task_adc_update(void *parameters)
     static uint32_t adc_tick = 0u;
     static uint8_t last_percent = 0u;
     static uint32_t last_sensor_log_ms = 0u;
+    static uint32_t last_calib_save_req_ms = 0u;
+    static uint16_t last_saved_calib_min = 0u;
+    static uint16_t last_saved_calib_max = ADC_FULL_SCALE_COUNTS;
+    static bool calib_shadow_valid = false;
     static button_ctx_t btn_on  = {BOT1_GPIO_Port, BOT1_Pin, ST_BTN_UNPRESSED, 0u};
     static button_ctx_t btn_off = {BUT2_GPIO_Port, BUT2_Pin, ST_BTN_UNPRESSED, 0u};
 
@@ -95,12 +105,79 @@ void task_adc_update(void *parameters)
         adc_tick = 0u;
 
         if (HAL_OK == adc_poll_read(&adc_value)) {
-            shared_data->adc_raw = adc_value;
-            shared_data->fan_delay_us = (uint16_t)(APP_FAN_DIM_DELAY_MIN_US +
-                                          ((adc_value * (APP_FAN_DIM_DELAY_MAX_US - APP_FAN_DIM_DELAY_MIN_US)) / 4095u));
+            bool calib_changed = false;
+            uint16_t calib_min = shared_data->adc_calib_min;
+            uint16_t calib_max = shared_data->adc_calib_max;
+            uint16_t effective_min;
+            uint16_t effective_max;
+            uint16_t calib_span;
 
-            adc_percent = (uint8_t)((adc_value * 100u) / 4095u);
+            shared_data->adc_raw = adc_value;
+
+            /* Auto-calibración: aprende min/max reales del potenciómetro. */
+            if (!shared_data->adc_calib_valid) {
+                calib_min = adc_value;
+                calib_max = adc_value;
+                shared_data->adc_calib_valid = true;
+                calib_changed = true;
+            } else {
+                if (adc_value < calib_min) {
+                    calib_min = adc_value;
+                    calib_changed = true;
+                }
+                if (adc_value > calib_max) {
+                    calib_max = adc_value;
+                    calib_changed = true;
+                }
+            }
+
+            if (calib_max < calib_min) {
+                calib_min = adc_value;
+                calib_max = adc_value;
+                calib_changed = true;
+            }
+
+            shared_data->adc_calib_min = calib_min;
+            shared_data->adc_calib_max = calib_max;
+
+            effective_min = calib_min;
+            effective_max = calib_max;
+            calib_span = (uint16_t)(calib_max - calib_min);
+
+            /* Mientras el rango observado es chico, mantiene escala base 0..4095. */
+            if (calib_span < APP_ADC_CALIB_MIN_SPAN) {
+                effective_min = 0u;
+                effective_max = ADC_FULL_SCALE_COUNTS;
+            }
+
+            adc_percent = adc_to_percent(adc_value, effective_min, effective_max);
             shared_data->adc_percent = adc_percent;
+            shared_data->fan_delay_us = (uint16_t)(APP_FAN_DIM_DELAY_MIN_US +
+                                          (((uint32_t)adc_percent * (APP_FAN_DIM_DELAY_MAX_US - APP_FAN_DIM_DELAY_MIN_US)) / 100u));
+
+            if (!calib_shadow_valid) {
+                last_saved_calib_min = shared_data->adc_calib_min;
+                last_saved_calib_max = shared_data->adc_calib_max;
+                calib_shadow_valid = true;
+            }
+
+            if (calib_changed && shared_data->adc_calib_valid) {
+                uint16_t min_delta = u16_abs_diff(shared_data->adc_calib_min, last_saved_calib_min);
+                uint16_t max_delta = u16_abs_diff(shared_data->adc_calib_max, last_saved_calib_max);
+
+                if ((calib_span >= APP_ADC_CALIB_MIN_SPAN) &&
+                    ((min_delta >= ADC_CALIB_SAVE_DELTA) || (max_delta >= ADC_CALIB_SAVE_DELTA)) &&
+                    ((HAL_GetTick() - last_calib_save_req_ms) >= ADC_CALIB_SAVE_PERIOD_MS)) {
+                    shared_data->flash_save_adc_calib_request = true;
+                    last_calib_save_req_ms = HAL_GetTick();
+                    last_saved_calib_min = shared_data->adc_calib_min;
+                    last_saved_calib_max = shared_data->adc_calib_max;
+
+                    TEST_LOG("[ADC] calib save request min=%u max=%u\r\n",
+                             shared_data->adc_calib_min,
+                             shared_data->adc_calib_max);
+                }
+            }
 
             /* Solo levanta evento si hubo cambio real en el valor mapeado. */
             if (adc_percent != last_percent) {
@@ -116,9 +193,11 @@ void task_adc_update(void *parameters)
 
     if ((HAL_GetTick() - last_sensor_log_ms) >= 1000u) {
         last_sensor_log_ms = HAL_GetTick();
-        TEST_LOG("[ADC] heartbeat dip=0x%X adc=%u%% on_ev=%u off_ev=%u\r\n",
+        TEST_LOG("[ADC] heartbeat dip=0x%X adc=%u%% min=%u max=%u on_ev=%u off_ev=%u\r\n",
                  shared_data->dip_value,
                  shared_data->adc_percent,
+                 shared_data->adc_calib_min,
+                 shared_data->adc_calib_max,
                  shared_data->ev_light_on_pressed ? 1u : 0u,
                  shared_data->ev_light_off_pressed ? 1u : 0u);
     }
@@ -191,6 +270,37 @@ static bool update_button_fsm(button_ctx_t *ctx)
     }
 
     return false;
+}
+
+static uint16_t clamp_u16(uint16_t value, uint16_t min, uint16_t max)
+{
+    if (value < min) {
+        return min;
+    }
+    if (value > max) {
+        return max;
+    }
+    return value;
+}
+
+static uint16_t u16_abs_diff(uint16_t a, uint16_t b)
+{
+    return (a >= b) ? (uint16_t)(a - b) : (uint16_t)(b - a);
+}
+
+static uint8_t adc_to_percent(uint16_t raw, uint16_t min, uint16_t max)
+{
+    uint16_t bounded_raw;
+    uint16_t span;
+
+    if (max <= min) {
+        return 0u;
+    }
+
+    bounded_raw = clamp_u16(raw, min, max);
+    span = (uint16_t)(max - min);
+
+    return (uint8_t)((((uint32_t)(bounded_raw - min)) * 100u) / span);
 }
 
 /********************** end of file ******************************************/

@@ -16,9 +16,15 @@
 
 /********************** macros and definitions *******************************/
 #define FLASH_MAGIC_WORD             0xA5A55A5Au
-#define FLASH_LIGHT_STATE_ADDR       0x0801FC00u
-#define FLASH_LIGHT_MAGIC_ADDR       FLASH_LIGHT_STATE_ADDR
-#define FLASH_LIGHT_VALUE_ADDR       (FLASH_LIGHT_STATE_ADDR + 4u)
+#define FLASH_LAYOUT_VERSION         0x00000002u
+#define FLASH_STATE_PAGE_ADDR        0x0801FC00u
+#define FLASH_STATE_MAGIC_ADDR       FLASH_STATE_PAGE_ADDR
+#define FLASH_STATE_META_ADDR        (FLASH_STATE_PAGE_ADDR + 4u)
+#define FLASH_STATE_LIGHT_ADDR       (FLASH_STATE_PAGE_ADDR + 8u)
+#define FLASH_STATE_ADC_MIN_ADDR     (FLASH_STATE_PAGE_ADDR + 12u)
+#define FLASH_STATE_ADC_MAX_ADDR     (FLASH_STATE_PAGE_ADDR + 16u)
+#define FLASH_ADC_INVALID_WORD       0xFFFFFFFFu
+#define ADC_FULL_SCALE_COUNTS        4095u
 #define FAULT_RECOVERY_MS            10000u
 #define FAULT_BLINK_MS               500u
 
@@ -33,9 +39,12 @@ typedef enum {
 } system_state_t;
 
 /********************** internal functions declaration ***********************/
-static bool flash_load_light_state(bool *light_on);
-static bool flash_store_light_state(bool light_on);
-static uint16_t build_fan_delay_from_adc(uint16_t adc_raw);
+static bool flash_load_persistent_state(shared_data_type *shared_data);
+static bool flash_store_persistent_state(bool light_on,
+                                         bool adc_calib_valid,
+                                         uint16_t adc_calib_min,
+                                         uint16_t adc_calib_max);
+static uint16_t build_fan_delay_from_percent(uint8_t adc_percent);
 static void apply_dip_roles(shared_data_type *shared_data);
 static bool bt_probe_hc06_at(void);
 
@@ -56,6 +65,7 @@ void task_system_init(void *parameters)
     shared_data->cut_off_voltage = false;
     shared_data->alarm_on = false;
     shared_data->flash_save_light_request = false;
+    shared_data->flash_save_adc_calib_request = false;
 }
 
 void task_system_update(void *parameters)
@@ -77,8 +87,8 @@ void task_system_update(void *parameters)
     /* FSM principal del sistema: Init -> Normal o Fault. */
     switch (state) {
     case ST_INIT_READ_FLASH:
-        /* Etapa 1: restaura el estado de luz desde flash. */
-        ok = flash_load_light_state(&shared_data->light_enabled);
+        /* Etapa 1: restaura estado de luz y calibración ADC desde flash. */
+        ok = flash_load_persistent_state(shared_data);
         if (ok) {
             state = ST_INIT_READ_DIP;
         } else {
@@ -102,8 +112,8 @@ void task_system_update(void *parameters)
         break;
 
     case ST_INIT_RESTORE_PWM:
-        /* Etapa 4: reconstruye delay del fan a partir del ADC actual. */
-        shared_data->fan_delay_us = build_fan_delay_from_adc(shared_data->adc_raw);
+        /* Etapa 4: reconstruye delay del fan a partir del porcentaje ya escalado. */
+        shared_data->fan_delay_us = build_fan_delay_from_percent(shared_data->adc_percent);
         state = ST_INIT_CONFIG_BT;
         break;
 
@@ -180,18 +190,36 @@ void task_system_update(void *parameters)
                      shared_data->fan_delay_us);
         }
 
-        if (shared_data->flash_save_light_request) {
+        if (shared_data->flash_save_light_request || shared_data->flash_save_adc_calib_request) {
+            bool light_save_req = shared_data->flash_save_light_request;
+            bool adc_calib_save_req = shared_data->flash_save_adc_calib_request;
+
             shared_data->flash_save_light_request = false;
-            if (!flash_store_light_state(shared_data->light_enabled)) {
-                /* Si falla persistencia crítica, pasa a modo Fault. */
-                fault_elapsed_ms = 0u;
-                fault_blink_ms = 0u;
-                fault_led_on = true;
-                shared_data->alarm_on = true;
-                state = ST_FAULT;
+            shared_data->flash_save_adc_calib_request = false;
+
+            if (!flash_store_persistent_state(shared_data->light_enabled,
+                                              shared_data->adc_calib_valid,
+                                              shared_data->adc_calib_min,
+                                              shared_data->adc_calib_max)) {
+#if APP_FLASH_STORE_STRICT
+                /* En modo estricto, la persistencia de luz fallida es crítica. */
+                if (light_save_req) {
+                    fault_elapsed_ms = 0u;
+                    fault_blink_ms = 0u;
+                    fault_led_on = true;
+                    shared_data->alarm_on = true;
+                    state = ST_FAULT;
+                }
+#endif
+                TEST_LOG("[SYS] flash save FAILED (light_req=%u calib_req=%u)\r\n",
+                         light_save_req ? 1u : 0u,
+                         adc_calib_save_req ? 1u : 0u);
             } else {
-                TEST_LOG("[SYS] flash save light=%u OK\r\n",
-                         shared_data->light_enabled ? 1u : 0u);
+                TEST_LOG("[SYS] flash save OK light=%u calib=%u min=%u max=%u\r\n",
+                         shared_data->light_enabled ? 1u : 0u,
+                         shared_data->adc_calib_valid ? 1u : 0u,
+                         shared_data->adc_calib_min,
+                         shared_data->adc_calib_max);
             }
         }
         break;
@@ -225,34 +253,70 @@ void task_system_update(void *parameters)
 }
 
 /********************** internal functions definition ************************/
-static bool flash_load_light_state(bool *light_on)
+static bool flash_load_persistent_state(shared_data_type *shared_data)
 {
-    uint32_t magic = *(volatile uint32_t *)FLASH_LIGHT_MAGIC_ADDR;
-    uint32_t value = *(volatile uint32_t *)FLASH_LIGHT_VALUE_ADDR;
+    uint32_t magic = *(volatile uint32_t *)FLASH_STATE_MAGIC_ADDR;
+    uint32_t meta = *(volatile uint32_t *)FLASH_STATE_META_ADDR;
 
-    if (magic == FLASH_MAGIC_WORD) {
-        *light_on = ((value & 0x1u) != 0u);
+    shared_data->light_enabled = false;
+    shared_data->adc_calib_valid = false;
+    shared_data->adc_calib_min = 0u;
+    shared_data->adc_calib_max = ADC_FULL_SCALE_COUNTS;
+
+    if (magic != FLASH_MAGIC_WORD) {
+        return true;
+    }
+
+    if (meta == FLASH_LAYOUT_VERSION) {
+        uint32_t light_word = *(volatile uint32_t *)FLASH_STATE_LIGHT_ADDR;
+        uint32_t adc_min_word = *(volatile uint32_t *)FLASH_STATE_ADC_MIN_ADDR;
+        uint32_t adc_max_word = *(volatile uint32_t *)FLASH_STATE_ADC_MAX_ADDR;
+
+        shared_data->light_enabled = ((light_word & 0x1u) != 0u);
+
+        if ((adc_min_word != FLASH_ADC_INVALID_WORD) &&
+            (adc_max_word != FLASH_ADC_INVALID_WORD) &&
+            (adc_min_word <= ADC_FULL_SCALE_COUNTS) &&
+            (adc_max_word <= ADC_FULL_SCALE_COUNTS) &&
+            (adc_max_word > adc_min_word)) {
+            shared_data->adc_calib_valid = true;
+            shared_data->adc_calib_min = (uint16_t)adc_min_word;
+            shared_data->adc_calib_max = (uint16_t)adc_max_word;
+        }
     } else {
-        *light_on = false;
+        /* Compatibilidad retro: layout viejo (magic + light). */
+        shared_data->light_enabled = ((meta & 0x1u) != 0u);
     }
 
     return true;
 }
 
-static bool flash_store_light_state(bool light_on)
+static bool flash_store_persistent_state(bool light_on,
+                                         bool adc_calib_valid,
+                                         uint16_t adc_calib_min,
+                                         uint16_t adc_calib_max)
 {
     HAL_StatusTypeDef hal_status;
     FLASH_EraseInitTypeDef erase_cfg;
     uint32_t page_error = 0u;
+    uint32_t adc_min_word = FLASH_ADC_INVALID_WORD;
+    uint32_t adc_max_word = FLASH_ADC_INVALID_WORD;
 
-    /* Borra y reescribe una página dedicada con magic + estado de luz. */
+    if (adc_calib_valid &&
+        (adc_calib_max > adc_calib_min) &&
+        (adc_calib_max <= ADC_FULL_SCALE_COUNTS)) {
+        adc_min_word = adc_calib_min;
+        adc_max_word = adc_calib_max;
+    }
+
+    /* Borra y reescribe una página dedicada con layout versionado. */
     hal_status = HAL_FLASH_Unlock();
     if (hal_status != HAL_OK) {
         return false;
     }
 
     erase_cfg.TypeErase = FLASH_TYPEERASE_PAGES;
-    erase_cfg.PageAddress = FLASH_LIGHT_STATE_ADDR;
+    erase_cfg.PageAddress = FLASH_STATE_PAGE_ADDR;
     erase_cfg.NbPages = 1u;
     hal_status = HAL_FLASHEx_Erase(&erase_cfg, &page_error);
     if (hal_status != HAL_OK) {
@@ -260,21 +324,42 @@ static bool flash_store_light_state(bool light_on)
         return false;
     }
 
-    hal_status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, FLASH_LIGHT_MAGIC_ADDR, FLASH_MAGIC_WORD);
+    hal_status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, FLASH_STATE_MAGIC_ADDR, FLASH_MAGIC_WORD);
     if (hal_status != HAL_OK) {
         (void)HAL_FLASH_Lock();
         return false;
     }
 
-    hal_status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, FLASH_LIGHT_VALUE_ADDR, (uint32_t)(light_on ? 1u : 0u));
+    hal_status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, FLASH_STATE_META_ADDR, FLASH_LAYOUT_VERSION);
+    if (hal_status != HAL_OK) {
+        (void)HAL_FLASH_Lock();
+        return false;
+    }
+
+    hal_status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, FLASH_STATE_LIGHT_ADDR, (uint32_t)(light_on ? 1u : 0u));
+    if (hal_status != HAL_OK) {
+        (void)HAL_FLASH_Lock();
+        return false;
+    }
+
+    hal_status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, FLASH_STATE_ADC_MIN_ADDR, adc_min_word);
+    if (hal_status != HAL_OK) {
+        (void)HAL_FLASH_Lock();
+        return false;
+    }
+
+    hal_status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, FLASH_STATE_ADC_MAX_ADDR, adc_max_word);
     (void)HAL_FLASH_Lock();
 
     return (hal_status == HAL_OK);
 }
 
-static uint16_t build_fan_delay_from_adc(uint16_t adc_raw)
+static uint16_t build_fan_delay_from_percent(uint8_t adc_percent)
 {
-    return (uint16_t)((adc_raw * APP_FAN_DIM_DELAY_MAX_US) / 4095u);
+    uint8_t bounded_percent = (adc_percent > 100u) ? 100u : adc_percent;
+
+    return (uint16_t)(APP_FAN_DIM_DELAY_MIN_US +
+                      (((uint32_t)bounded_percent * (APP_FAN_DIM_DELAY_MAX_US - APP_FAN_DIM_DELAY_MIN_US)) / 100u));
 }
 
 static void apply_dip_roles(shared_data_type *shared_data)

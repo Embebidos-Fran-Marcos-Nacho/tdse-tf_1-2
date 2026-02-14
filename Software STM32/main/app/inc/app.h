@@ -48,10 +48,26 @@ extern "C" {
 
 /* Temporización de control por cruce por cero (50 Hz -> 10 ms por semiciclo). */
 #define APP_ZC_HALF_CYCLE_US       (10000u)
-#define APP_TRIAC_FIXED_WAIT_US    (500u)
-#define APP_TRIAC_PULSE_US         (300u)
+#define APP_TRIAC_FIXED_WAIT_US    (700u)
+#define APP_TRIAC_PULSE_US         (1000u)
 #define APP_FAN_DIM_DELAY_MIN_US   (100u)
 #define APP_FAN_DIM_DELAY_MAX_US   (7500u)
+
+/* Failsafe de cruce por cero:
+ * si no llegan eventos ZCD por hardware, genera eventos cada 10 ms.
+ */
+#define APP_ZC_FAILSAFE_ENABLE      (1)
+#define APP_ZC_FAILSAFE_TIMEOUT_MS  (30u)
+#define APP_ZC_FAILSAFE_PERIOD_MS   (10u)
+
+/* Rango mínimo aceptable de calibración ADC para usar escala min/max. */
+#define APP_ADC_CALIB_MIN_SPAN      (200u)
+
+/* Estrategia ante fallo al guardar en flash:
+ * 1 -> entra en ST_FAULT
+ * 0 -> sigue operando y solo informa por log
+ */
+#define APP_FLASH_STORE_STRICT      (1)
 
 /********************** typedef **********************************************/
 
@@ -64,6 +80,9 @@ typedef struct {
 	uint16_t adc_raw;
 	uint16_t fan_delay_us;
 	uint8_t adc_percent;
+	uint16_t adc_calib_min;
+	uint16_t adc_calib_max;
+	bool adc_calib_valid;
 	bool fan_enabled;
 	bool light_enabled;
 	uint8_t dip_value;
@@ -82,6 +101,7 @@ typedef struct {
 	bool cut_off_voltage;
 	bool alarm_on;
 	bool flash_save_light_request;
+	bool flash_save_adc_calib_request;
 } shared_data_type;
 
 /********************** external data declaration ****************************/
