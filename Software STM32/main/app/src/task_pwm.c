@@ -28,6 +28,7 @@
 #define WAIT_SPIN_US        200ul
 #define UART_TX_TIMEOUT_MS  20u
 #define BUZZER_FREQ_HZ      2000u
+#define BUZZER_DUTY_PERCENT 20u
 
 /* Role mapping: swap these two pairs if board wiring is opposite. */
 #define TRIAC_LIGHT_PIN      TRIAC2_Pin
@@ -249,6 +250,7 @@ static void buzzer_start_tone(void)
     uint32_t timer_clock_hz = pclk2_hz;
     uint32_t timer_tick_hz;
     uint32_t period_ticks;
+    uint32_t pulse_ticks;
     uint32_t prescaler = (uint32_t)htim1.Instance->PSC + 1u;
 
     /* En STM32F1, si APB2 no es /1, el clock efectivo de timer se duplica. */
@@ -261,9 +263,13 @@ static void buzzer_start_tone(void)
     if (period_ticks < 2u) {
         period_ticks = 2u;
     }
+    pulse_ticks = (period_ticks * BUZZER_DUTY_PERCENT) / 100u;
+    if (pulse_ticks < 1u) {
+        pulse_ticks = 1u;
+    }
 
     __HAL_TIM_SET_AUTORELOAD(&htim1, period_ticks - 1u);
-    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, period_ticks / 2u);
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, pulse_ticks);
     __HAL_TIM_SET_COUNTER(&htim1, 0u);
     (void)HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 }

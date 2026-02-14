@@ -20,7 +20,7 @@
 #define FLASH_LIGHT_MAGIC_ADDR       FLASH_LIGHT_STATE_ADDR
 #define FLASH_LIGHT_VALUE_ADDR       (FLASH_LIGHT_STATE_ADDR + 4u)
 #define FAULT_RECOVERY_MS            10000u
-#define FAULT_BLINK_MS               1000u
+#define FAULT_BLINK_MS               500u
 
 typedef enum {
     ST_INIT_READ_FLASH = 0,
