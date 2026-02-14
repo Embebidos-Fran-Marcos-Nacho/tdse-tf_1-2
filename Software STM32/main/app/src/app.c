@@ -70,6 +70,7 @@ void app_init(void)
     shared_data.zc_event_pending = false;
     shared_data.zc_timestamp_us = 0u;
     shared_data.last_zc_timestamp_us = 0u;
+    shared_data.zc_period_us = APP_ZC_HALF_CYCLE_US;
     shared_data.adc_raw = 0u;
     shared_data.fan_delay_us = 0u;
     shared_data.adc_percent = 0u;
@@ -123,6 +124,7 @@ void app_update(void)
             last_simulated_zc_ms = HAL_GetTick();
             shared_data.last_zc_timestamp_us = shared_data.zc_timestamp_us;
             shared_data.zc_timestamp_us = app_get_time_us();
+            shared_data.zc_period_us = APP_ZC_HALF_CYCLE_US;
             shared_data.zc_event_pending = true;
             task_pwm_on_zero_crossing_isr(&shared_data);
         }
@@ -181,9 +183,14 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
     if (GPIO_Pin == ZCD_INT_Pin) {
         uint32_t now_us = app_get_time_us();
+        uint32_t zc_period_us = (uint32_t)(now_us - shared_data.last_zc_timestamp_us);
 
         /* Filtro anti-rebote/ruido del detector de cruce por cero. */
-        if ((uint32_t)(now_us - shared_data.last_zc_timestamp_us) > ZC_HOLDOFF_US) {
+        if (zc_period_us > ZC_HOLDOFF_US) {
+            /* Este hardware entrega ZC en cada cruce (semiciclo, ~100 Hz @ 50 Hz de red). */
+            if ((zc_period_us >= 7000u) && (zc_period_us <= 13000u)) {
+                shared_data.zc_period_us = (uint16_t)zc_period_us;
+            }
             shared_data.last_zc_timestamp_us = now_us;
             shared_data.zc_timestamp_us = now_us;
             shared_data.zc_event_pending = true;

@@ -49,9 +49,9 @@ extern "C" {
 /* Temporización de control por cruce por cero (50 Hz -> 10 ms por semiciclo). */
 #define APP_ZC_HALF_CYCLE_US       (10000u)
 #define APP_TRIAC_FIXED_WAIT_US    (600u)
-#define APP_TRIAC_PULSE_US         (200u)
+#define APP_TRIAC_PULSE_US         (300u)
 #define APP_FAN_DIM_DELAY_MIN_US   (0u)
-#define APP_FAN_DIM_DELAY_MAX_US   (9500u)
+#define APP_FAN_DIM_DELAY_MAX_US   (7500u)
 
 /********************** typedef **********************************************/
 
@@ -59,6 +59,7 @@ typedef struct {
 	volatile bool zc_event_pending;
 	volatile uint32_t zc_timestamp_us;
 	volatile uint32_t last_zc_timestamp_us;
+	volatile uint16_t zc_period_us;
 
 	uint16_t adc_raw;
 	uint16_t fan_delay_us;

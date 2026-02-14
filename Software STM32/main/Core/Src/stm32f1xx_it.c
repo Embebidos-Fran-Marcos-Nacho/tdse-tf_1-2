@@ -22,6 +22,7 @@
 #include "stm32f1xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "task_pwm.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,7 +59,6 @@
 
 /* USER CODE BEGIN EV */
 extern ADC_HandleTypeDef hadc1;
-extern TIM_HandleTypeDef htim2;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -212,7 +212,7 @@ void EXTI2_IRQHandler(void)
   */
 void TIM2_IRQHandler(void)
 {
-  HAL_TIM_IRQHandler(&htim2);
+  task_pwm_timer_isr();
 }
 
 /* USER CODE BEGIN 1 */

@@ -24,15 +24,14 @@
 #define UART_TX_TIMEOUT_MS  20u
 #define BUZZER_FREQ_HZ      2000u
 #define BUZZER_DUTY_PERCENT 30u
+#define ZC_PERIOD_MIN_US    7000u
+#define ZC_PERIOD_MAX_US    13000u
 
 /* Role mapping: swap these two pairs if board wiring is opposite. */
 #define TRIAC_LIGHT_PIN      TRIAC2_Pin
 #define TRIAC_LIGHT_PORT     TRIAC2_GPIO_Port
 #define TRIAC_FAN_PIN        TRIAC1_Pin
 #define TRIAC_FAN_PORT       TRIAC1_GPIO_Port
-
-/* El disparo siempre debe quedar dentro del semiciclo (10 ms @ 50 Hz). */
-#define TRIAC_FIRE_MAX_US (APP_ZC_HALF_CYCLE_US - APP_TRIAC_PULSE_US - 1u)
 
 typedef struct {
     const char *name;
@@ -44,6 +43,7 @@ typedef struct {
 
 /********************** internal functions declaration ***********************/
 static uint32_t clamp_u32(uint32_t value, uint32_t min, uint32_t max);
+static void tim2_config_tick_1mhz(void);
 static void triac_outputs_off(void);
 static void triac_disable_all_events(void);
 static void triac_cancel_light_events(void);
@@ -73,16 +73,14 @@ void task_pwm_init(void *parameters)
     triac_outputs_off();
     HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
 
+    tim2_config_tick_1mhz();
     __HAL_TIM_SET_COUNTER(&htim2, 0u);
-    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, TRIAC_FIRE_MAX_US);
-    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, TRIAC_FIRE_MAX_US);
-    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, TRIAC_FIRE_MAX_US);
-    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, TRIAC_FIRE_MAX_US);
-
-    (void)HAL_TIM_OC_Start_IT(&htim2, TIM_CHANNEL_1);
-    (void)HAL_TIM_OC_Start_IT(&htim2, TIM_CHANNEL_2);
-    (void)HAL_TIM_OC_Start_IT(&htim2, TIM_CHANNEL_3);
-    (void)HAL_TIM_OC_Start_IT(&htim2, TIM_CHANNEL_4);
+    __HAL_TIM_SET_AUTORELOAD(&htim2, APP_ZC_HALF_CYCLE_US - 1u);
+    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, APP_ZC_HALF_CYCLE_US - 1u);
+    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, APP_ZC_HALF_CYCLE_US - 1u);
+    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, APP_ZC_HALF_CYCLE_US - 1u);
+    __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, APP_ZC_HALF_CYCLE_US - 1u);
+    (void)HAL_TIM_Base_Start(&htim2);
 
     triac_disable_all_events();
 }
@@ -158,6 +156,9 @@ void task_pwm_update(void *parameters)
 
 void task_pwm_on_zero_crossing_isr(const shared_data_type *shared_data)
 {
+    uint32_t zc_period_us;
+    uint32_t triac_fire_max_us;
+    uint32_t fan_delay_max_us;
     uint32_t fan_delay_us;
     uint32_t light_on_us;
     uint32_t light_off_us;
@@ -175,16 +176,23 @@ void task_pwm_on_zero_crossing_isr(const shared_data_type *shared_data)
         return;
     }
 
-    fan_delay_us = clamp_u32(shared_data->fan_delay_us, APP_FAN_DIM_DELAY_MIN_US, APP_FAN_DIM_DELAY_MAX_US);
+    zc_period_us = clamp_u32(shared_data->zc_period_us, ZC_PERIOD_MIN_US, ZC_PERIOD_MAX_US);
+    triac_fire_max_us = zc_period_us - APP_TRIAC_PULSE_US - 1u;
+    fan_delay_max_us = (triac_fire_max_us > APP_TRIAC_FIXED_WAIT_US) ?
+                       (triac_fire_max_us - APP_TRIAC_FIXED_WAIT_US) : 0u;
 
-    light_on_us = clamp_u32(APP_TRIAC_FIXED_WAIT_US, 0u, TRIAC_FIRE_MAX_US);
-    fan_on_us = clamp_u32(APP_TRIAC_FIXED_WAIT_US + fan_delay_us, 0u, TRIAC_FIRE_MAX_US);
+    fan_delay_us = clamp_u32(shared_data->fan_delay_us, APP_FAN_DIM_DELAY_MIN_US, APP_FAN_DIM_DELAY_MAX_US);
+    fan_delay_us = clamp_u32(fan_delay_us, APP_FAN_DIM_DELAY_MIN_US, fan_delay_max_us);
+
+    light_on_us = clamp_u32(APP_TRIAC_FIXED_WAIT_US, 0u, triac_fire_max_us);
+    fan_on_us = clamp_u32(APP_TRIAC_FIXED_WAIT_US + fan_delay_us, 0u, triac_fire_max_us);
     light_off_us = light_on_us + APP_TRIAC_PULSE_US;
     fan_off_us = fan_on_us + APP_TRIAC_PULSE_US;
 
     triac_disable_all_events();
     triac_outputs_off();
 
+    __HAL_TIM_SET_AUTORELOAD(&htim2, zc_period_us - 1u);
     __HAL_TIM_SET_COUNTER(&htim2, 0u);
     __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, light_on_us);
     __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, light_off_us);
@@ -214,47 +222,45 @@ void task_pwm_on_zero_crossing_isr(const shared_data_type *shared_data)
     }
 }
 
-void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim)
+void task_pwm_timer_isr(void)
 {
-    if (htim->Instance != TIM2) {
-        return;
-    }
+    uint32_t sr = htim2.Instance->SR;
+    uint32_t dier = htim2.Instance->DIER;
 
-    switch (htim->Channel) {
-    case HAL_TIM_ACTIVE_CHANNEL_1:
+    if ((sr & TIM_SR_CC1IF) && (dier & TIM_DIER_CC1IE)) {
+        htim2.Instance->SR &= ~TIM_SR_CC1IF;
         if (triac_light.on_pending) {
             HAL_GPIO_WritePin(triac_light.port, triac_light.pin, GPIO_PIN_SET);
             triac_light.on_pending = false;
-            TEST_LOG("[PWM] %s FIRE ON t=%lu us\r\n", triac_light.name, __HAL_TIM_GET_COUNTER(htim));
+            TEST_LOG("[PWM] %s FIRE ON t=%lu us\r\n", triac_light.name, __HAL_TIM_GET_COUNTER(&htim2));
         }
-        __HAL_TIM_DISABLE_IT(htim, TIM_IT_CC1);
-        break;
+        htim2.Instance->DIER &= ~TIM_DIER_CC1IE;
+    }
 
-    case HAL_TIM_ACTIVE_CHANNEL_2:
+    if ((sr & TIM_SR_CC2IF) && (dier & TIM_DIER_CC2IE)) {
+        htim2.Instance->SR &= ~TIM_SR_CC2IF;
         HAL_GPIO_WritePin(triac_light.port, triac_light.pin, GPIO_PIN_RESET);
         triac_light.off_pending = false;
-        TEST_LOG("[PWM] %s FIRE OFF t=%lu us\r\n", triac_light.name, __HAL_TIM_GET_COUNTER(htim));
-        __HAL_TIM_DISABLE_IT(htim, TIM_IT_CC2);
-        break;
+        TEST_LOG("[PWM] %s FIRE OFF t=%lu us\r\n", triac_light.name, __HAL_TIM_GET_COUNTER(&htim2));
+        htim2.Instance->DIER &= ~TIM_DIER_CC2IE;
+    }
 
-    case HAL_TIM_ACTIVE_CHANNEL_3:
+    if ((sr & TIM_SR_CC3IF) && (dier & TIM_DIER_CC3IE)) {
+        htim2.Instance->SR &= ~TIM_SR_CC3IF;
         if (triac_fan.on_pending) {
             HAL_GPIO_WritePin(triac_fan.port, triac_fan.pin, GPIO_PIN_SET);
             triac_fan.on_pending = false;
-            TEST_LOG("[PWM] %s FIRE ON t=%lu us\r\n", triac_fan.name, __HAL_TIM_GET_COUNTER(htim));
+            TEST_LOG("[PWM] %s FIRE ON t=%lu us\r\n", triac_fan.name, __HAL_TIM_GET_COUNTER(&htim2));
         }
-        __HAL_TIM_DISABLE_IT(htim, TIM_IT_CC3);
-        break;
+        htim2.Instance->DIER &= ~TIM_DIER_CC3IE;
+    }
 
-    case HAL_TIM_ACTIVE_CHANNEL_4:
+    if ((sr & TIM_SR_CC4IF) && (dier & TIM_DIER_CC4IE)) {
+        htim2.Instance->SR &= ~TIM_SR_CC4IF;
         HAL_GPIO_WritePin(triac_fan.port, triac_fan.pin, GPIO_PIN_RESET);
         triac_fan.off_pending = false;
-        TEST_LOG("[PWM] %s FIRE OFF t=%lu us\r\n", triac_fan.name, __HAL_TIM_GET_COUNTER(htim));
-        __HAL_TIM_DISABLE_IT(htim, TIM_IT_CC4);
-        break;
-
-    default:
-        break;
+        TEST_LOG("[PWM] %s FIRE OFF t=%lu us\r\n", triac_fan.name, __HAL_TIM_GET_COUNTER(&htim2));
+        htim2.Instance->DIER &= ~TIM_DIER_CC4IE;
     }
 }
 
@@ -268,6 +274,29 @@ static uint32_t clamp_u32(uint32_t value, uint32_t min, uint32_t max)
         return max;
     }
     return value;
+}
+
+static void tim2_config_tick_1mhz(void)
+{
+    uint32_t pclk1_hz = HAL_RCC_GetPCLK1Freq();
+    uint32_t tim_clk_hz = pclk1_hz;
+    uint32_t prescaler;
+
+    /* En STM32F1, si APB1 no es /1, el clock efectivo de TIM2 se duplica. */
+    if ((RCC->CFGR & RCC_CFGR_PPRE1) != RCC_CFGR_PPRE1_DIV1) {
+        tim_clk_hz *= 2u;
+    }
+
+    prescaler = tim_clk_hz / 1000000u;
+    if (prescaler == 0u) {
+        prescaler = 1u;
+    }
+
+    __HAL_TIM_DISABLE(&htim2);
+    __HAL_TIM_SET_PRESCALER(&htim2, prescaler - 1u);
+    __HAL_TIM_SET_COUNTER(&htim2, 0u);
+    __HAL_TIM_CLEAR_FLAG(&htim2, TIM_FLAG_UPDATE);
+    htim2.Instance->EGR = TIM_EGR_UG;
 }
 
 static void triac_outputs_off(void)
@@ -286,12 +315,8 @@ static void triac_disable_all_events(void)
     triac_fan.on_pending = false;
     triac_fan.off_pending = false;
 
-    __HAL_TIM_DISABLE_IT(&htim2, TIM_IT_CC1 | TIM_IT_CC2 | TIM_IT_CC3 | TIM_IT_CC4);
-    __HAL_TIM_CLEAR_IT(&htim2, TIM_IT_CC1);
-    __HAL_TIM_CLEAR_IT(&htim2, TIM_IT_CC2);
-    __HAL_TIM_CLEAR_IT(&htim2, TIM_IT_CC3);
-    __HAL_TIM_CLEAR_IT(&htim2, TIM_IT_CC4);
-    __HAL_TIM_CLEAR_FLAG(&htim2, TIM_FLAG_CC1 | TIM_FLAG_CC2 | TIM_FLAG_CC3 | TIM_FLAG_CC4);
+    htim2.Instance->DIER &= ~(TIM_DIER_CC1IE | TIM_DIER_CC2IE | TIM_DIER_CC3IE | TIM_DIER_CC4IE);
+    htim2.Instance->SR &= ~(TIM_SR_CC1IF | TIM_SR_CC2IF | TIM_SR_CC3IF | TIM_SR_CC4IF);
 
     if (primask == 0u) {
         __enable_irq();
@@ -304,10 +329,8 @@ static void triac_cancel_light_events(void)
     __disable_irq();
     triac_light.on_pending = false;
     triac_light.off_pending = false;
-    __HAL_TIM_DISABLE_IT(&htim2, TIM_IT_CC1 | TIM_IT_CC2);
-    __HAL_TIM_CLEAR_IT(&htim2, TIM_IT_CC1);
-    __HAL_TIM_CLEAR_IT(&htim2, TIM_IT_CC2);
-    __HAL_TIM_CLEAR_FLAG(&htim2, TIM_FLAG_CC1 | TIM_FLAG_CC2);
+    htim2.Instance->DIER &= ~(TIM_DIER_CC1IE | TIM_DIER_CC2IE);
+    htim2.Instance->SR &= ~(TIM_SR_CC1IF | TIM_SR_CC2IF);
     if (primask == 0u) {
         __enable_irq();
     }
@@ -321,10 +344,8 @@ static void triac_cancel_fan_events(void)
     __disable_irq();
     triac_fan.on_pending = false;
     triac_fan.off_pending = false;
-    __HAL_TIM_DISABLE_IT(&htim2, TIM_IT_CC3 | TIM_IT_CC4);
-    __HAL_TIM_CLEAR_IT(&htim2, TIM_IT_CC3);
-    __HAL_TIM_CLEAR_IT(&htim2, TIM_IT_CC4);
-    __HAL_TIM_CLEAR_FLAG(&htim2, TIM_FLAG_CC3 | TIM_FLAG_CC4);
+    htim2.Instance->DIER &= ~(TIM_DIER_CC3IE | TIM_DIER_CC4IE);
+    htim2.Instance->SR &= ~(TIM_SR_CC3IF | TIM_SR_CC4IF);
     if (primask == 0u) {
         __enable_irq();
     }
