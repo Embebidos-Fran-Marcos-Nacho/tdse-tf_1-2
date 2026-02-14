@@ -274,7 +274,7 @@ static bool flash_store_light_state(bool light_on)
 
 static uint16_t build_fan_delay_from_adc(uint16_t adc_raw)
 {
-    return (uint16_t)((adc_raw * 7500u) / 4095u);
+    return (uint16_t)((adc_raw * APP_FAN_DIM_DELAY_MAX_US) / 4095u);
 }
 
 static void apply_dip_roles(shared_data_type *shared_data)

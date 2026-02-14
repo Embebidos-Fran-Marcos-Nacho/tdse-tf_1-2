@@ -124,6 +124,7 @@ void app_update(void)
             shared_data.last_zc_timestamp_us = shared_data.zc_timestamp_us;
             shared_data.zc_timestamp_us = app_get_time_us();
             shared_data.zc_event_pending = true;
+            task_pwm_on_zero_crossing_isr(&shared_data);
         }
 #endif
 
@@ -186,6 +187,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
             shared_data.last_zc_timestamp_us = now_us;
             shared_data.zc_timestamp_us = now_us;
             shared_data.zc_event_pending = true;
+            task_pwm_on_zero_crossing_isr(&shared_data);
         }
     }
 }

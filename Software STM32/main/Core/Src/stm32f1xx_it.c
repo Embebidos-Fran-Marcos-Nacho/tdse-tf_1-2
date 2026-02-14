@@ -58,6 +58,7 @@
 
 /* USER CODE BEGIN EV */
 extern ADC_HandleTypeDef hadc1;
+extern TIM_HandleTypeDef htim2;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -204,6 +205,14 @@ void SysTick_Handler(void)
 void EXTI2_IRQHandler(void)
 {
   HAL_GPIO_EXTI_IRQHandler(ZCD_INT_Pin);
+}
+
+/**
+  * @brief This function handles TIM2 global interrupt.
+  */
+void TIM2_IRQHandler(void)
+{
+  HAL_TIM_IRQHandler(&htim2);
 }
 
 /* USER CODE BEGIN 1 */

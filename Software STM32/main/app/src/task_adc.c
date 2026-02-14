@@ -17,8 +17,6 @@
 #define ADC_PERIOD_MS           50u
 #define BTN_DEBOUNCE_TICKS      50u
 #define BUTTON_PRESSED_LEVEL    GPIO_PIN_RESET
-#define FAN_DELAY_MIN_US        0u
-#define FAN_DELAY_MAX_US        7500u
 
 typedef enum {
     ST_BTN_UNPRESSED = 0,
@@ -98,8 +96,8 @@ void task_adc_update(void *parameters)
 
         if (HAL_OK == adc_poll_read(&adc_value)) {
             shared_data->adc_raw = adc_value;
-            shared_data->fan_delay_us = (uint16_t)(FAN_DELAY_MIN_US +
-                                          ((adc_value * (FAN_DELAY_MAX_US - FAN_DELAY_MIN_US)) / 4095u));
+            shared_data->fan_delay_us = (uint16_t)(APP_FAN_DIM_DELAY_MIN_US +
+                                          ((adc_value * (APP_FAN_DIM_DELAY_MAX_US - APP_FAN_DIM_DELAY_MIN_US)) / 4095u));
 
             adc_percent = (uint8_t)((adc_value * 100u) / 4095u);
             shared_data->adc_percent = adc_percent;

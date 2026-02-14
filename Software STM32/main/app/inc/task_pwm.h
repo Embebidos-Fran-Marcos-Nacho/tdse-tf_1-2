@@ -44,6 +44,7 @@ extern "C" {
 #endif
 
 /********************** inclusions *******************************************/
+#include "app.h"
 
 /********************** macros ***********************************************/
 
@@ -52,6 +53,7 @@ extern "C" {
 /********************** external functions declaration ***********************/
 void task_pwm_init(void *parameters);
 void task_pwm_update(void *parameters);
+void task_pwm_on_zero_crossing_isr(const shared_data_type *shared_data);
 
 /********************** End of CPP guard *************************************/
 #ifdef __cplusplus
