@@ -22,20 +22,20 @@ extern "C" {
  * 0 = desactivado (normal)
  * 1 = activado (debug de recorrido de tareas/estados/eventos)
  */
-#define APP_TEST_MODE (1)
+#define APP_TEST_MODE (0)
 
 /* Simulación de cruce por cero para pruebas sin cableado externo.
  * Solo se usa si APP_TEST_MODE == 1.
  * 1 = genera eventos ZCD periódicos por software (100 Hz)
  * 0 = usa únicamente la interrupción real de ZCD (PC2)
  */
-#define APP_TEST_SIMULATE_ZC (1)
+#define APP_TEST_SIMULATE_ZC (0)
 
 /* Señal cuadrada de prueba en pin libre (PC8).
  * 1 = genera 100 Hz (toggle cada 5 ms)
  * 0 = pin fijo en bajo
  */
-#define APP_TEST_WAVE_100HZ_PIN (1)
+#define APP_TEST_WAVE_100HZ_PIN (0)
 
 /* Verificación simple de vida del módulo BT al iniciar (USART1).
  * Envía "AT" (sin CR/LF) y espera "OK".
@@ -43,7 +43,7 @@ extern "C" {
  *   1 -> si falla, entra a ST_FAULT
  *   0 -> si falla, solo loguea y continúa
  */
-#define APP_BT_AT_PROBE_ON_INIT (1)
+#define APP_BT_AT_PROBE_ON_INIT (0)
 #define APP_BT_AT_PROBE_STRICT  (0)
 
 /********************** typedef **********************************************/
