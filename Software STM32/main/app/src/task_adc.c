@@ -17,6 +17,8 @@
 #define ADC_PERIOD_MS           50u
 #define BTN_DEBOUNCE_TICKS      50u
 #define BUTTON_PRESSED_LEVEL    GPIO_PIN_RESET
+#define FAN_DELAY_MIN_US        0u
+#define FAN_DELAY_MAX_US        7500u
 
 typedef enum {
     ST_BTN_UNPRESSED = 0,
@@ -25,9 +27,16 @@ typedef enum {
     ST_BTN_RISING
 } button_state_t;
 
+typedef struct {
+    GPIO_TypeDef *port;
+    uint16_t pin;
+    button_state_t state;
+    uint8_t tick;
+} button_ctx_t;
+
 /********************** internal functions declaration ***********************/
 static HAL_StatusTypeDef adc_poll_read(uint16_t *value);
-static void update_button_fsm(shared_data_type *shared_data);
+static bool update_button_fsm(button_ctx_t *ctx);
 
 /********************** internal data definition *****************************/
 const char *p_task_adc = "Task Sensor";
@@ -46,6 +55,8 @@ void task_adc_init(void *parameters)
     shared_data->adc_percent = 0u;
     shared_data->fan_delay_us = 0u;
     shared_data->ev_sys_pressed = false;
+    shared_data->ev_light_on_pressed = false;
+    shared_data->ev_light_off_pressed = false;
     shared_data->ev_pote_changed = false;
 }
 
@@ -54,6 +65,8 @@ void task_adc_update(void *parameters)
     static uint32_t adc_tick = 0u;
     static uint8_t last_percent = 0u;
     static uint32_t last_sensor_log_ms = 0u;
+    static button_ctx_t btn_on  = {BOT1_GPIO_Port, BOT1_Pin, ST_BTN_UNPRESSED, 0u};
+    static button_ctx_t btn_off = {BUT2_GPIO_Port, BUT2_Pin, ST_BTN_UNPRESSED, 0u};
 
     shared_data_type *shared_data = (shared_data_type *)parameters;
     uint16_t adc_value = 0u;
@@ -66,8 +79,17 @@ void task_adc_update(void *parameters)
         ((HAL_GPIO_ReadPin(DIP3_GPIO_Port, DIP3_Pin) == GPIO_PIN_SET) ? (1u << 2) : 0u) |
         ((HAL_GPIO_ReadPin(DIP4_GPIO_Port, DIP4_Pin) == GPIO_PIN_SET) ? (1u << 3) : 0u);
 
-    /* Debounce por máquina de estados del botón de luz. */
-    update_button_fsm(shared_data);
+    /* Debounce por máquina de estados para botón ON (BOT1) y OFF (BUT2). */
+    if (update_button_fsm(&btn_on)) {
+        shared_data->ev_light_on_pressed = true;
+        shared_data->ev_sys_pressed = true; /* compatibilidad con logs existentes */
+        TEST_LOG("[ADC] EV_LIGHT_ON_PRESSED t=%lu ms\r\n", HAL_GetTick());
+    }
+    if (update_button_fsm(&btn_off)) {
+        shared_data->ev_light_off_pressed = true;
+        shared_data->ev_sys_pressed = true; /* compatibilidad con logs existentes */
+        TEST_LOG("[ADC] EV_LIGHT_OFF_PRESSED t=%lu ms\r\n", HAL_GetTick());
+    }
 
     /* Muestreo periódico del potenciómetro (ADC). */
     adc_tick++;
@@ -76,7 +98,8 @@ void task_adc_update(void *parameters)
 
         if (HAL_OK == adc_poll_read(&adc_value)) {
             shared_data->adc_raw = adc_value;
-            shared_data->fan_delay_us = (uint16_t)((adc_value * 7500u) / 4095u);
+            shared_data->fan_delay_us = (uint16_t)(FAN_DELAY_MIN_US +
+                                          ((adc_value * (FAN_DELAY_MAX_US - FAN_DELAY_MIN_US)) / 4095u));
 
             adc_percent = (uint8_t)((adc_value * 100u) / 4095u);
             shared_data->adc_percent = adc_percent;
@@ -95,10 +118,11 @@ void task_adc_update(void *parameters)
 
     if ((HAL_GetTick() - last_sensor_log_ms) >= 1000u) {
         last_sensor_log_ms = HAL_GetTick();
-        TEST_LOG("[ADC] heartbeat dip=0x%X adc=%u%% btn_ev=%u\r\n",
+        TEST_LOG("[ADC] heartbeat dip=0x%X adc=%u%% on_ev=%u off_ev=%u\r\n",
                  shared_data->dip_value,
                  shared_data->adc_percent,
-                 shared_data->ev_sys_pressed ? 1u : 0u);
+                 shared_data->ev_light_on_pressed ? 1u : 0u,
+                 shared_data->ev_light_off_pressed ? 1u : 0u);
     }
 }
 
@@ -118,60 +142,57 @@ static HAL_StatusTypeDef adc_poll_read(uint16_t *value)
     return res;
 }
 
-static void update_button_fsm(shared_data_type *shared_data)
+static bool update_button_fsm(button_ctx_t *ctx)
 {
-    static button_state_t state = ST_BTN_UNPRESSED;
-    static uint8_t tick = 0u;
-
-    bool btn_pressed = (HAL_GPIO_ReadPin(BOT1_GPIO_Port, BOT1_Pin) == BUTTON_PRESSED_LEVEL);
+    bool btn_pressed = (HAL_GPIO_ReadPin(ctx->port, ctx->pin) == BUTTON_PRESSED_LEVEL);
 
     /* FSM de debounce estilo Harel: UNPRESSED/FALLING/PRESSED/RISING. */
-    switch (state) {
+    switch (ctx->state) {
     case ST_BTN_UNPRESSED:
         if (btn_pressed) {
-            tick = BTN_DEBOUNCE_TICKS;
-            state = ST_BTN_FALLING;
+            ctx->tick = BTN_DEBOUNCE_TICKS;
+            ctx->state = ST_BTN_FALLING;
         }
         break;
 
     case ST_BTN_FALLING:
         if (btn_pressed) {
-            if (tick > 0u) {
-                tick--;
+            if (ctx->tick > 0u) {
+                ctx->tick--;
             } else {
-                /* Evento limpio de pulsación confirmada. */
-                shared_data->ev_sys_pressed = true;
-                TEST_LOG("[ADC] EV_SYS_PRESSED t=%lu ms\r\n", HAL_GetTick());
-                state = ST_BTN_PRESSED;
+                ctx->state = ST_BTN_PRESSED;
+                return true;
             }
         } else {
-            state = ST_BTN_UNPRESSED;
+            ctx->state = ST_BTN_UNPRESSED;
         }
         break;
 
     case ST_BTN_PRESSED:
         if (!btn_pressed) {
-            tick = BTN_DEBOUNCE_TICKS;
-            state = ST_BTN_RISING;
+            ctx->tick = BTN_DEBOUNCE_TICKS;
+            ctx->state = ST_BTN_RISING;
         }
         break;
 
     case ST_BTN_RISING:
         if (!btn_pressed) {
-            if (tick > 0u) {
-                tick--;
+            if (ctx->tick > 0u) {
+                ctx->tick--;
             } else {
-                state = ST_BTN_UNPRESSED;
+                ctx->state = ST_BTN_UNPRESSED;
             }
         } else {
-            state = ST_BTN_PRESSED;
+            ctx->state = ST_BTN_PRESSED;
         }
         break;
 
     default:
-        state = ST_BTN_UNPRESSED;
+        ctx->state = ST_BTN_UNPRESSED;
         break;
     }
+
+    return false;
 }
 
 /********************** end of file ******************************************/

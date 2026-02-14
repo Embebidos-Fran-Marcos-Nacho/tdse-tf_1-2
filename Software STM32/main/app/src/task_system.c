@@ -149,14 +149,27 @@ void task_system_update(void *parameters)
         }
 #endif
 
-        if (shared_data->ev_sys_pressed) {
+        if (shared_data->ev_light_on_pressed) {
+            shared_data->ev_light_on_pressed = false;
             shared_data->ev_sys_pressed = false;
-            shared_data->light_enabled = !shared_data->light_enabled;
+            shared_data->light_enabled = true;
             shared_data->ev_send_bt_update_light = true;
             shared_data->flash_save_light_request = true;
-            TEST_LOG("[SYS] toggle light=%u t=%lu ms\r\n",
-                     shared_data->light_enabled ? 1u : 0u,
-                     HAL_GetTick());
+            TEST_LOG("[SYS] light ON t=%lu ms\r\n", HAL_GetTick());
+        }
+
+        if (shared_data->ev_light_off_pressed) {
+            shared_data->ev_light_off_pressed = false;
+            shared_data->ev_sys_pressed = false;
+            shared_data->light_enabled = false;
+            shared_data->ev_send_bt_update_light = true;
+            shared_data->flash_save_light_request = true;
+            TEST_LOG("[SYS] light OFF t=%lu ms\r\n", HAL_GetTick());
+        }
+
+        if (shared_data->ev_send_bt_update_light) {
+            TEST_LOG("[SYS] light state=%u\r\n",
+                     shared_data->light_enabled ? 1u : 0u);
         }
 
         if (shared_data->ev_pote_changed) {

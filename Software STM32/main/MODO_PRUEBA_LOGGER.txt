@@ -129,7 +129,9 @@ Importante:
 4. Forzar ADC a 0V y 3.3V.
    - Debe cambiar adc% y delay del fan.
 5. Presionar botón de luz.
-   - Debe aparecer EV_SYS_PRESSED y toggle light.
+   - BOT1 (PC12) fuerza ON.
+   - BUT2 (PC9) fuerza OFF.
+   - Deben aparecer logs [SYS] light ON / OFF.
 6. Probar BT.
    - Debe aparecer [BT] TX en cambios de luz/pote.
 7. Probar estado Fault (LED/Buzzer):

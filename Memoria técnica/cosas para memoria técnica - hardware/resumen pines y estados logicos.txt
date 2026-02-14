@@ -24,9 +24,12 @@ Entradas de usuario/sensores
 PC12 (BOT1) - Boton principal (debounced)
 - activo en 0 (presionado)
 - suelto en 1
+- accion: enciende la luz (ON)
 
-PC9 (BUT2) - Boton auxiliar
-- definido como entrada (sin logica activa en firmware actual)
+PC9 (BUT2) - Boton auxiliar (debounced)
+- activo en 0 (presionado)
+- suelto en 1
+- accion: apaga la luz (OFF)
 
 PC2 (ZCD_INT) - Detector de cruce por cero (EXTI)
 - flanco ascendente = evento de cruce por cero

@@ -64,6 +64,8 @@ typedef struct {
 	bool led_enabled;
 
 	bool ev_sys_pressed;
+	bool ev_light_on_pressed;
+	bool ev_light_off_pressed;
 	bool ev_pote_changed;
 	bool ev_send_bt_update_light;
 	bool ev_send_bt_update_pote;

@@ -80,6 +80,8 @@ void app_init(void)
     shared_data.buzzer_enabled = false;
     shared_data.led_enabled = false;
     shared_data.ev_sys_pressed = false;
+    shared_data.ev_light_on_pressed = false;
+    shared_data.ev_light_off_pressed = false;
     shared_data.ev_pote_changed = false;
     shared_data.ev_send_bt_update_light = false;
     shared_data.ev_send_bt_update_pote = false;

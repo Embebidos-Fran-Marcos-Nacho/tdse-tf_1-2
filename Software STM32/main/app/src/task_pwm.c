@@ -21,7 +21,9 @@
 #endif
 
 /********************** macros and definitions *******************************/
-#define ZC_OFFSET_US        600ul
+#define TRIAC_FIXED_WAIT_US 500ul
+#define TRIAC_DELAY_MIN_US  0ul
+#define TRIAC_DELAY_MAX_US  7500ul
 #define TRIAC_PULSE_US      300ul
 #define WAIT_SPIN_US        200ul
 #define UART_TX_TIMEOUT_MS  20u
@@ -169,8 +171,14 @@ static bool time_reached(uint32_t now_us, uint32_t target_us)
 
 static void triac_schedule(triac_channel_t *channel, uint32_t zc_time_us, uint32_t delay_us)
 {
+    if (delay_us < TRIAC_DELAY_MIN_US) {
+        delay_us = TRIAC_DELAY_MIN_US;
+    } else if (delay_us > TRIAC_DELAY_MAX_US) {
+        delay_us = TRIAC_DELAY_MAX_US;
+    }
+
     /* Programa el instante exacto de disparo respecto al último ZC. */
-    channel->fire_at_us = zc_time_us + ZC_OFFSET_US + delay_us;
+    channel->fire_at_us = zc_time_us + TRIAC_FIXED_WAIT_US + delay_us;
     channel->armed = true;
     channel->pulsing = false;
     TEST_LOG("[PWM] %s schedule fire_at=%lu us (delay=%lu)\r\n",
