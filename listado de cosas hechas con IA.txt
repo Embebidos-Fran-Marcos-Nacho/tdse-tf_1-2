@@ -12,3 +12,6 @@ Francisco:
 Común:
 1. Memoria técnica - usandoe l modo agente del repositorio se armó la memoria técnica que cumpla con todos los requerimientos. 
 2. código del stm32
+3. Se armó con IA (Codex) la descripción del Pull Request para mergear la branch actual con main.
+4. Se usó IA para apoyar prácticamente toda la programación del software STM32 (estructura, módulos y ajustes finales), con validación y corrección manual del equipo.
+5. Estimación de costo de IA para este trabajo: bajo (aprox. USD 0 a USD 10 en total, según plan/herramienta usada).
