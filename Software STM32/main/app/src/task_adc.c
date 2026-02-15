@@ -18,6 +18,9 @@
 #define BTN_DEBOUNCE_TICKS       50u
 #define BUTTON_PRESSED_LEVEL     GPIO_PIN_RESET
 #define ADC_FULL_SCALE_COUNTS    4095u
+/* Ajuste manual del rango útil del potenciómetro (cuentas ADC crudas: 0..4095). */
+#define ADC_RAW_MIN_COUNTS       696u
+#define ADC_RAW_MAX_COUNTS       3194u
 
 typedef enum {
     ST_BTN_UNPRESSED = 0,
@@ -198,8 +201,21 @@ static bool update_button_fsm(button_ctx_t *ctx)
 
 static uint8_t adc_to_percent(uint16_t raw)
 {
-    uint32_t bounded_raw = (raw > ADC_FULL_SCALE_COUNTS) ? ADC_FULL_SCALE_COUNTS : raw;
-    return (uint8_t)((bounded_raw * 100u) / ADC_FULL_SCALE_COUNTS);
+    uint32_t min_counts = ADC_RAW_MIN_COUNTS;
+    uint32_t max_counts = ADC_RAW_MAX_COUNTS;
+    uint32_t bounded_raw = raw;
+
+    if (max_counts <= min_counts) {
+        return 0u;
+    }
+
+    if (bounded_raw < min_counts) {
+        bounded_raw = min_counts;
+    } else if (bounded_raw > max_counts) {
+        bounded_raw = max_counts;
+    }
+
+    return (uint8_t)(((bounded_raw - min_counts) * 100u) / (max_counts - min_counts));
 }
 
 /********************** end of file ******************************************/
