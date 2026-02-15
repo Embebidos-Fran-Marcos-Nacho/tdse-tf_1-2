@@ -359,10 +359,9 @@ static void bt_send_status(const shared_data_type *shared_data)
     int len = snprintf(tx,
                        sizeof(tx),
                        /* Formato simple para app móvil: JSON por línea. */
-                       "{\"adc\":%u,\"light\":%u,\"btCfg\":%u}\r\n",
+                       "{\"adc\":%u,\"light\":%u}\r\n",
                        (unsigned int)shared_data->adc_percent,
-                       (unsigned int)(shared_data->light_enabled ? 1u : 0u),
-                       (unsigned int)((shared_data->dip_value >> 3u) & 0x01u));
+                       (unsigned int)(shared_data->light_enabled ? 1u : 0u));
 
     if (len > 0) {
         (void)HAL_UART_Transmit(&huart1, (uint8_t *)tx, (uint16_t)strlen(tx), UART_TX_TIMEOUT_MS);
