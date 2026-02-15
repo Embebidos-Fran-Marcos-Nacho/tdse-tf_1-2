@@ -47,6 +47,7 @@ static bool flash_store_persistent_state(bool light_on,
 static uint16_t build_fan_delay_from_percent(uint8_t adc_percent);
 static void apply_dip_roles(shared_data_type *shared_data);
 static bool bt_probe_hc06_at(void);
+static bool dip_fault_forced(const shared_data_type *shared_data);
 
 /********************** internal data definition *****************************/
 const char *p_task_system = "Task System";
@@ -146,18 +147,16 @@ void task_system_update(void *parameters)
         /* Modo operativo normal: procesa eventos limpios de sensor. */
         apply_dip_roles(shared_data);
 
-#if APP_TEST_MODE
-        /* Prueba: DIP4 en 1 fuerza entrada a estado Fault. */
-        if ((shared_data->dip_value & (1u << 3)) != 0u) {
+        /* DIP4 en 1 fuerza entrada a estado Fault para demo/prueba. */
+        if (dip_fault_forced(shared_data)) {
             fault_elapsed_ms = 0u;
             fault_blink_ms = 0u;
             fault_led_on = true;
             shared_data->alarm_on = true;
-            TEST_LOG("[SYS] test: DIP4=1 -> force ST_FAULT\r\n");
+            TEST_LOG("[SYS] DIP4=1 -> force ST_FAULT\r\n");
             state = ST_FAULT;
             break;
         }
-#endif
 
         if (shared_data->ev_light_on_pressed) {
             shared_data->ev_light_on_pressed = false;
@@ -227,6 +226,20 @@ void task_system_update(void *parameters)
     case ST_FAULT:
         /* Modo seguro: corta potencia y parpadea alarma 1 Hz. */
         apply_dip_roles(shared_data);
+
+        /* Si DIP4 vuelve a 0, sale de Fault inmediatamente. */
+        if (!dip_fault_forced(shared_data)) {
+            shared_data->fault_mode = false;
+            shared_data->cut_off_voltage = false;
+            shared_data->alarm_on = false;
+            fault_elapsed_ms = 0u;
+            fault_blink_ms = 0u;
+            fault_led_on = false;
+            TEST_LOG("[SYS] DIP4=0 -> leave ST_FAULT\r\n");
+            state = ST_NORMAL;
+            break;
+        }
+
         shared_data->fault_mode = true;
         shared_data->cut_off_voltage = true;
 
@@ -368,11 +381,16 @@ static void apply_dip_roles(shared_data_type *shared_data)
      * DIP1 -> Bluetooth enable
      * DIP2 -> Buzzer enable
      * DIP3 -> LED enable
-     * DIP4 -> Reserved / currently unused
+     * DIP4 -> Force FAULT mode (handled by FSM)
      */
     shared_data->bt_enabled = ((shared_data->dip_value & (1u << 0)) != 0u);
     shared_data->buzzer_enabled = ((shared_data->dip_value & (1u << 1)) != 0u);
     shared_data->led_enabled = ((shared_data->dip_value & (1u << 2)) != 0u);
+}
+
+static bool dip_fault_forced(const shared_data_type *shared_data)
+{
+    return ((shared_data->dip_value & (1u << 3)) != 0u);
 }
 
 static bool bt_probe_hc06_at(void)

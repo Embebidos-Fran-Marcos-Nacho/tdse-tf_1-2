@@ -69,6 +69,9 @@ extern "C" {
  */
 #define APP_FLASH_STORE_STRICT      (1)
 
+/* Dimmer fijo para demo (sin control dinámico por ADC). */
+#define APP_DIMMER_FIXED_PERCENT     (50u)
+
 /********************** typedef **********************************************/
 
 typedef struct {
