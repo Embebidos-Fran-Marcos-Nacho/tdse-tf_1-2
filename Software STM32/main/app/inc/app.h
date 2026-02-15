@@ -56,7 +56,7 @@ extern "C" {
 /* Failsafe de cruce por cero:
  * si no llegan eventos ZCD por hardware, genera eventos cada 10 ms.
  */
-#define APP_ZC_FAILSAFE_ENABLE      (1)
+#define APP_ZC_FAILSAFE_ENABLE      (0)
 #define APP_ZC_FAILSAFE_TIMEOUT_MS  (30u)
 #define APP_ZC_FAILSAFE_PERIOD_MS   (10u)
 
