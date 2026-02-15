@@ -1,0 +1,3 @@
+Usar el README y el informe de seguimiento como fuentes del estilo de escritura, y usar los ejemplos de memoria técnica como fuente de todo lo que la memoria debe abarcar.
+Si se requieren fotos en alguna parte particular, dejar el comentario en el texto y se completará cada una a mano con el permalink de github, además que si hace falta una foto que no está la deberemos tomar. 
+tambien usar los comentarios de "cosas a mencionar sobre fabricación.txt" y "listado de cosas hechas con IA", deben mencionarse ambos en la memoria. el de fabricacion porque tiene sentido hablar del futuro, y el de cosas hechas con IA es a pedido del docente

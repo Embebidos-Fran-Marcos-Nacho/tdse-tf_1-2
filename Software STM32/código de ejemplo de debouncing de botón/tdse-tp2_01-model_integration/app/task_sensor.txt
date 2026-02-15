@@ -1,0 +1,11 @@
+Define los tiempos de debouncing. 
+Crea un array de tareas para hacer la lectura del botón. 
+
+Task_sensor_init lee todos los sensores y loguea su estado inicial
+
+Task_sensor_update corre el statechart con task_sensor_statechart();
+
+task_sensor_statechart() emula la statechart de la imagen pero sin el debouncing; tiene los cases para el rising y falling pero con un break. 
+
+ Task_sensor_attribute.h contiene la tabla de estados del botón entera. Tiene los enum de los estados y eventos del botón. Luego hay una estructura que contendría todos los datos del sensor (task_sensor_cfg_t). 
+Task_sensor_dta_t es una estructura de estructuras. 

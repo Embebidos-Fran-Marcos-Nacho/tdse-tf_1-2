@@ -8,3 +8,10 @@ Francisco:
 1. Se utilizó Gemini 3.0 como soporte técnico para el manejo de Itemis Create y para optimizar la eficiencia de los flujos del diagrama.
 2. Se empleó Claude para generar la estructura base del archivo STATECHART_EXPLANATION.md, la cual fue revisada y corregida manualmente por nosotros.
 4. Informe de avences genérico en base a los de ejemplo, luego se ajustó a nuestros avances y proyecto. 
+
+Común:
+1. Memoria técnica - usandoe l modo agente del repositorio se armó la memoria técnica que cumpla con todos los requerimientos. 
+2. código del stm32
+3. Se armó con IA (Codex) la descripción del Pull Request para mergear la branch actual con main.
+4. Se usó IA para apoyar prácticamente toda la programación del software STM32 (estructura, módulos y ajustes finales), con validación y corrección manual del equipo.
+5. Estimación de costo de IA para este trabajo: bajo (aprox. USD 0 a USD 10 en total, según plan/herramienta usada).
