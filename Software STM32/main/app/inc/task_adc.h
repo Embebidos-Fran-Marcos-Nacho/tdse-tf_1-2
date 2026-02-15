@@ -49,9 +49,6 @@ extern "C" {
 
 /********************** typedef **********************************************/
 
-/********************** external data declaration ****************************/
-extern uint32_t g_task_a_cnt;
-
 /********************** external functions declaration ***********************/
 void task_adc_init(void *parameters);
 void task_adc_update(void *parameters);

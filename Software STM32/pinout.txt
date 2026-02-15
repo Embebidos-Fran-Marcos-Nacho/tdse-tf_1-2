@@ -20,6 +20,8 @@ PB13  -> LED
 
 PA8   -> Buzzer (TIM1_CH1, salida por timer)
 
+PC8   -> Señal de prueba/debug 100 Hz (solo modo test)
+
 
 
 potenciómetro usa 3.3V

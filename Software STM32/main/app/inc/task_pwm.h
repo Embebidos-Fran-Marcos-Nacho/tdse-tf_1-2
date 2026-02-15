@@ -44,17 +44,17 @@ extern "C" {
 #endif
 
 /********************** inclusions *******************************************/
+#include "app.h"
 
 /********************** macros ***********************************************/
 
 /********************** typedef **********************************************/
 
-/********************** external data declaration ****************************/
-extern uint32_t g_task_b_cnt;
-
 /********************** external functions declaration ***********************/
 void task_pwm_init(void *parameters);
 void task_pwm_update(void *parameters);
+void task_pwm_on_zero_crossing_isr(const shared_data_type *shared_data);
+void task_pwm_timer_isr(void);
 
 /********************** End of CPP guard *************************************/
 #ifdef __cplusplus
