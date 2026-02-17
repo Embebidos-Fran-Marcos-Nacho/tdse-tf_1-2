@@ -199,6 +199,16 @@ A continuación se presentan los casos de uso siguiendo el formato del archivo e
 - Ajustar nivel PWM.  
 - La app puede mostrar el último valor de PWM restaurado automáticamente.
 
+## 4.3 Telemetría Bluetooth (STM32 -> App)
+
+- El firmware envía un frame binario fijo de **3 bytes** por USART1 (HC-06).
+- Formato del frame:
+  - Byte 0: `fault_mode` (`0` = normal, `1` = falla).
+  - Byte 1: `adc_percent` (valor `0..100`).
+  - Byte 2: `light_enabled` (`0` = luz apagada, `1` = luz encendida).
+- Los bytes se envían en ese orden, sin JSON y sin separadores de texto.
+- Para MIT App Inventor, se recomienda leer exactamente 3 bytes por muestra y parsearlos como enteros sin signo de 8 bits.
+
 ---
 
 # 5. Configuración (DIP switch)
