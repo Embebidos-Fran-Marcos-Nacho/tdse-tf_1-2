@@ -551,7 +551,26 @@ Donde:
 - El valor `0.685` es una cota conservadora construida con máximos individuales observados en ventanas distintas.
 - **Conclusión**: El sistema opera con margen temporal holgado en estado estable (sin overruns), incluso considerando una cota conservadora.
 
-## 4.8 Cumplimiento de requisitos
+## 4.8 Gestión de bajo consumo y justificación
+
+En esta iteración del TP no se implementó una estrategia dedicada de bajo consumo a nivel firmware (por ejemplo, entrada explícita a modos `Sleep/Stop` ni escalado dinámico de frecuencia), ya que el objetivo principal fue priorizar robustez funcional, seguridad eléctrica y cierre de integración.
+
+No obstante, se evaluó el impacto energético real del sistema y los resultados muestran que el consumo del conjunto está dominado principalmente por el hardware periférico y la plataforma de prototipado:
+- El salto de consumo al conectar el módulo Bluetooth es significativo (`64 mA` -> `104 mA`), aun sin transmitir.
+- La diferencia entre Bluetooth desactivado y transmitiendo es menor (`104 mA` -> `107 mA`).
+- En falla, el mayor consumo se explica por actuadores/indicadores (`buzzer + LED`), no por carga computacional del CPU.
+
+Esto es consistente con el factor de uso medido (`Uavg` alrededor de `14%` y cota conservadora `Uwcet = 0.685`): la carga temporal del microcontrolador no aparece como cuello de botella energético principal en el prototipo actual.
+
+En una versión orientada a producto (placa dedicada, sin sobrecarga de NUCLEO y periféricos de laboratorio), sí corresponde aplicar optimización sistemática de consumo:
+- reducir frecuencia de reloj del MCU al mínimo compatible con temporización y control de TRIAC;
+- incorporar política de idle de bajo consumo (entrada a `Sleep` entre eventos periódicos/interrupts);
+- migrar de HC-06 (Bluetooth clásico) a BLE para telemetría de bajo consumo;
+- revisar arquitectura de hardware auxiliar (drivers, conversores, etapas de acondicionamiento y protecciones) para eliminar consumo no esencial.
+
+Conclusión: para el alcance académico de esta entrega, el consumo observado está mayormente determinado por decisiones de hardware e instrumentación de prototipo. La optimización fina de bajo consumo queda planificada como mejora de próxima revisión de diseño.
+
+## 4.9 Cumplimiento de requisitos
 
 | ID | Requisito | Estado |
 | --- | --- | :---: |
@@ -574,7 +593,7 @@ Leyenda:
 - ✅ cumplido
 - 🟡 parcialmente cumplido / pendiente de cierre documental o medición final
 
-## 4.9 Comparación con sistemas similares
+## 4.10 Comparación con sistemas similares
 
 | Característica | Control IR/RF básico | Solución Wi-Fi comercial | Este proyecto |
 | --- | :---: | :---: | :---: |
@@ -584,7 +603,7 @@ Leyenda:
 | Persistencia local | Variable | Sí | Sí |
 | Costo de prototipo académico | N/A | Alto | Medio |
 
-## 4.10 Documentación del desarrollo realizado
+## 4.11 Documentación del desarrollo realizado
 
 Material técnico disponible en repositorio:
 - código fuente STM32 (`Software STM32/main`).
