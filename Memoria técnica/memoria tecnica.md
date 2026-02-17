@@ -448,28 +448,33 @@ Metodología aplicada:
 Procedimiento realizado:
 1. Desconectar USB/ST-Link para evitar doble alimentación.
 2. Conectar fuente externa a `5V` y `GND`.
-3. Intercalar amperímetro en serie en la línea de `5V`.
-4. Medir tensión de entrada en paralelo sobre `5V-GND`.
-5. Registrar datos en los modos:
+3. Ajustar la fuente para garantizar `5V` en el pin `5V` de la placa (compensando caídas en cables).
+4. Intercalar amperímetro en serie en la línea de `5V`.
+5. Medir tensión de entrada en paralelo sobre `5V-GND`.
+6. Registrar datos en los modos:
    - inicialización.
-   - normal sin Bluetooth.
-   - normal con Bluetooth.
-   - fault con alarma activa.
-6. Repetir al menos 3 veces por modo y promediar.
+   - normal sin módulo Bluetooth conectado.
+   - normal con módulo Bluetooth conectado pero desactivado.
+   - normal con Bluetooth activo enviando datos.
+   - fault con alarma activa (buzzer + LED).
+7. Debido a que el consumo oscila rápidamente en el tiempo, se tomó como referencia el valor pico observado en cada modo.
 
 Alcance de la medición:
 - Esta medición representa el consumo total a `5V` del conjunto montado.
 - El riel de `3.3V` queda incluido indirectamente, ya que se genera desde `5V` mediante el regulador de la placa.
 
-| Modo | I(5V) [mA] | I(3.3V) [mA] | Observaciones |
+| Modo | I pico @5V [mA] | P pico @5V [W] | Observaciones |
 | --- | ---: | ---: | --- |
-| Inicialización | TODO | TODO | TODO |
-| Normal sin BT | TODO | TODO | TODO |
-| Normal con BT | TODO | TODO | TODO |
-| Fault (alarma activa) | TODO | TODO | TODO |
+| Normal sin módulo BT (desconectado) | 64 | 0.320 | Escenario de menor consumo; representa una forma válida de uso sin telemetría Bluetooth. |
+| Normal con módulo BT conectado y desactivado | 104 | 0.520 | Aumento de consumo por presencia/alimentación del módulo Bluetooth. |
+| Normal con BT activo enviando datos | 107 | 0.535 | Incremento leve respecto al modo BT desactivado. |
+| Fault (buzzer + LED activos) | 145 | 0.725 | Peor caso medido en operación. |
 
 Análisis:
-- <!-- TODO: completar interpretación de consumo por modo y por periférico -->
+- Potencia calculada como `P = V * I`, usando `V = 5V` y corriente pico medida en cada modo.
+- El peor caso medido fue `145 mA` a `5V`, equivalente a `0.725 W`.
+- El sistema se mantiene por debajo de `1 W`, por lo que puede alimentarse sin inconvenientes con fuentes comerciales 220VAC->5V de baja potencia.
+- La diferencia entre BT desactivado y BT transmitiendo (`104 mA` -> `107 mA`) es baja, consistente con carga adicional moderada por comunicación.
 
 ## 4.5 Console and Build Analyzer
 
