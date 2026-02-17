@@ -475,7 +475,7 @@ Análisis:
 
 <img width="1198" height="248" alt="imagen" src="https://github.com/user-attachments/assets/9d20e74c-6718-4841-81af-730a0a252f69" />
 
-
+(Dice 10.31% y 16.11%)
 
 ## 4.6 Medición y análisis de WCET por tarea
 
