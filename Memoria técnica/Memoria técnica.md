@@ -10,7 +10,7 @@ Memoria del Trabajo Final:
 - Ignacio Ezequiel Cavicchioli - Legajo 109428
 - Francisco Javier Moya - Legajo 109899
 
-*Trabajo realizado durante el verano del 2025.*
+*Trabajo realizado en Ciudad Autónoma de Buenos Aires durante el verano del 2025.*
 
 ---
 
@@ -36,7 +36,6 @@ Esta memoria documenta los requisitos, el diseño de hardware y firmware, los en
 | 1.0 | Reescritura integral de la memoria, alineada a pautas de entrega final | 17/02/2026 |
 | 1.1 | Completar con mediciones de consumo, WCET y factor de uso CPU | 17/02/2026 |
 | 1.2 | Completar con permalinks definitivos de imágenes y link de video | 17/02/2026 |
-| 1.2 | Entrega | 17/02/2026 |
 
 ---
 
