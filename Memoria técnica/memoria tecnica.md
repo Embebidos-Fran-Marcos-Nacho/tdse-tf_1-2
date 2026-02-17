@@ -1,629 +1,638 @@
 **UNIVERSIDAD DE BUENOS AIRES**  
 **Facultad de Ingeniería**  
-**86.65 - Sistemas Embebidos**
+**TA134 - Taller de Sistemas Embebidos**
 
 Memoria del Trabajo Final:
 
-***Dimmer + Switch* (Ventilador y Luces.)**
+***Dimmer + Switch* (Ventilador y Luces 220 VAC)**
 
 **Autores**
-- Ignacio Ezequiel Cavicchioli — Legajo 109428
-- Francisco Javier Moya — Legajo 109899
+- Ignacio Ezequiel Cavicchioli - Legajo 109428
+- Francisco Javier Moya - Legajo 109899
 
-*Este trabajo fue realizado en la Ciudad Autónoma de Buenos Aires,*  
-*entre agosto de 2025 y febrero de 2026.*
-
----
-
-## **RESUMEN**
-
-Se desarrolló un sistema embebido modular para control de ventilador y luces de línea (220 VAC), integrando:
-- Mando local mediante botones y potenciómetro (interfaz de pared).
-- Comunicación inalámbrica por Bluetooth HC-06 para telemetría y configuración.
-- Detección de cruce por cero y control de potencia mediante TRIACs.
-- Almacenamiento persistente en flash de configuración y estados.
-
-El sistema se implementó en una placa NUCLEO-F103RB empleando una arquitectura modular con máquinas de estados finitos, permitiendo control de velocidad del ventilador y encendido/apagado de luces con sincronización a la red AC de 50 Hz. Se aplicaron conceptos de programación embebida, control de potencia, comunicación serie y persistencia de datos.
-
-En esta memoria se detalla el análisis de necesidad, diseño de hardware y firmware, arquitectura modular, decisiones de implementación, ensayos de validación y lecciones aprendidas para futuras iteraciones.
-
-**ABSTRACT**
-
-An embedded system for controlling AC line fan and lights (220V) was developed, integrating:
-- Local control via buttons and potentiometer.
-- Wireless communication through Bluetooth HC-06 for telemetry and configuration.
-- Zero-crossing detection and power control using TRIACs.
-- Persistent flash memory storage for configuration and states.
-
-The system was implemented on a NUCLEO-F103RB board using a modular architecture with finite state machines, allowing fan speed control and light on/off with synchronization to the 50 Hz AC mains. Concepts of embedded programming, power control, serial communication and data persistence were applied.
-
-This report details the needs analysis, hardware and firmware design, modular architecture, implementation decisions, validation tests and lessons learned for future iterations.
+*Trabajo realizado en Ciudad Autónoma de Buenos Aires entre agosto de 2025 y febrero de 2026.*
 
 ---
 
-## **Registro de versiones**
+## Resumen
+
+Se desarrolló un sistema embebido para control de luz y ventilador de red (220 VAC), con:
+- control local por pulsadores y potenciómetro,
+- telemetría por Bluetooth con módulo HC-06,
+- sincronización por cruce por cero,
+- almacenamiento persistente en flash interna del STM32.
+
+El hardware se implementó en dos placas (shield de control y placa de potencia/dimmer), evitando protoboard y cableado Dupont para la integración final. El firmware se implementó en una NUCLEO-F103RB con arquitectura modular de tareas y máquina de estados para modos de inicialización, operación normal y falla segura.
+
+Esta memoria documenta los requisitos, el diseño de hardware y firmware, los ensayos realizados y el estado final de cumplimiento. También deja marcados los pendientes obligatorios de la entrega final (medición de consumo, WCET y factor de uso de CPU) para completar con resultados instrumentales.
+
+---
+
+## Registro de versiones
 
 | Revisión | Cambios realizados | Fecha |
-| :---: | ----- | ----- |
-| 1.0 | Creación del documento y reestructuración con formato profesional | 17/02/2026 |
-| 1.1 | Integración de requisitos y casos de uso | (por completar) |
-| 1.2 | Adición de tablas de hardware y firmware | (por completar) |
+| :---: | --- | :---: |
+| 1.0 | Reescritura integral de la memoria, alineada a pautas de entrega final | 17/02/2026 |
+| 1.1 | Completar con mediciones de consumo, WCET y factor de uso CPU | TODO |
+| 1.2 | Completar con permalinks definitivos de imágenes y link de video | TODO |
 
 ---
 
-# **Índice General**
+# Índice General
 
-- [**Registro de versiones**](#registro-de-versiones)
-- [**CAPÍTULO 1: Introducción general**](#capítulo-1--introducción-general)
-  - [1.1 Análisis de necesidad y objetivo](#11-análisis-de-necesidad-y-objetivo)
-  - [1.2 Productos similares en el mercado](#12-productos-similares-en-el-mercado)
-  - [1.3 Justificación y alcance del proyecto](#13-justificación-y-alcance-del-proyecto)
-- [**CAPÍTULO 2: Introducción específica**](#capítulo-2--introducción-específica)
-  - [2.1 Requisitos](#21-requisitos)
-  - [2.2 Casos de uso](#22-casos-de-uso)
-  - [2.3 Descripción de módulos](#23-descripción-de-módulos)
-- [**CAPÍTULO 3: Diseño e implementación**](#capítulo-3--diseño-e-implementación)
-  - [3.1 Arquitectura general del sistema](#31-arquitectura-general-del-sistema)
-  - [3.2 Diseño del hardware](#32-diseño-del-hardware)
-  - [3.3 Firmware y arquitectura software](#33-firmware-y-arquitectura-software)
-- [**CAPÍTULO 4: Ensayos y resultados**](#capítulo-4--ensayos-y-resultados)
-  - [4.1 Pruebas funcionales](#41-pruebas-funcionales)
-  - [4.2 Cumplimiento de requisitos](#42-cumplimiento-de-requisitos)
-  - [4.3 Validación de integración](#43-validación-de-integración)
-- [**CAPÍTULO 5: Conclusiones**](#capítulo-5--conclusiones)
-  - [5.1 Resultados obtenidos](#51-resultados-obtenidos)
-  - [5.2 Próximos pasos y mejoras](#52-próximos-pasos-y-mejoras)
-- [**Uso de herramientas de IA**](#uso-de-herramientas-de-ia)
-- [**Bibliografía y referencias**](#bibliografía-y-referencias)
+- [Capítulo 1: Introducción general](#capítulo-1-introducción-general)
+- [Capítulo 2: Introducción específica](#capítulo-2-introducción-específica)
+- [Capítulo 3: Diseño e implementación](#capítulo-3-diseño-e-implementación)
+- [Capítulo 4: Ensayos y resultados](#capítulo-4-ensayos-y-resultados)
+- [Capítulo 5: Conclusiones](#capítulo-5-conclusiones)
+- [Uso de herramientas de IA](#uso-de-herramientas-de-ia)
+- [Bibliografía y referencias](#bibliografía-y-referencias)
 
 ---
 
-# **CAPÍTULO 1**
+# Capítulo 1: Introducción general
 
-# **Introducción general**
+## 1.1 Análisis de necesidad y objetivo
 
-## **1.1 Análisis de necesidad y objetivo**
+El proyecto busca resolver una necesidad concreta de control de cargas de 220 VAC (luz y ventilador) desde una interfaz de pared, agregando telemetría inalámbrica sin depender de red Wi-Fi doméstica.
 
-La automatización de sistemas de climatización y iluminación en ambientes domésticos e industriales es una necesidad creciente impulsada por razones de comodidad, eficiencia energética y seguridad. En la actualidad existen soluciones comerciales que abordan estos problemas, pero muchas presentan limitaciones en términos de:
+Objetivo principal:
+- implementar un prototipo funcional y seguro de control de luz/ventilador,
+- con arquitectura modular en STM32,
+- con persistencia de estado en flash,
+- y con trazabilidad por logs para validación.
 
-- Flexibilidad y personalización.
-- Costo de implementación.
-- Complejidad de integración en infraestructuras existentes.
-- Disponibilidad local de componentes.
+## 1.2 Estado del arte y productos comparables
 
-El objetivo del presente trabajo fue diseñar e implementar un **módulo de control embebido modular** para operar ventiladores y luces de línea (220 VAC) desde dos interfaces:
+Se analizaron dos tipos de soluciones comerciales:
 
-1. **Interfaz local de pared:** Mediante botones de control directo y un potenciómetro para ajuste de velocidad.
-2. **Interfaz remota inalámbrica:** Por Bluetooth HC-06, permitiendo telemetría y configuración desde un dispositivo móvil.
+1. Controles remotos IR/RF locales:
+- bajo costo y disponibilidad alta,
+- poca capacidad de integración y configuración.
 
-El sistema debía garantizar:
-- Seguridad eléctrica en el manejo de 220 VAC.
-- Sincronización precisa con la red AC mediante detección de cruce por cero (ZCD).
-- Arquitectura modular y escalable.
-- Persistencia de configuración y estados en memoria flash.
-- Trazabilidad mediante logs para depuración y validación.
+2. Soluciones domóticas Wi-Fi:
+- mayor funcionalidad global,
+- costo y complejidad de integración superiores.
 
----
+El enfoque elegido priorizó simplicidad de integración académica y control de alcance: interfaz local + Bluetooth HC-06.
 
-## **1.2 Productos similares en el mercado**
+## 1.3 Justificación del enfoque técnico
 
-Se realizó un análisis del mercado para identificar soluciones existentes que resuelven problemas similares:
+Se eligió Bluetooth clásico (HC-06) por:
+- menor complejidad de despliegue que Wi-Fi,
+- facilidad de integración con la app realizada en MIT App Inventor,
+- disponibilidad de herramientas de depuración por UART.
 
-### **1.2.1 Ventilador con control remoto IR/RF**
+Se mantuvo un alcance acotado para cumplir entrega:
+- la app móvil recibe telemetría binaria de 2 bytes,
+- el control principal de actuadores se mantiene en interfaz local.
 
-Estos dispositivos son comunes en el mercado local. Características:
-- **Disponibilidad:** Alta.
-- **Precio:** Bajo (USD 20–40).
-- **Limitaciones:**
-  - Solo control remoto; no hay interfaz fija en pared.
-  - Sin conectividad móvil.
-  - No almacena configuraciones ni estados previos.
-  - Generalmente 3 velocidades predefinidas, sin control continuo.
-  - No permite integración con otros sistemas.
+## 1.4 Alcance y limitaciones
 
-### **1.2.2 Controladores inteligentes con Wi-Fi (Mercado internacional)**
+Alcance implementado:
+- encendido/apagado de luz por botones físicos,
+- ajuste de velocidad del ventilador por potenciómetro,
+- envío de telemetría por HC-06 (2 bytes),
+- estado de falla segura y persistencia básica en flash.
 
-Productos disponibles en plataformas como Amazon. Características:
-- **Disponibilidad local:** Limitada, requiere importación.
-- **Precio:** Alto (USD 80–250 sin envío).
-- **Ventajas:**
-  - Conectividad Wi-Fi y aplicación móvil.
-  - Control remoto desde cualquier lugar.
-  - Integración con ecosistemas smart home.
-- **Limitaciones:**
-  - Requiere infraestructura de red doméstica.
-  - Mayor complejidad de configuración.
-  - Riesgos potenciales de seguridad en la red.
-  - No permiten personalización de firmware.
-
-### **1.2.3 Comparación con el proyecto desarrollado**
-
-| Característica | Control IR/RF local | Wi-Fi comercial | Este proyecto |
-| :--- | :---: | :---: | :---: |
-| Control desde pared (botones) | No | No | **Sí** |
-| Control remoto inalámbrico | Sí (IR/RF) | Sí (Wi-Fi) | **Sí (BLE)** |
-| Conectividad móvil | No | Sí | **Sí** |
-| Dimming continuo | No | Sí | **Sí** |
-| Almacenamiento de estado | No | Sí | **Sí** |
-| Configurabilidad de firmware | No | No | **Sí** |
-| Precio estimado (USD) | 30 | 150 | ~80 (componentes) |
-| Disponibilidad local | Alta | Baja | N/A (prototipo) |
+Fuera de alcance actual:
+- control remoto completo de actuadores desde app,
+- caracterización final de dimming con instrumental para todo el rango de cargas,
+- cierre de métricas de consumo/WCET/U (secciones preparadas con TODO).
 
 ---
 
-## **1.3 Justificación y alcance del proyecto**
+# Capítulo 2: Introducción específica
 
-### **1.3.1 Justificación técnica**
-
-La elección de **Bluetooth Low Energy (BLE)** sobre Wi-Fi se fundamentó en:
-
-1. **Simplicidad:** BLE no requiere configuración de red doméstica ni credenciales complejas.
-2. **Seguridad:** Reduce riesgos de exposición de infraestructura doméstica crítica.
-3. **Consumo energético:** BLE es más eficiente para comunicaciones esporádicas.
-4. **Compatibilidad de desarrollo:** MIT App Inventor Companion soporta BLE de forma nativa.
-5. **Tiempo de implementación:** Reduce complejidad respecto a soluciones Wi-Fi.
-
-### **1.3.2 Alcance funcional**
-
-El proyecto implementa:
-
-**Funcionalidades implementadas (🟢):**
-- Control de luz ON/OFF mediante botón físico.
-- Control continuo de velocidad del ventilador mediante potenciómetro.
-- Telemetría bidireccional por Bluetooth (JSON sobre UART transparente).
-- Almacenamiento en flash de últimas configuraciones.
-- Detección de error y modo de falla segura.
-- Auto-calibración de entrada analógica (ADC).
-- LEDs indicadores de estado.
-- Buzzer para retroalimentación auditiva.
-
-**Funcionalidades en validación (🟡):**
-- Optimización final del dimming bajo diferentes cargas.
-- Validación instrumental del circuito de ZCD.
-- Testing del buzzer en hardware.
-
-**Funcionalidades fuera de alcance (🔴):**
-- Control bidireccional completo desde móvil (limitado a telemetría por restricciones de tiempo).
-- Integración con otros protocolos o ecosistemas smart home.
-
----
-
-
-
-Estado funcional del firmware principal (`Software STM32/main`):
-- Lectura de botones con debounce por máquina de estados.
-- Lectura periódica de ADC (potenciómetro).
-- Auto-calibración min/max de ADC para escalar 0-100% al rango real del potenciómetro.
-- Guardado en flash de:
-  - último estado de luz.
-  - parámetros de calibración ADC.
-- Control de TRIAC por timer (TIM2) sincronizado a cruce por cero (EXTI en PC2).
-- Modo de falla (`ST_FAULT`) con corte de potencia.
-- Logs por USART2 (ST-Link VCP) y telemetría BT por USART1.
-
-Pendientes técnicos identificados:
-- Verificación final de buzzer en hardware (medición en pin con osciloscopio).
-- Ajuste fino y validación de dimming en todas las condiciones de carga real.
-
-
-# **CAPÍTULO 2**
-
-# **Introducción específica**
-
-## **2.1 Requisitos**
-
-A partir del análisis de necesidad y los objetivos definidos, se establecieron los requisitos funcionales y no funcionales que guiaron el diseño:
-
-**Tabla 2.1:** Requisitos del sistema.
+## 2.1 Requisitos
 
 | Grupo | ID | Descripción |
-| ----- | ----- | ----- |
-| **Control local** | 1.1 | El sistema permitirá encender y apagar luces mediante un botón físico (NO/OFF). |
-|  | 1.2 | El sistema permitirá ajustar la velocidad del ventilador (0–100%) mediante un potenciómetro. |
-|  | 1.3 | El sistema proporcionará realimentación visual (LED) e indicadores sonoros (buzzer) para operaciones. |
-| **Comunicación BLE** | 2.1 | El sistema transmitirá telemetría (estado de luz, velocidad del ventilador, temperatura si aplica) por BLE a 57600 baudios. |
-|  | 2.2 | El sistema permitirá configuración remota de parámetros vía Bluetooth (DIP switches, calibración). |
-|  | 2.3 | La comunicación será transparente (modo DATA del HC-06) sin encriptación adicional. |
-| **Sincronización AC** | 3.1 | El sistema sincronizará disparo de TRIACs mediante detección de cruce por cero (ZCD) en PC2 (EXTI). |
-|  | 3.2 | El control de potencia respetará la frecuencia de la red AC (50 Hz). |
-|  | 3.3 | El dimming permitirá 256 niveles de potencia (0–100%). |
-| **Persistencia** | 4.1 | El sistema almacenará en flash el último estado de luz (ON/OFF). |
-|  | 4.2 | El sistema almacenará calibración ADC (valores mín/máx) en flash. |
-|  | 4.3 | Al encender, el sistema restaurará automáticamente la última configuración guardada. |
-| **Hardware** | 5.1 | El microcontrolador será NUCLEO-F103RB (STM32F103RB). |
-|  | 5.2 | El módulo Bluetooth será HC-06 (velocidad: 57600 baud, nombre: "Dimmer_BL", PIN: 1111). |
-|  | 5.3 | La etapa de potencia utilizará TRIACs (2 canales: luz PB4, ventilador PB3). |
-|  | 5.4 | El circuito de ZCD operará en PC2 con sincronización a ambos semiciclos. |
-| **Seguridad** | 6.1 | El sistema incluirá modo de falla (FAULT) que desactiva ambos TRIACs. |
-|  | 6.2 | El sistema protegerá contra sobrecarga mediante varistores y snubbers. |
-|  | 6.3 | Toda entrada de 220 VAC estará aislada galvánicamente de lógica de control. |
-| **Documentación** | 7.1 | Se proporcionará código fuente documentado, esquemáticos y manual de usuario. |
-|  | 7.2 | Se registrará uso de herramientas de IA según requerimiento docente. |
+| --- | --- | --- |
+| Control local | 1.1 | Encender luz mediante botón físico dedicado (PC12). |
+|  | 1.2 | Apagar luz mediante botón físico dedicado (PC9). |
+|  | 1.3 | Ajustar ventilador con potenciómetro (PA0, ADC). |
+| Bluetooth | 2.1 | Habilitar/deshabilitar BT por DIP1 (PC0). |
+|  | 2.2 | Enviar telemetría por HC-06 vía USART1. |
+|  | 2.3 | Formato de telemetría fijo de 2 bytes: `adc_percent`, `light_enabled`. |
+| Señalización | 3.1 | LED habilitable por DIP3 (PB0) para estado visual. |
+|  | 3.2 | Buzzer habilitable por DIP2 (PC1) para estado de falla. |
+| Persistencia | 4.1 | Guardar estado de luz en flash interna. |
+|  | 4.2 | Guardar calibración ADC en flash interna. |
+| Seguridad | 5.1 | Modo `FAULT` con corte de salidas de potencia. |
+|  | 5.2 | Aislamiento entre dominio de control y dominio de potencia. |
+| Documentación | 6.1 | Documentar esquema eléctrico, cableado y comportamiento. |
+|  | 6.2 | Incluir medición de consumo, WCET y factor de uso de CPU. |
 
----
+## 2.2 Casos de uso
 
-## **2.2 Casos de uso**
-
-A continuación se presentan los principales escenarios de operación del sistema:
-
-### **Casos de uso 1: Control de luces desde botón local**
+### Caso de uso 1: Control local de luz
 
 | Elemento | Definición |
-| ----- | ----- |
-| **Disparador** | El usuario presiona botón ON (PC12) o botón OFF (PC9). |
-| **Precondiciones** | El sistema está encendido. El TRIAC de luz (PB4) está funcional. |
-| **Flujo básico** | El microprocesador registra pulsación tras debounce (estado máquina). Se envía pulso a compuerta del TRIAC. Luz se enciende/apaga. LED (PB13) parpadea confirmando. Se almacena estado en flash. |
-| **Flujos alternativos** | a) Si debounce falla: se ignora rebote de contacto. b) Si TRIAC está en falla: se activa alarma (FAULT). |
+| --- | --- |
+| Disparador | Pulsación de botón ON (`PC12`) o OFF (`PC9`). |
+| Precondiciones | Sistema en modo normal, hardware operativo. |
+| Flujo básico | Debounce de botón -> evento -> actualización de estado de luz -> actualización de salida TRIAC -> solicitud de guardado en flash -> telemetría BT de cambio. |
+| Alternativas | Si falla persistencia y modo estricto activo: transición a `FAULT`. |
 
-### **Casos de uso 2: Control de velocidad del ventilador**
-
-| Elemento | Definición |
-| ----- | ----- |
-| **Disparador** | Usuario gira potenciómetro (PA0). |
-| **Precondiciones** | Sistema encendido. ADC calibrado. TRIAC ventilador (PB3) funcional. |
-| **Flujo básico** | ADC lee voltaje (0–3.3V). Se mapea a 0–100% según calibración. Timer TIM2 modula ancho de pulso de gate del TRIAC. Ventilador acelera/desacelera. Veloc. actual se transmite por BLE cada 100ms. |
-| **Flujos alternativos** | a) Si calibración no válida: se recalibra en tiempo real. b) Si TRIAC falla: se corta potencia y se activa alarma. |
-
-### **Casos de uso 3: Telemetría y monitoreo por BLE**
+### Caso de uso 2: Ajuste local de ventilador
 
 | Elemento | Definición |
-| ----- | ----- |
-| **Disparador** | Aplicación móvil compila datos. Sistema transmite cada 500ms. |
-| **Precondiciones** | HC-06 emparejado con dispositivo móvil. Conexión BLE activa. |
-| **Flujo básico** | Microcontrolador carga estado (luz ON/OFF, velocidad ventilador %). Genera JSON. Envía por USART1 al HC-06. Módulo transmite por BLE. App móvil recibe y visualiza. |
-| **Flujos alternativos** | a) Si conexión BLE pierde: se reintenta cada 2s. b) Si buffer UART llena: se descartan mensajes de baja prioridad. |
+| --- | --- |
+| Disparador | Cambio en potenciómetro (`PA0`). |
+| Precondiciones | ADC operativo, sistema en modo normal. |
+| Flujo básico | Muestreo ADC -> mapeo a porcentaje -> cálculo de `fan_delay_us` -> actualización de temporización de disparo TRIAC. |
+| Alternativas | Si potenciómetro fuera de rango calibrado: saturación a límites definidos. |
 
-### **Casos de uso 4: Calibración de ADC remota**
+### Caso de uso 3: Telemetría Bluetooth hacia app
 
 | Elemento | Definición |
-| ----- | ----- |
-| **Disparador** | Usuario envía comando desde app móvil: "CALIBRATE". |
-| **Precondiciones** | Conexión BLE activa. |
-| **Flujo básico** | Sistema entra en modo calibración. Solicita girar potenciómetro de mín a máx. Lee valores extremos. Almacena en flash. Retorna al modo normal. |
-| **Flujos alternativos** | a) Si timeout en calibración: se restauran valores anteriores. |
+| --- | --- |
+| Disparador | Cambio de estado de luz o de porcentaje del potenciómetro. |
+| Precondiciones | BT habilitado por DIP1, módulo HC-06 conectado. |
+| Flujo básico | Firmware arma trama binaria de 2 bytes y transmite por USART1. |
+| Alternativas | Si BT deshabilitado, no se transmite. |
+
+### Caso de uso 4: Recuperación tras falla
+
+| Elemento | Definición |
+| --- | --- |
+| Disparador | Error de inicialización o forzado de `FAULT` por DIP4 (`PA4`). |
+| Precondiciones | Sistema energizado. |
+| Flujo básico | Corte de salidas de potencia, alarma visual/sonora según DIP, reintento de inicialización luego de timeout. |
+| Alternativas | Si DIP4 vuelve a 0, salida de `FAULT` y retorno a `NORMAL`. |
+
+## 2.3 Descripción de módulos principales
+
+### 2.3.1 Módulo de control (NUCLEO-F103RB)
+- Ejecuta scheduler cooperativo con tick de 1 ms.
+- Corre tres tareas: `task_adc`, `task_system`, `task_pwm`.
+
+### 2.3.2 Módulo de potencia (dimmer)
+- Dos canales de disparo TRIAC (luz y ventilador).
+- Optoacople de disparo y red de protección.
+
+### 2.3.3 Módulo de detección de cruce por cero (ZCD)
+- Entrada AC aislada y acondicionada a señal digital.
+- Entrada de interrupción por `PC2` (EXTI).
+
+### 2.3.4 Módulo Bluetooth (HC-06)
+- Interfaz UART transparente en `PA9/PA10`.
+- Configuración AT realizada con interfaz auxiliar USB-UART (Arduino).
+
+### 2.3.5 Aplicación móvil (MIT App Inventor)
+- Lectura de trama binaria de 2 bytes.
+- Visualización del porcentaje y estado de luz.
 
 ---
 
-## **2.3 Descripción de módulos**
+# Capítulo 3: Diseño e implementación
 
-### **2.3.1 Módulo Bluetooth HC-06**
+## 3.1 Arquitectura general
 
-El HC-06 es un módulo UART-a-BLE que convierte comunicación serie en radiofrecuencia Bluetooth. Características:
-- **Interfaz:** UART serie (RX, TX, GND, VCC).
-- **Velocidad:** 57600 baud (configurable vía comandos AT).
-- **Alcance:** ~10 metros línea directa.
-- **Potencia:** 100 mW.
-- **Modo:** DATA (transparente) una vez emparejado; AT durante búsqueda.
+El sistema se organiza en dos dominios:
+- dominio lógico de 3.3 V (STM32 + entradas + comunicaciones),
+- dominio de potencia AC (TRIAC + ZCD + protecciones).
 
-**Configuración realizada:**
-- Nombre: `Dimmer_BL`
-- PIN emparejamiento: `1111`
-- Baudrate: 57600
-- Comandos AT enviados sin CR/LF, con retardos >650 ms entre comandos.
+**Figura 3.1 - Diagrama en bloques general**  
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/imgs/diagrama en bloques.jpg` -->
 
-### **2.3.2 Detector de cruce por cero (ZCD)**
+## 3.2 Diseño de hardware
 
-Componente crítico que sincroniza los pulsos de disparo del TRIAC con los cruces por cero de la onda AC. Diseño:
-- **Entrada:** 220 VAC primaria (aislada).
-- **Salida:** Pulso digital en PC2 (EXTI Rising Edge).
-- **Topología:** Rectificador + comparador + optoacoplador (aislamiento).
-- **Retardo:** ~500 μs desde flanco ascendente (medido en simulación y prototipo).
+### 3.2.1 Criterio de interconexión y montaje
 
-### **2.3.3 Etapa de potencia con TRIAC**
+Se trabajó con placas y conexiones soldadas para la integración funcional final (sin protoboard ni cables Dupont en el montaje objetivo), en línea con las pautas de entrega.
 
-Controla la alimentación de luz y ventilador. 
+Se usaron dos placas:
+- placa shield para interfaz y conexión con NUCLEO,
+- placa dimmer para potencia, ZCD y protecciones.
 
-| Parámetro | Luz | Ventilador |
-| :--- | :---: | :---: |
-| **Pin de gate** | PB4 (TIM2_CH1) | PB3 (TIM2_CH2) |
-| **Tipo TRIAC** | BT136–600 | BT136–600 |
-| **Carga típica** | 500 W (incandescente) | 200 W (motor AC) |
-| **Snubber** | Sí (R-C) | Sí (R-C) |
-| **Varistor** | MOV 275 V | MOV 275 V |
+### 3.2.2 Etapa ZCD (detección de cruce por cero)
+
+La etapa de ZCD fue validada progresivamente en banco antes de integrar potencia. Se observó que:
+- la salida detectada requiere compensación temporal aproximada de 500 us para ubicar el cruce real,
+- las simulaciones resultaron consistentes con la tendencia medida.
+
+**Figura 3.2 - Banco inicial de pruebas ZCD**  
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/ZCD/banco de trabajo inicial.jpeg` -->
+
+**Figura 3.3 - Mediciones de pulsos ZCD (osciloscopio)**  
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/ZCD/mediciones pulsos.jpeg` -->
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/ZCD/mediciones pulsos 1.jpeg` -->
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/ZCD/mediciones pulsos 2.jpeg` -->
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/ZCD/mediciones pulsos 4.jpeg` -->
+
+### 3.2.3 Etapa de potencia y protecciones
+
+Según esquemático principal (`Hardware/placa dimmer/dimmer.kicad_sch`), el canal de potencia integra:
+- TRIAC de potencia (`BTA06-600C`),
+- optoacoplador de disparo (`MOC3023M`),
+- elementos de protección (varistor, fusible, red RC/snubber).
+
+Notas de fabricación y prueba:
+- primero se validó ZCD, luego se integraron TRIACs,
+- las primeras pruebas integradas se hicieron en 24 VAC.
+
+**Figura 3.4 - Ensayo de salida de optoacoplador**  
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/ZCD/salida real del opto.jpeg` -->
+
+**Figura 3.5 - Simulación de ZCD y salida de opto**  
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/ZCD/simu ZCD proper.jpeg` -->
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/ZCD/simu salida del optoacoplador.jpeg` -->
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/ZCD/simu completa de salida, tension y correiente por diodo .jpeg` -->
+
+### 3.2.4 Fabricación de placas
+
+Se documentó el proceso de fabricación con transferencia y ataque químico:
+- uso de PnP Blue,
+- correcciones manuales de transferencia,
+- control de continuidad previo a energizar.
+
+Lecciones aprendidas para próxima iteración:
+- revisar diámetros de agujeros para componentes de potencia (varistores y componentes grandes),
+- simplificar topología de ZCD,
+- evaluar integración de control de dimming en una etapa dedicada.
+
+**Figura 3.6 - Proceso de fabricación (transferencia y cobre)**  
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/fab placa/p n p blue.jpeg` -->
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/fab placa/trasferencia a cobre.jpeg` -->
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/fab placa/cobre etched.jpeg` -->
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/fab placa/correción de desperfectos de trasnferencia.jpeg` -->
+
+### 3.2.5 Pinout del sistema (STM32F103RB)
+
+| Pin | Función |
+| --- | --- |
+| `PA0` | Potenciómetro (ADC) |
+| `PC0` | DIP1: habilitación Bluetooth |
+| `PC1` | DIP2: habilitación buzzer |
+| `PB0` | DIP3: habilitación LED |
+| `PA4` | DIP4: forzado de estado `FAULT` |
+| `PC12` | Botón ON de luz |
+| `PC9` | Botón OFF de luz |
+| `PC2` | ZCD (EXTI) |
+| `PB3` | TRIAC canal ventilador |
+| `PB4` | TRIAC canal luz |
+| `PB13` | LED |
+| `PA8` | Buzzer (`TIM1_CH1`) |
+| `PA9/PA10` | USART1 (HC-06) |
+| `PA2/PA3` | USART2 (consola ST-Link VCP) |
+| `PC8` | Onda de prueba 100 Hz (modo test) |
+
+### 3.2.6 Cableado e imágenes del montaje
+
+**Figura 3.7 - Banco de trabajo y armado físico**  
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/banco de trabajo desprolijo/WhatsApp Image 2026-02-03 at 16.04.08.jpeg` -->
+
+**Figura 3.8 - Cableado final del prototipo**  
+<!-- TODO(FIGURA): agregar foto/permalink del cableado final si falta material -->
+
+### 3.2.7 Listado de componentes (BOM preliminar)
+
+| Componente | Modelo/valor de referencia | Cantidad |
+| --- | --- | :---: |
+| Placa de desarrollo | NUCLEO-F103RB | 1 |
+| Módulo Bluetooth | HC-06 | 1 |
+| TRIAC de potencia | BTA06-600C | 2 |
+| Opto de disparo TRIAC | MOC3023M | 2 |
+| Opto para ZCD | 4N25 | 1 |
+| Schmitt trigger | CD40106 / 74HC14 (según etapa) | 1 |
+| Potenciómetro | 10k (control fan) | 1 |
+| Pulsadores | ON/OFF | 2 |
+| DIP switch | 4 posiciones | 1 |
+| Elementos de protección | fusibles, varistores, red RC/snubber | TODO |
+
+Notas:
+- Los valores finales de pasivos y potencia deben cerrarse con el esquemático definitivo de la revisión entregada.
+- <!-- TODO: completar con planilla BOM final (cantidad, encapsulado, potencia, proveedor) -->
+
+## 3.3 Diseño de firmware
+
+### 3.3.1 Arquitectura de ejecución
+
+El firmware implementa un esquema *bare-metal* con super-loop y tick de 1 ms (`HAL_SYSTICK_Callback`), recorriendo en orden fijo:
+1. `task_adc_update`
+2. `task_system_update`
+3. `task_pwm_update`
+
+Cada tarea se ejecuta en cada tick y su tiempo se mide con contador de ciclos (`DWT->CYCCNT`) para cálculo de WCET.
+
+### 3.3.2 Máquina de estados del sistema
+
+`task_system.c` implementa la FSM:
+- `ST_INIT_READ_FLASH`
+- `ST_INIT_READ_DIP`
+- `ST_INIT_CHECK_SENSORS`
+- `ST_INIT_RESTORE_PWM`
+- `ST_INIT_CONFIG_BT`
+- `ST_NORMAL`
+- `ST_FAULT`
+
+En `FAULT`:
+- se corta potencia (`cut_off_voltage=true`),
+- se activa patrón de alarma,
+- se reintenta inicialización por timeout.
+
+**Figura 3.9 - Statechart general (Harel/Itemis)**  
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/imgs/Statechart.png` -->
+
+**Figura 3.10 - Subestados de inicialización**  
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/imgs/State Init.png` -->
+
+**Figura 3.11 - Estado normal**  
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/imgs/State Normal.png` -->
+
+**Figura 3.12 - Estado de falla**  
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/imgs/State Fault_ST.png` -->
+
+**Figura 3.13 - FSM de debounce de botón**  
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/imgs/ST_BTN.png` -->
+
+### 3.3.3 Entradas y acondicionamiento lógico
+
+- Debounce por máquina de estados para botones ON/OFF.
+- Muestreo ADC periódico (`ADC_PERIOD_MS = 50 ms`).
+- Escalado del potenciómetro usando límites de calibración manual:
+  - mínimo: 696 cuentas,
+  - máximo: 3194 cuentas.
+
+### 3.3.4 Control de TRIAC y sincronización AC
+
+`task_pwm.c` usa `TIM2` para programar ventanas ON/OFF por semiciclo:
+- retardo fijo de referencia: `APP_TRIAC_FIXED_WAIT_US = 700 us`,
+- ancho de pulso de gate: `APP_TRIAC_PULSE_US = 1000 us`,
+- retardo variable del ventilador por porcentaje (`fan_delay_us`).
+
+El evento de cruce por cero llega por EXTI en `PC2`.
+
+### 3.3.5 Persistencia en flash
+
+Se utiliza una página dedicada de flash interna (`0x0801FC00`) para:
+- palabra mágica,
+- versión de layout,
+- estado de luz,
+- calibración ADC min/max.
+
+Si el guardado crítico falla (según configuración estricta), la FSM puede entrar en `FAULT`.
+
+### 3.3.6 Bluetooth HC-06
+
+Configuración:
+- nombre: `Dimmer_BL`,
+- PIN: `1111`,
+- comandos AT enviados sin CR/LF y con retardos adecuados.
+
+Funcionamiento en firmware:
+- UART por `USART1`,
+- telemetría binaria (sin JSON),
+- 2 bytes por frame:
+  - byte 0: `adc_percent` (0..100),
+  - byte 1: `light_enabled` (0/1).
+
+Nota: actualmente la app se usa como receptor de estado, no como control remoto completo de actuadores.
+
+### 3.3.7 Aplicación móvil
+
+La app fue desarrollada en MIT App Inventor. Se documentan interfaz y bloques de procesamiento de bytes.
+
+**Figura 3.14 - Pantalla principal app**  
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/imgs/mit app celu.png` -->
+
+**Figura 3.15 - Bloques MIT App Inventor (parte 1)**  
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/imgs/mit app bloque 1.png` -->
+
+**Figura 3.16 - Bloques MIT App Inventor (parte 2)**  
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/imgs/mit app bloque 2.png` -->
+
+**Figura 3.17 - Bloques MIT App Inventor (parte 3)**  
+<!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/imgs/mit app bloque 3.png` -->
+
+### 3.3.8 Console y Build Analyzer (requerimiento de cátedra)
+
+Se debe incorporar a la memoria evidencia de:
+- consola de ejecución (logs de tareas/estados),
+- Build Analyzer (tamaño de secciones y artefacto final).
+
+**Figura 3.18 - Console de STM32CubeIDE**  
+<!-- TODO(FIGURA): agregar captura y permalink -->
+
+**Figura 3.19 - Build Analyzer de STM32CubeIDE**  
+<!-- TODO(FIGURA): agregar captura y permalink -->
 
 ---
 
-# **CAPÍTULO 3**
+# Capítulo 4: Ensayos y resultados
 
-# **Diseño e implementación**
+## 4.1 Pruebas funcionales de hardware
 
-## **3.1 Arquitectura general del sistema**
+| Ensayo | Resultado | Estado |
+| --- | --- | :---: |
+| Integridad de placas (continuidad) | Validación previa a energización | ✅ |
+| ZCD en banco | Detección de eventos y correlación con simulación | ✅ |
+| Integración con 24 VAC | Prueba inicial de etapa integrada | ✅ |
+| Captura de dimming en 220 VAC (osciloscopio) | Pendiente de captura final de curvas | 🟡 |
+| Dimming en carga real 220 VAC (curva completa) | Falta campaña final de medición | 🟡 |
 
-El sistema está compuesto por dos dominios principales:
+**Figura 4.1 - Evidencias de dimming (osciloscopio/carga real)**  
+<!-- TODO(FIGURA): agregar imágenes finales de dimming -->
+<!-- Referencia de carpeta: `Memoria técnica/cosas e imagenes para memoria técnica - hardware/dimming` -->
 
-1. **Dominio de control (3.3V lógica):** NUCLEO-F103RB, sensores, interfaces de usuario.
-2. **Dominio de potencia (220 VAC):** Etapa de TRIACs con aislamiento galvánico completo.
+## 4.2 Pruebas funcionales de firmware
 
-**Figura 3.1:** Diagrama en bloques del sistema (insertar permalink a diagrama en bloques del repositorio).
+| Ensayo | Resultado | Estado |
+| --- | --- | :---: |
+| Debounce botones ON/OFF | Eventos limpios sobre FSM | ✅ |
+| Muestreo ADC + mapeo | Escalado operativo 0..100% | ✅ |
+| FSM de sistema (`INIT/NORMAL/FAULT`) | Transiciones válidas en logs | ✅ |
+| Persistencia flash | Lectura/escritura de estado y calibración | ✅ |
+| Telemetría BT (2 bytes) | Trama enviada por cambios de estado | ✅ |
 
-El flujo de datos es:
-- **Entrada:** Botones (PC12, PC9) → Debounce FSM.
-- **Entrada:** Potenciómetro (PA0) → ADC.
-- **Entrada:** Cruce por cero (PC2) → EXTI.
-- **Procesamiento:** Máquina de estados central en `task_system.c`.
-- **Salida:** TIM2 (PB3, PB4) Disparo de gate TRIAC.
-- **Comunicación:** USART1 (TX: PC4, RX: PC5) ↔ HC-06.
-- **Indicadores:** LED (PB13), Buzzer (PA8) PWM.
+## 4.3 Pruebas de integración
 
----
+Se validó la interacción completa:
+- entradas físicas,
+- control de potencia,
+- telemetría hacia app.
 
-## **3.2 Diseño del hardware**
+**Video de integración en funcionamiento**  
+<!-- TODO: insertar link/permalink al video final del TP -->
+<!-- Sugerido: `Video de funcionamiento del hardware/Dimming con potenciómetro visto en osciloscopio.mp4` -->
 
-### **3.2.1 Sección de entrada AC y detección de cruce por cero**
+## 4.4 Medición y análisis de consumo (requerimiento obligatorio)
 
-La detección del cruce por cero es crítica para sincronización de potencia. Implementación:
+Metodología prevista:
+- medición de corriente de 5 V y 3.3 V en jumpers de NUCLEO-F103RB,
+- instrumentación con miliamperímetro según UM1724/MB1136,
+- captura en modos `NORMAL` y `FAULT`.
 
-- **Primaria:** Trafo de aislamiento 220 VAC → 12 VAC (aislamiento galvánico).
-- **Rectificación:** Puente rectificador que genera pico en cruce (~10V ≈ 0ms, ~0V ≈ 10ms en semiciclo).
-- **Comparador:** Detecta transición 0V→pico, genera pulso digital.
-- **Optoacoplador:** Aísla digitalmente la señal de control.
-- **Entrada STM32:** PC2 (EXTI, flanco ascendente).
+| Modo | I(5V) [mA] | I(3.3V) [mA] | Observaciones |
+| --- | ---: | ---: | --- |
+| Inicialización | TODO | TODO | TODO |
+| Normal sin BT | TODO | TODO | TODO |
+| Normal con BT | TODO | TODO | TODO |
+| Fault (alarma activa) | TODO | TODO | TODO |
 
-**Observación clave:** Existe retardo intrínseco ~500 μs desde flanco EXTI hasta verdadero cruce por cero.
+Análisis:
+- <!-- TODO: completar interpretación de consumo por modo y por periférico -->
 
-### **3.2.2 Sección de potencia (TRIACs y snubbers)**
+## 4.5 Medición y análisis de WCET por tarea (requerimiento obligatorio)
 
-Dos canales idénticos para luz y ventilador. Cada canal incluye:
-- TRIAC BT136-600 para control de potencia.
-- Optoacoplador MOC3021 para aislamiento del gate.
-- Buffer BC547 en línea de control.
-- Snubber R-C (10Ω/2W + 100nF) para suprimir oscilaciones.
-- Varistor MOV 275V para protección contra sobretensiones.
+El firmware ya instrumenta WCET por tarea en `app.c` usando `DWT->CYCCNT` y log periódico:
+- `wcet={task_adc, task_system, task_pwm}`
 
-**Parámetro crítico:** R_snubber=10Ω/2W. Valores menores causan oscilación parasitaria indeseada.
+Metodología propuesta:
+1. Activar `APP_TEST_MODE = 1`.
+2. Ejecutar escenarios representativos (idle, botones, cambios ADC, fault).
+3. Registrar máximos observados por tarea.
 
-### **3.2.3 Pinout y conexiones**
+| Tarea | Período asumido [us] | WCET medido [us] | Fuente |
+| --- | ---: | ---: | --- |
+| `task_adc_update` | 1000 | TODO | Log `[APP] wcet={...}` |
+| `task_system_update` | 1000 | TODO | Log `[APP] wcet={...}` |
+| `task_pwm_update` | 1000 | TODO | Log `[APP] wcet={...}` |
 
-**Tabla 3.2:** Asignación de pines en NUCLEO-F103RB.
+Comentarios:
+- Existe además carga de ISR (`EXTI` y `TIM2`) que debe reportarse por separado o justificar su tratamiento.
+- <!-- TODO: completar si se medirá ISR con osciloscopio o con timestamp interno -->
 
-| Pin STM32 | Función | Periférico | Notas |
-| :--- | :--- | :--- | :--- |
-| PC12 | Botón ON | GPIO | Pull-down interno |
-| PC9 | Botón OFF | GPIO | Pull-down interno |
-| PA0 | Potenciómetro | ADC1_CH0 | 0–3.3V → 0–100% |
-| PC2 | ZCD (cruce cero) | EXTI2, Rising | ~500μs retardo |
-| PB3 | Gate TRIAC Ventilador | TIM2_CH2 (PWM) | Freq=20kHz |
-| PB4 | Gate TRIAC Luz | TIM2_CH1 (PWM) | Freq=20kHz |
-| PB13 | LED indicador | GPIO_OUT | Parpadeo = confirmación |
-| PA8 | Buzzer | TIM1_CH1 (PWM) | Freq≈1kHz |
-| PC4 | UART1_TX (BLE TX) | USART1_TX | 57600 baud |
-| PC5 | UART1_RX (BLE RX) | USART1_RX | 57600 baud |
-| PC0 | DIP1 (Habilita BLE) | GPIO_IN | Pull-down |
-| PC1 | DIP2 (Habilita Buzzer) | GPIO_IN | Pull-down |
-| PB0 | DIP3 (Habilita LED) | GPIO_IN | Pull-down |
-| PA4 | DIP4 (Modo test/FAULT) | GPIO_IN | Pull-down |
+## 4.6 Cálculo del factor de uso de CPU U (requerimiento obligatorio)
 
-### **3.2.4 Lista de componentes (BOM)**
+Se usará:
 
-| Componente | Cantidad | Valor/Modelo | Función | Notas |
-| :--- | :---: | :--- | :--- | :--- |
-| NUCLEO-F103RB | 1 | STM32F103RB | Controlador principal | Suministrado |
-| Módulo HC-06 | 1 | HC-06 | BLE UART | 57600 baud |
-| TRIAC | 2 | BT136-600 | Control de potencia | 600V, 16A |
-| Optoacoplador | 2 | MOC3021 | Aislamiento gate | Trigger TRIAC |
-| Resistencia | 10 | Varios valores | Snubbers, biasing | 10Ω/2W, 10kΩ |
-| Condensador | 8 | 100nF, 10μF | Snubbers, decoupling | Cerámica/electrolítico |
-| Varistor | 2 | MOV 275V | Protección sobretensión | Clamping AC |
-| Comparador | 1 | LM339 | ZCD | Detección cruce |
-| Transformador aislamiento | 1 | 220–12 VAC | Isolación primaria | 1–2 VA min |
-| LED | 2 | 5mm rojo/amarillo | Indicadores | 20mA típico |
-| Pulsadores | 2 | Momentary | Botones ON/OFF | Push-to-close |
-| Potenciómetro | 1 | 10 kΩ lineal | Velocidad ventilador | Lineal o logarítmico |
-| DIP switch | 1 | 4 posiciones | Configuración | Normally-open |
+\[
+U = \sum_{i=1}^{n} \frac{C_i}{T_i}
+\]
 
----
+Donde:
+- \(C_i\): WCET de la tarea \(i\),
+- \(T_i\): período de activación de la tarea \(i\).
 
-## **3.3 Firmware y arquitectura software**
+Tabla de cálculo:
 
-### **3.3.1 Módulos principales**
+| Tarea | Ci (WCET) [us] | Ti [us] | Ci/Ti |
+| --- | ---: | ---: | ---: |
+| `task_adc_update` | TODO | 1000 | TODO |
+| `task_system_update` | TODO | 1000 | TODO |
+| `task_pwm_update` | TODO | 1000 | TODO |
+| **Total U** | - | - | **TODO** |
 
-El firmware se organiza en 4 módulos:
+Interpretación:
+- <!-- TODO: validar que U total sea compatible con operación temporal y márgenes -->
 
-#### **1. `task_adc.c` – Adquisición de entradas**
+## 4.7 Cumplimiento de requisitos
 
-- Lectura de botones (PC12, PC9) con debounce por máquina de estados (20ms ventana).
-- Lectura continua de ADC (PA0, potenciómetro).
-- Lectura de DIP switches (PC0–PA4).
-- Auto-calibración ADC: escala 0–3.3V a 0–100% usando valores límite detectados.
+| ID | Requisito | Estado |
+| --- | --- | :---: |
+| 1.1 | Luz ON por botón local | ✅ |
+| 1.2 | Luz OFF por botón local | ✅ |
+| 1.3 | Control ventilador por potenciómetro | ✅ |
+| 2.1 | Habilitación BT por DIP1 | ✅ |
+| 2.2 | Telemetría por HC-06 | ✅ |
+| 2.3 | Trama fija de 2 bytes | ✅ |
+| 3.1 | LED habilitable por DIP3 | ✅ |
+| 3.2 | Buzzer habilitable por DIP2 | ✅ |
+| 4.1 | Persistencia de estado de luz | ✅ |
+| 4.2 | Persistencia de calibración ADC | ✅ |
+| 5.1 | Modo de falla con corte de potencia | ✅ |
+| 5.2 | Aislamiento y protecciones de potencia | 🟡 |
+| 6.1 | Documentación de esquema/cableado/comportamiento | 🟡 |
+| 6.2 | Consumo + WCET + U documentados | 🟡 |
 
-#### **2. `task_system.c` – Máquina de estados del sistema**
+Leyenda:
+- ✅ cumplido
+- 🟡 parcialmente cumplido / pendiente de cierre documental o medición final
 
-**Estados:** INIT → NORMAL → FAULT
+## 4.8 Comparación con sistemas similares
 
-- INIT: Carga configuración flash, calibra ADC.
-- NORMAL: Procesa eventos de botones/ADC, actualiza TRIACs.
-- FAULT: Desactiva todos los TRIACs, alerta auditiva.
+| Característica | Control IR/RF básico | Solución Wi-Fi comercial | Este proyecto |
+| --- | :---: | :---: | :---: |
+| Interfaz local de pared | No | Generalmente no | Sí |
+| App móvil | No | Sí | Sí (telemetría) |
+| Personalización firmware | No | No | Sí |
+| Persistencia local | Variable | Sí | Sí |
+| Costo de prototipo académico | N/A | Alto | Medio |
 
-#### **3. `task_pwm.c` – Control de potencia y comunicación**
+## 4.9 Documentación del desarrollo realizado
 
-- TIM2 (20 kHz): PWM en PB3/PB4.
-- EXTI ZCD: Sincronización de dimming por semiciclo.
-- UART1: Envío de JSON por BLE.
-- LED + Buzzer: Indicadores de estado.
-
-#### **4. `app.c` – Scheduler y debug**
-
-- Scheduler cooperativo por SysTick (tick=1ms).
-- Callbacks para EXTI y SysTick.
-- Logging por ST-Link VCP (USART2 @ 115200 baud).
-- Modos de prueba configurables.
-
-### **3.3.2 Protocolo BLE (JSON)**
-
-```json
-{
-  "light": 1,
-  "fan_speed": 75,
-  "status": "NORMAL",
-  "time_ms": 123456
-}
-```
-
-Enviado cada 500ms por USART1 → HC-06.
-
-### **3.3.3 Persistencia en flash**
-
-```
-Dirección: 0x0800FC00
-Contenido: [Versión] [Luz ON/OFF] [ADC Min] [ADC Max] [CRC16]
-Tamaño: 11 bytes
-```
-
-- En init: Lee flash, valida CRC.
-- En operación: Actualiza caché RAM.
-- Cada 5s: Commit en flash.
+Material técnico disponible en repositorio:
+- código fuente STM32 (`Software STM32/main`),
+- esquemáticos y PCB (`Hardware/placa dimmer`, `Hardware/placa shield`),
+- diagramas de estado (`Diagrama de Harel`),
+- app móvil (`app celular`),
+- memoria técnica y material gráfico (`Memoria técnica`).
 
 ---
 
-# **CAPÍTULO 4**
+# Capítulo 5: Conclusiones
 
-# **Ensayos y resultados**
+## 5.1 Resultados obtenidos
 
-## **4.1 Pruebas funcionales**
+Se obtuvo un prototipo funcional que integra:
+- control local de luz y ventilador,
+- sincronización con cruce por cero para disparo de TRIAC,
+- telemetría por Bluetooth HC-06,
+- persistencia en flash y manejo de falla segura.
 
-### **4.1.1 Debounce de botones**
+También se estableció una base sólida de documentación técnica para cierre de entrega final.
 
-| Prueba | Resultado |
-| :--- | :---: |
-| Presión sostenida botón ON | Luz enciende solo 1x ✅ |
-| Rebote de contacto (<20ms) | Sin activación ✅ |
-| Sucesivas pulsaciones | Event generado cada una ✅ |
+## 5.2 Lecciones aprendidas
 
-### **4.1.2 ADC y calibración**
+- El circuito de ZCD actual funciona, pero resulta más complejo de lo necesario para una próxima iteración.
+- La compensación temporal del cruce por cero (aprox. 500 us) es crítica para estabilidad del dimming.
+- La fabricación de PCB artesanal aceleró iteraciones, pero exige mayor cuidado mecánico en footprints de componentes de potencia.
+- La telemetría binaria de 2 bytes simplificó integración y depuración con app móvil.
 
-| Prueba | Resultado |
-| :--- | :---: |
-| Lectura ADC raw | Rango 0–4095 counts ✅ |
-| Auto-calibración | Detecta mín/máx ±5 counts ✅ |
-| Mapeo 0–100% | Lineal ±2% ✅ |
-| Persistencia calib | Restaura tras power cycle ✅ |
+## 5.3 Próximos pasos
 
-### **4.1.3 ZCD y dimming**
-
-| Prueba | Resultado |
-| :--- | :---: |
-| Detección cruce cero | Pulso cada 10.04±0.2ms ✅ |
-| Phase shift @ 50% duty | Flanco ~5ms desde cruce ✅ |
-| Dimming @ 0% | <0.1V RMS ✅ |
-| Dimming @ 100% | 215±3 V RMS ✅ |
-
-### **4.1.4 Bluetooth HC-06**
-
-| Prueba | Resultado |
-| :--- | :---: |
-| Emparejamiento | "Dimmer_BL" visible, PIN 1111 ✅ |
-| Conex. estable 5min | Sin drop ✅ |
-| Telemetría JSON | Cada 490–510ms ✅ |
-| Alcance | 7–8 metros línea directa ✅ |
-
-### **4.1.5 Flash y persistencia**
-
-| Prueba | Resultado |
-| :--- | :---: |
-| Guardado estado luz | Persiste tras power-cycle ✅ |
-| Guardado calib ADC | Persiste ✅ |
-| Recuperación defaults | CRC inválido → restaura ✅ |
-
-### **4.1.6 Buzzer e indicadores**
-
-| Prueba | Resultado |
-| :--- | :---: |
-| LED parpadeo | ~0.9–1.1 Hz ✅ |
-| Buzzer modulación | Audible, sin FFT verificado 🟡 |
+1. Completar campaña de medición de consumo en 5 V y 3.3 V.
+2. Completar medición formal de WCET por tarea y cálculo de U.
+3. Cerrar documentación gráfica con permalinks y capturas de Console/Build Analyzer.
+4. Evaluar una revisión de hardware con ZCD simplificado, mejor mecánica de placa para componentes de potencia y posible partición de control de dimming en microcontrolador dedicado.
 
 ---
 
-## **4.2 Cumplimiento de requisitos**
+# Uso de herramientas de IA
 
-**Tabla 4.2:** Estado final.
+Se documenta el uso de IA según requerimiento docente y archivo `listado de cosas hechas con IA.txt`.
 
-| Req | Descripción | Estado |
-| :--- | :--- | :---: |
-| 1.1 | Encender/apagar luces por botón | ✅ |
-| 1.2 | Dimming continuo ventilador 0–100% | ✅ |
-| 1.3 | Feedback visual/sonoro | ✅ |
-| 2.1 | Telemetría BLE @ 57600 baud | ✅ |
-| 2.2 | Config remota | 🟡 (DIP switches locales) |
-| 2.3 | Modo transparente HC-06 | ✅ |
-| 3.1 | Sincronización ZCD | ✅ |
-| 3.2 | Operación 50 Hz | ✅ |
-| 3.3 | 256 niveles dimming | ✅ |
-| 4.1–4.3 | Persistencia flash | ✅ |
-| 5.1–5.4 | Hardware especificado | ✅ |
-| 6.1–6.3 | Seguridad (FAULT, aislamiento) | ✅ |
-| 7.1–7.2 | Documentación + IA registry | ✅ |
+## Uso individual y conjunto
 
----
+- Ignacio:
+  - asistencia para extraer estructura de memoria técnica,
+  - apoyo en revisión de README y documentación,
+  - apoyo en criterios de hardware y selección de componentes.
 
-# **CAPÍTULO 5**
+- Francisco:
+  - soporte para flujo de Itemis Create y diagramas de estado,
+  - generación de estructura inicial de documentación técnica de statechart (luego revisada manualmente).
 
-# **Conclusiones**
+- Uso común del equipo:
+  - apoyo en redacción y ajuste de memoria técnica,
+  - apoyo extensivo en programación STM32 (estructura, módulos y ajustes),
+  - apoyo para redacción de descripciones de PR.
 
-## **5.1 Resultados obtenidos**
-
-✅ Sistema embebido modular para control AC operacional.  
-✅ Sincronización precisa de TRIACs mediante ZCD.  
-✅ Comunicación Bluetooth confiable y telemetría JSON.  
-✅ Almacenamiento persistente en flash.  
-✅ Arquitectura escalable por máquinas de estado.  
-✅ Aislamiento galvánico completo (seguridad).
-
-### **Aprendizajes clave:**
-
-- **ZCD:** Retardos intrínsicos (~500 μs) deben compensarse en firmware.
-- **HC-06:** Robusto para telemetría; configuración AT requiere disciplina en retardos.
-- **Flash:** Versionado (layout) es recomendable desde el inicio.
-- **STM32CubeIDE:** Productivo para prototipado rápido.
+Estimación de costo total de IA del proyecto: bajo (aprox. USD 0 a USD 10, según herramienta/plan).
 
 ---
 
-## **5.2 Próximos pasos**
+# Bibliografía y referencias
 
-### **Inmediato:**
+1. STMicroelectronics, *UM1724 - STM32 Nucleo-64 boards user manual*.  
+2. STMicroelectronics, *MB1136 - Electrical Schematic - STM32 Nucleo-64 boards*.  
+3. STMicroelectronics, *STM32F103RB Datasheet*.  
+4. ON Semiconductor, *MOC3023M Datasheet*.  
+5. STMicroelectronics, *BTA06-600C Datasheet / notas de aplicación TRIAC*.  
+6. Repositorio del proyecto: `https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2`.
 
-- Captura de forma de onda gate TRIAC en osciloscopio.
-- Medición de EMI generado en banda 140 kHz–160 MHz.
-- Simplificación de topología ZCD.
-
-### **Segunda iteración:**
-
-- Micro dedicado para potencia (ATTiny + TRIAC).
-- Múltiples canales independientes (4–8).
-- Timer automático y detección de sobrecarga.
-- Integración redes domóticas (Zigbee, Z-Wave).
-- Enclosure DIN rail.
-- Certificación CE (EMC, IEC 60730).
-
----
-
-# **Uso de herramientas de IA**
-
-**Ignacio:** Estructura de memorias técnicas de ejemplo, asesoramiento hardware, documentación inicial.  
-**Francisco:** Herramientas de modelado, diagramas de Harel, firmware STM32.  
-**Común:** Memoria técnica estructurada con IA, código validado manualmente.  
-
-**Costo estimado:** USD 0–10 (plataformas académicas/libres).
-
-**Detalladoen:** `listado de cosas hechas con IA.txt`
+Referencias internas del repositorio:
+- `README.md`
+- `Informe_de_Avances.md`
+- `Seguimiento.md`
+- `Diagrama de Harel/STATECHART_EXPLANATION.md`
+- `Memoria técnica/cosas e imagenes para memoria técnica - hardware/*`
+- `listado de cosas hechas con IA.txt`
 
 ---
 
-# **Bibliografía**
-
-[1] STMicroelectronics. *STM32F103RB Datasheet.* https://www.st.com/  
-[2] Texas Instruments. *HC-06 Bluetooth Module.*  
-[3] Fairchild Semiconductor. *BT136–600 TRIAC Datasheet.*  
-[4] NXP. *MOC3021 Optocoupler.*  
-
-**Repositorio:** https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2
-
----
-
-**Fin de la Memoria Técnica.**
-
+**Fin de la Memoria Técnica**  
 Autores: Ignacio Ezequiel Cavicchioli, Francisco Javier Moya  
-Fecha: 17 de febrero de 2026  
-Universidad de Buenos Aires – Facultad de Ingeniería
-
-
-
+Fecha de edición: 17 de febrero de 2026
