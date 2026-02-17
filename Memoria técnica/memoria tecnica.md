@@ -452,7 +452,14 @@ Metodología prevista:
 Análisis:
 - <!-- TODO: completar interpretación de consumo por modo y por periférico -->
 
-## 4.5 Medición y análisis de WCET por tarea (requerimiento obligatorio)
+## 4.5 Console and Build Analyzer
+
+<img width="496" height="206" alt="imagen" src="https://github.com/user-attachments/assets/fa8c178f-c74a-4094-b17b-c943656f8903" />
+
+<img width="682" height="155" alt="imagen" src="https://github.com/user-attachments/assets/1cad2e71-8833-4583-a080-f5a1b0eb87f1" />
+
+
+## 4.6 Medición y análisis de WCET por tarea
 
 El firmware ya instrumenta WCET por tarea en `app.c` usando `DWT->CYCCNT` y log periódico:
 - `wcet={task_adc, task_system, task_pwm}`
@@ -468,11 +475,8 @@ Metodología propuesta:
 | `task_system_update` | 1000 | TODO | Log `[APP] wcet={...}` |
 | `task_pwm_update` | 1000 | TODO | Log `[APP] wcet={...}` |
 
-Comentarios:
-- Existe además carga de ISR (`EXTI` y `TIM2`) que debe reportarse por separado o justificar su tratamiento.
-- <!-- TODO: completar si se medirá ISR con osciloscopio o con timestamp interno -->
 
-## 4.6 Cálculo del factor de uso de CPU U (requerimiento obligatorio)
+## 4.7 Cálculo del factor de uso de CPU U
 
 Se usará:
 
@@ -496,7 +500,7 @@ Tabla de cálculo:
 Interpretación:
 - <!-- TODO: validar que U total sea compatible con operación temporal y márgenes -->
 
-## 4.7 Cumplimiento de requisitos
+## 4.8 Cumplimiento de requisitos
 
 | ID | Requisito | Estado |
 | --- | --- | :---: |
@@ -519,7 +523,7 @@ Leyenda:
 - ✅ cumplido
 - 🟡 parcialmente cumplido / pendiente de cierre documental o medición final
 
-## 4.8 Comparación con sistemas similares
+## 4.9 Comparación con sistemas similares
 
 | Característica | Control IR/RF básico | Solución Wi-Fi comercial | Este proyecto |
 | --- | :---: | :---: | :---: |
@@ -529,7 +533,7 @@ Leyenda:
 | Persistencia local | Variable | Sí | Sí |
 | Costo de prototipo académico | N/A | Alto | Medio |
 
-## 4.9 Documentación del desarrollo realizado
+## 4.10 Documentación del desarrollo realizado
 
 Material técnico disponible en repositorio:
 - código fuente STM32 (`Software STM32/main`).
