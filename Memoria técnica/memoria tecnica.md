@@ -191,6 +191,8 @@ El sistema se organiza en dos dominios:
 
 **Figura 3.1 - Diagrama en bloques general**  
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/imgs/diagrama en bloques.jpg` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/imgs/diagrama%20en%20bloques.jpg
+
 
 ## 3.2 Diseño de hardware
 
@@ -210,12 +212,22 @@ La etapa de ZCD fue validada progresivamente en banco antes de integrar potencia
 
 **Figura 3.2 - Banco inicial de pruebas ZCD**  
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/ZCD/banco de trabajo inicial.jpeg` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/banco%20de%20trabajo%20inicial.jpeg
+
 
 **Figura 3.3 - Mediciones de pulsos ZCD (osciloscopio)**  
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/ZCD/mediciones pulsos.jpeg` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/mediciones%20pulsos.jpeg
+
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/ZCD/mediciones pulsos 1.jpeg` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/mediciones%20pulsos%201.jpeg
+
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/ZCD/mediciones pulsos 2.jpeg` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/mediciones%20pulsos%202.jpeg
+
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/ZCD/mediciones pulsos 4.jpeg` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/mediciones%20pulsos%204.jpeg
+
 
 ### 3.2.3 Etapa de potencia y protecciones
 
@@ -230,11 +242,17 @@ Notas de fabricación y prueba:
 
 **Figura 3.4 - Ensayo de salida de optoacoplador**  
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/ZCD/salida real del opto.jpeg` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/salida%20real%20del%20opto.jpeg
 
 **Figura 3.5 - Simulación de ZCD y salida de opto**  
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/ZCD/simu ZCD proper.jpeg` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/simu%20ZCD%20proper.jpeg
+
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/ZCD/simu salida del optoacoplador.jpeg` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/simu%20salida%20del%20optoacoplador.jpeg
+
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/ZCD/simu completa de salida, tension y correiente por diodo .jpeg` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/simu%20completa%20de%20salida%2C%20tension%20y%20correiente%20por%20diodo%20.jpeg
 
 ### 3.2.4 Fabricación de placas
 
@@ -250,9 +268,18 @@ Lecciones aprendidas para próxima iteración:
 
 **Figura 3.6 - Proceso de fabricación (transferencia y cobre)**  
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/fab placa/p n p blue.jpeg` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/p%20n%20p%20blue.jpeg
+
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/fab placa/trasferencia a cobre.jpeg` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/trasferencia%20a%20cobre.jpeg
+
+
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/fab placa/cobre etched.jpeg` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/cobre%20etched.jpeg
+
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/fab placa/correción de desperfectos de trasnferencia.jpeg` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/correci%C3%B3n%20de%20desperfectos%20de%20trasnferencia.jpeg
+
 
 ### 3.2.5 Pinout del sistema (STM32F103RB)
 
@@ -278,10 +305,11 @@ Lecciones aprendidas para próxima iteración:
 
 **Figura 3.7 - Banco de trabajo y armado físico**  
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/cosas e imagenes para memoria técnica - hardware/banco de trabajo desprolijo/WhatsApp Image 2026-02-03 at 16.04.08.jpeg` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/banco%20de%20trabajo%20desprolijo/WhatsApp%20Image%202026-02-03%20at%2016.04.08.jpeg
 
 **Figura 3.8 - Cableado final del prototipo**  
 <!-- TODO(FIGURA): agregar foto/permalink del cableado final si falta imagen -->
-
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/banco%20de%20trabajo%20desprolijo/banco%20final.jpeg
 
 ## 3.3 Diseño de firmware
 
@@ -312,18 +340,23 @@ En `FAULT`:
 
 **Figura 3.9 - Statechart general (Harel/Itemis)**  
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/imgs/Statechart.png` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/Statechart.png
 
 **Figura 3.10 - Subestados de inicialización**  
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/imgs/State Init.png` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/State%20Init.png
 
 **Figura 3.11 - Estado normal**  
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/imgs/State Normal.png` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/State%20Normal.png
 
 **Figura 3.12 - Estado de falla**  
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/imgs/State Fault_ST.png` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/State%20Fault_ST.png
 
 **Figura 3.13 - FSM de debounce de botón**  
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/imgs/ST_BTN.png` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/ST_BTN.png
 
 ### 3.3.3 Entradas y acondicionamiento lógico
 
@@ -377,27 +410,20 @@ La app fue desarrollada en MIT App Inventor. Se documentan interfaz y bloques de
 
 **Figura 3.14 - Pantalla principal app**  
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/imgs/mit app celu.png` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/566a7314061481abbec17f240388ee198cea82ee/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/captura%20app.jpeg
+
 
 **Figura 3.15 - Bloques MIT App Inventor (parte 1)**  
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/imgs/mit app bloque 1.png` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/65b6a1be5b7a1b68e959d041707e17e00ebe5659/Memoria%20t%C3%A9cnica/imgs/mit%20app%20bloque%201.png
 
 **Figura 3.16 - Bloques MIT App Inventor (parte 2)**  
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/imgs/mit app bloque 2.png` -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/65b6a1be5b7a1b68e959d041707e17e00ebe5659/Memoria%20t%C3%A9cnica/imgs/mit%20app%20bloque%202.png
 
 **Figura 3.17 - Bloques MIT App Inventor (parte 3)**  
 <!-- TODO(FIGURA): insertar permalink de GitHub para `Memoria técnica/imgs/mit app bloque 3.png` -->
-
-### 3.3.8 Console y Build Analyzer (requerimiento de cátedra)
-
-Se debe incorporar a la memoria evidencia de:
-- consola de ejecución (logs de tareas/estados).
-- Build Analyzer (tamaño de secciones y artefacto final).
-
-**Figura 3.18 - Console de STM32CubeIDE**  
-<!-- TODO(FIGURA): agregar captura y permalink -->
-
-**Figura 3.19 - Build Analyzer de STM32CubeIDE**  
-<!-- TODO(FIGURA): agregar captura y permalink -->
+https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/65b6a1be5b7a1b68e959d041707e17e00ebe5659/Memoria%20t%C3%A9cnica/imgs/mit%20app%20bloque%203.png
 
 ---
 
@@ -411,10 +437,6 @@ Se debe incorporar a la memoria evidencia de:
 | ZCD en banco | Detección de eventos y correlación con simulación | ✅ |
 | Integración con 24 VAC | Prueba inicial de etapa integrada | ✅ |
 | Observar integridad de dimming en 24 VAC (osciloscopio) | Se verificó por medio de osciloscopio | ✅ |
-
-**Figura 4.1 - Evidencias de dimming (osciloscopio/carga real)**  
-<!-- TODO(FIGURA): agregar imágenes finales de dimming -->
-<!-- Referencia de carpeta: `Memoria técnica/cosas e imagenes para memoria técnica - hardware/dimming` -->
 
 ## 4.2 Pruebas funcionales de firmware
 
@@ -436,6 +458,8 @@ Se validó la interacción completa:
 **Video de integración en funcionamiento**  
 <!-- TODO: insertar link/permalink al video final del TP -->
 <!-- Sugerido: `Video de funcionamiento del hardware/Dimming con potenciómetro visto en osciloscopio.mp4` -->
+
+https://youtu.be/iv2bGrqrMtU
 
 ## 4.4 Medición y análisis de consumo
 
