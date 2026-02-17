@@ -37,6 +37,12 @@ extern "C" {
  */
 #define APP_TEST_WAVE_100HZ_PIN (0)
 
+/* Verbosidad de trazas PWM en modo test.
+ * 1 = imprime eventos de ZC/FIRE (muy ruidoso, puede distorsionar WCET)
+ * 0 = silencia esos eventos para medir tiempos de scheduler/tareas
+ */
+#define APP_TEST_PWM_VERBOSE_LOGS (0)
+
 /* Verificación simple de vida del módulo BT al iniciar (USART1).
  * Envía "AT" (sin CR/LF) y espera "OK".
  * APP_BT_AT_PROBE_STRICT:

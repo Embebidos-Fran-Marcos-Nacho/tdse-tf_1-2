@@ -18,6 +18,12 @@
 #define TEST_LOG(...)
 #endif
 
+#if APP_TEST_MODE && APP_TEST_PWM_VERBOSE_LOGS
+#define TEST_LOG_PWM(...) LOGGER_LOG(__VA_ARGS__)
+#else
+#define TEST_LOG_PWM(...)
+#endif
+
 /********************** macros and definitions *******************************/
 #define UART_TX_TIMEOUT_MS  20u
 #define BUZZER_FREQ_HZ      2000u
@@ -88,23 +94,29 @@ void task_pwm_update(void *parameters)
     static bool buzzer_running = false;
     shared_data_type *shared_data = (shared_data_type *)parameters;
     bool zc_pending = false;
+#if APP_TEST_MODE && APP_TEST_PWM_VERBOSE_LOGS
     uint32_t zc_timestamp_us = 0u;
+#endif
 
     /* Consume flag de ZC solo para trazas de depuración del scheduler. */
     uint32_t primask = __get_PRIMASK();
     __disable_irq();
     if (shared_data->zc_event_pending) {
         zc_pending = true;
+#if APP_TEST_MODE && APP_TEST_PWM_VERBOSE_LOGS
         zc_timestamp_us = shared_data->zc_timestamp_us;
+#endif
         shared_data->zc_event_pending = false;
     }
     if (primask == 0u) {
         __enable_irq();
     }
 
+#if APP_TEST_MODE && APP_TEST_PWM_VERBOSE_LOGS
     if (zc_pending) {
-        TEST_LOG("[PWM] ZC captured t=%lu us\r\n", zc_timestamp_us);
+        TEST_LOG_PWM("[PWM] ZC captured t=%lu us\r\n", zc_timestamp_us);
     }
+#endif
 
     if (shared_data->cut_off_voltage || shared_data->fault_mode) {
         /* En Fault/seguridad se bloquea toda salida de potencia. */
@@ -230,7 +242,7 @@ void task_pwm_timer_isr(void)
         if (triac_light.on_pending) {
             HAL_GPIO_WritePin(triac_light.port, triac_light.pin, GPIO_PIN_SET);
             triac_light.on_pending = false;
-            TEST_LOG("[PWM] %s FIRE ON t=%lu us\r\n", triac_light.name, __HAL_TIM_GET_COUNTER(&htim2));
+            TEST_LOG_PWM("[PWM] %s FIRE ON t=%lu us\r\n", triac_light.name, __HAL_TIM_GET_COUNTER(&htim2));
         }
         htim2.Instance->DIER &= ~TIM_DIER_CC1IE;
     }
@@ -239,7 +251,7 @@ void task_pwm_timer_isr(void)
         htim2.Instance->SR &= ~TIM_SR_CC2IF;
         HAL_GPIO_WritePin(triac_light.port, triac_light.pin, GPIO_PIN_RESET);
         triac_light.off_pending = false;
-        TEST_LOG("[PWM] %s FIRE OFF t=%lu us\r\n", triac_light.name, __HAL_TIM_GET_COUNTER(&htim2));
+        TEST_LOG_PWM("[PWM] %s FIRE OFF t=%lu us\r\n", triac_light.name, __HAL_TIM_GET_COUNTER(&htim2));
         htim2.Instance->DIER &= ~TIM_DIER_CC2IE;
     }
 
@@ -248,7 +260,7 @@ void task_pwm_timer_isr(void)
         if (triac_fan.on_pending) {
             HAL_GPIO_WritePin(triac_fan.port, triac_fan.pin, GPIO_PIN_SET);
             triac_fan.on_pending = false;
-            TEST_LOG("[PWM] %s FIRE ON t=%lu us\r\n", triac_fan.name, __HAL_TIM_GET_COUNTER(&htim2));
+            TEST_LOG_PWM("[PWM] %s FIRE ON t=%lu us\r\n", triac_fan.name, __HAL_TIM_GET_COUNTER(&htim2));
         }
         htim2.Instance->DIER &= ~TIM_DIER_CC3IE;
     }
@@ -257,7 +269,7 @@ void task_pwm_timer_isr(void)
         htim2.Instance->SR &= ~TIM_SR_CC4IF;
         HAL_GPIO_WritePin(triac_fan.port, triac_fan.pin, GPIO_PIN_RESET);
         triac_fan.off_pending = false;
-        TEST_LOG("[PWM] %s FIRE OFF t=%lu us\r\n", triac_fan.name, __HAL_TIM_GET_COUNTER(&htim2));
+        TEST_LOG_PWM("[PWM] %s FIRE OFF t=%lu us\r\n", triac_fan.name, __HAL_TIM_GET_COUNTER(&htim2));
         htim2.Instance->DIER &= ~TIM_DIER_CC4IE;
     }
 }
