@@ -12066,7 +12066,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005ed7f261")
-		(property "Reference" "X3"
+		(property "Reference" "X1"
 			(at 36.195 17.145 0)
 			(effects
 				(font
@@ -12224,7 +12224,7 @@
 		(instances
 			(project ""
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "X3")
+					(reference "X1")
 					(unit 1)
 				)
 			)
@@ -12239,7 +12239,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005ed80557")
-		(property "Reference" "X4"
+		(property "Reference" "X2"
 			(at 89.535 17.145 0)
 			(effects
 				(font
@@ -12397,7 +12397,7 @@
 		(instances
 			(project ""
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "X4")
+					(reference "X2")
 					(unit 1)
 				)
 			)
@@ -12412,7 +12412,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005ed884ef")
-		(property "Reference" "#P016"
+		(property "Reference" "#P01"
 			(at 72.39 36.83 0)
 			(effects
 				(font
@@ -12460,7 +12460,7 @@
 		(instances
 			(project ""
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "#P016")
+					(reference "#P01")
 					(unit 1)
 				)
 			)
@@ -12475,7 +12475,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "10828e02-0587-495a-a990-a8100779ae19")
-		(property "Reference" "#PWR08"
+		(property "Reference" "#PWR013"
 			(at 76.2 97.79 0)
 			(effects
 				(font
@@ -12523,7 +12523,7 @@
 		(instances
 			(project "Nucleo2USB"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "#PWR08")
+					(reference "#PWR013")
 					(unit 1)
 				)
 			)
@@ -12538,7 +12538,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "12c5eb1a-7194-4e68-8ad4-d7faa173c721")
-		(property "Reference" "Luz_ON"
+		(property "Reference" "Luz_ON1"
 			(at 128.27 81.28 0)
 			(effects
 				(font
@@ -12591,7 +12591,7 @@
 		(instances
 			(project "Nucleo2USB"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "Luz_ON")
+					(reference "Luz_ON1")
 					(unit 1)
 				)
 			)
@@ -12606,7 +12606,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "13a4f78b-9dc2-436c-916a-033547748341")
-		(property "Reference" "#PWR07"
+		(property "Reference" "#PWR010"
 			(at 22.86 95.25 0)
 			(effects
 				(font
@@ -12654,7 +12654,7 @@
 		(instances
 			(project "Nucleo2USB"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "#PWR07")
+					(reference "#PWR010")
 					(unit 1)
 				)
 			)
@@ -12669,7 +12669,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "1cfba715-3d2c-444d-ab6a-b957fdcb67b3")
-		(property "Reference" "#PWR014"
+		(property "Reference" "#PWR011"
 			(at 82.55 88.9 0)
 			(effects
 				(font
@@ -12718,7 +12718,7 @@
 		(instances
 			(project "Nucleo2USB"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "#PWR014")
+					(reference "#PWR011")
 					(unit 1)
 				)
 			)
@@ -12733,7 +12733,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "20143d24-1b4a-47bd-84c6-040f0bead5f4")
-		(property "Reference" "#PWR015"
+		(property "Reference" "#PWR016"
 			(at 165.1 105.41 0)
 			(effects
 				(font
@@ -12781,7 +12781,7 @@
 		(instances
 			(project "Nucleo2USB"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "#PWR015")
+					(reference "#PWR016")
 					(unit 1)
 				)
 			)
@@ -12796,7 +12796,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "23777328-55cd-48b0-a0ad-3c6a459ecb39")
-		(property "Reference" "#PWR020"
+		(property "Reference" "#PWR02"
 			(at 45.72 40.64 0)
 			(effects
 				(font
@@ -12845,7 +12845,7 @@
 		(instances
 			(project "Shield"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "#PWR020")
+					(reference "#PWR02")
 					(unit 1)
 				)
 			)
@@ -12860,7 +12860,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "346d9fa6-af3d-4239-923b-c12291c73395")
-		(property "Reference" "#PWR04"
+		(property "Reference" "#PWR018"
 			(at 67.31 142.24 0)
 			(effects
 				(font
@@ -12908,7 +12908,7 @@
 		(instances
 			(project "Shield"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "#PWR04")
+					(reference "#PWR018")
 					(unit 1)
 				)
 			)
@@ -12924,7 +12924,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "34aa1a19-ef97-416b-978b-d307692a8c46")
-		(property "Reference" "R23"
+		(property "Reference" "R4"
 			(at 146.05 40.6399 0)
 			(effects
 				(font
@@ -12978,7 +12978,7 @@
 		(instances
 			(project "Nucleo2USB"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "R23")
+					(reference "R4")
 					(unit 1)
 				)
 			)
@@ -12994,7 +12994,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "34bce545-a35f-4686-9ef4-3b6862b6fc71")
-		(property "Reference" "R13"
+		(property "Reference" "R5"
 			(at 135.89 91.4399 0)
 			(effects
 				(font
@@ -13048,7 +13048,7 @@
 		(instances
 			(project "Nucleo2USB"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "R13")
+					(reference "R5")
 					(unit 1)
 				)
 			)
@@ -13135,7 +13135,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "3d87b3f3-68a7-428e-8ba9-a41ddd12fdcb")
-		(property "Reference" "#PWR022"
+		(property "Reference" "#PWR03"
 			(at 45.72 43.18 0)
 			(effects
 				(font
@@ -13184,7 +13184,7 @@
 		(instances
 			(project "Shield"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "#PWR022")
+					(reference "#PWR03")
 					(unit 1)
 				)
 			)
@@ -13200,7 +13200,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "4dc0801f-5730-4644-9de5-f6e971d9b91d")
-		(property "Reference" "R14"
+		(property "Reference" "R6"
 			(at 151.13 91.4399 0)
 			(effects
 				(font
@@ -13254,7 +13254,7 @@
 		(instances
 			(project "Nucleo2USB"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "R14")
+					(reference "R6")
 					(unit 1)
 				)
 			)
@@ -13269,7 +13269,7 @@
 		(on_board no)
 		(dnp no)
 		(uuid "577c912c-7d68-4fc2-ac1a-8c1189b66ffd")
-		(property "Reference" "#PWR012"
+		(property "Reference" "#PWR01"
 			(at 119.38 31.75 0)
 			(effects
 				(font
@@ -13318,7 +13318,7 @@
 		(instances
 			(project "Shield"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "#PWR012")
+					(reference "#PWR01")
 					(unit 1)
 				)
 			)
@@ -13333,7 +13333,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "5b8ec20c-ab4c-4ef8-8a23-a88c1e178dbb")
-		(property "Reference" "R22"
+		(property "Reference" "R3"
 			(at 160.02 38.0999 0)
 			(effects
 				(font
@@ -13387,7 +13387,7 @@
 		(instances
 			(project "Nucleo2USB"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "R22")
+					(reference "R3")
 					(unit 1)
 				)
 			)
@@ -13402,7 +13402,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "6488313d-c0ed-47e3-98be-a530c34acaa7")
-		(property "Reference" "#PWR016"
+		(property "Reference" "#PWR014"
 			(at 133.35 105.41 0)
 			(effects
 				(font
@@ -13450,7 +13450,7 @@
 		(instances
 			(project "Nucleo2USB"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "#PWR016")
+					(reference "#PWR014")
 					(unit 1)
 				)
 			)
@@ -13465,7 +13465,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "68e6c5c2-8b58-4550-8d0f-a3e5b47d103c")
-		(property "Reference" "#PWR023"
+		(property "Reference" "#PWR05"
 			(at 143.51 54.61 0)
 			(effects
 				(font
@@ -13513,7 +13513,7 @@
 		(instances
 			(project "Nucleo2USB"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "#PWR023")
+					(reference "#PWR05")
 					(unit 1)
 				)
 			)
@@ -13529,7 +13529,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "79a2c6d7-200b-49b2-93cb-c4a14da73cda")
-		(property "Reference" "SW5"
+		(property "Reference" "SW1"
 			(at 130.81 22.86 0)
 			(effects
 				(font
@@ -13599,7 +13599,7 @@
 		(instances
 			(project "Nucleo2USB"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "SW5")
+					(reference "SW1")
 					(unit 1)
 				)
 			)
@@ -13614,7 +13614,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "7a840908-09f4-4099-be62-6ab67f21c59f")
-		(property "Reference" "#PWR017"
+		(property "Reference" "#PWR015"
 			(at 148.59 105.41 0)
 			(effects
 				(font
@@ -13662,7 +13662,7 @@
 		(instances
 			(project "Nucleo2USB"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "#PWR017")
+					(reference "#PWR015")
 					(unit 1)
 				)
 			)
@@ -13753,7 +13753,7 @@
 		(on_board no)
 		(dnp no)
 		(uuid "8fe769a4-a892-4b58-92d5-f5cb416ae228")
-		(property "Reference" "#PWR011"
+		(property "Reference" "#PWR07"
 			(at 133.35 77.47 0)
 			(effects
 				(font
@@ -13802,7 +13802,7 @@
 		(instances
 			(project "Shield"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "#PWR011")
+					(reference "#PWR07")
 					(unit 1)
 				)
 			)
@@ -13818,7 +13818,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "96b70207-2bf9-44fb-bb56-b6d2ab44f1fb")
-		(property "Reference" "R5"
+		(property "Reference" "R9"
 			(at 29.21 128.27 90)
 			(effects
 				(font
@@ -13870,7 +13870,7 @@
 		(instances
 			(project "Shield"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "R5")
+					(reference "R9")
 					(unit 1)
 				)
 			)
@@ -13962,7 +13962,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "a579ed0b-6b1e-48ec-8d15-899a6f34a50a")
-		(property "Reference" "R180"
+		(property "Reference" "R7"
 			(at 44.45 111.7599 0)
 			(effects
 				(font
@@ -13971,7 +13971,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "R"
+		(property "Value" "180"
 			(at 44.45 114.2999 0)
 			(effects
 				(font
@@ -14016,7 +14016,7 @@
 		(instances
 			(project ""
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "R180")
+					(reference "R7")
 					(unit 1)
 				)
 			)
@@ -14032,7 +14032,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "abb133ae-73bf-4e03-99f1-f7d09994a124")
-		(property "Reference" "J6"
+		(property "Reference" "J2"
 			(at 95.25 85.0899 0)
 			(effects
 				(font
@@ -14095,7 +14095,7 @@
 		(instances
 			(project "Nucleo2USB"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "J6")
+					(reference "J2")
 					(unit 1)
 				)
 			)
@@ -14110,7 +14110,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "aff0107e-f9b6-45fd-8a77-eeb0c100895a")
-		(property "Reference" "#PWR025"
+		(property "Reference" "#PWR06"
 			(at 45.72 50.8 0)
 			(effects
 				(font
@@ -14161,7 +14161,7 @@
 		(instances
 			(project "Shield"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "#PWR025")
+					(reference "#PWR06")
 					(unit 1)
 				)
 			)
@@ -14176,7 +14176,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "b894be95-6336-44f7-8c7d-19a19e8ff211")
-		(property "Reference" "#PWR024"
+		(property "Reference" "#PWR04"
 			(at 55.88 48.26 0)
 			(effects
 				(font
@@ -14224,7 +14224,7 @@
 		(instances
 			(project "Shield"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "#PWR024")
+					(reference "#PWR04")
 					(unit 1)
 				)
 			)
@@ -14240,7 +14240,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "bb820137-0e53-42b4-9bfa-96d79e63ded3")
-		(property "Reference" "R20"
+		(property "Reference" "R1"
 			(at 187.96 33.0199 0)
 			(effects
 				(font
@@ -14294,7 +14294,7 @@
 		(instances
 			(project "Nucleo2USB"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "R20")
+					(reference "R1")
 					(unit 1)
 				)
 			)
@@ -14388,7 +14388,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "c73260b8-e17e-4943-852b-f2512d08d69c")
-		(property "Reference" "#PWR02"
+		(property "Reference" "#PWR019"
 			(at 41.91 148.59 0)
 			(effects
 				(font
@@ -14436,7 +14436,7 @@
 		(instances
 			(project "Shield"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "#PWR02")
+					(reference "#PWR019")
 					(unit 1)
 				)
 			)
@@ -14451,7 +14451,7 @@
 		(on_board no)
 		(dnp no)
 		(uuid "c8dc1e3f-fd6e-4913-8284-5143252ee322")
-		(property "Reference" "#PWR09"
+		(property "Reference" "#PWR08"
 			(at 148.59 77.47 0)
 			(effects
 				(font
@@ -14500,7 +14500,7 @@
 		(instances
 			(project "Shield"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "#PWR09")
+					(reference "#PWR08")
 					(unit 1)
 				)
 			)
@@ -14585,7 +14585,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "d9f9ac9f-9dd5-419e-9c54-f91180820c03")
-		(property "Reference" "Luz_OFF"
+		(property "Reference" "Luz_OFF1"
 			(at 143.51 81.28 0)
 			(effects
 				(font
@@ -14638,7 +14638,7 @@
 		(instances
 			(project "Nucleo2USB"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "Luz_OFF")
+					(reference "Luz_OFF1")
 					(unit 1)
 				)
 			)
@@ -14653,7 +14653,7 @@
 		(on_board no)
 		(dnp no)
 		(uuid "eb447fc6-58ed-41a8-9dc2-612cf89590a0")
-		(property "Reference" "#PWR010"
+		(property "Reference" "#PWR09"
 			(at 165.1 77.47 0)
 			(effects
 				(font
@@ -14702,7 +14702,7 @@
 		(instances
 			(project "Shield"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "#PWR010")
+					(reference "#PWR09")
 					(unit 1)
 				)
 			)
@@ -14718,7 +14718,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "eff7c6dd-19b1-4a9e-b33b-2d624d0d0d6a")
-		(property "Reference" "R1"
+		(property "Reference" "R8"
 			(at 69.85 116.8399 0)
 			(effects
 				(font
@@ -14772,7 +14772,7 @@
 		(instances
 			(project ""
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "R1")
+					(reference "R8")
 					(unit 1)
 				)
 			)
@@ -14787,7 +14787,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "fa535c2e-6d2e-4153-bda8-fe8c979b4b2b")
-		(property "Reference" "#PWR01"
+		(property "Reference" "#PWR012"
 			(at 36.83 91.44 0)
 			(effects
 				(font
@@ -14836,7 +14836,7 @@
 		(instances
 			(project "Nucleo2USB"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "#PWR01")
+					(reference "#PWR012")
 					(unit 1)
 				)
 			)
@@ -14852,7 +14852,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "fb0a1c2a-6b5d-41ce-a307-3b5a9f64ecd4")
-		(property "Reference" "R21"
+		(property "Reference" "R2"
 			(at 173.99 35.5599 0)
 			(effects
 				(font
@@ -14906,7 +14906,7 @@
 		(instances
 			(project "Nucleo2USB"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "R21")
+					(reference "R2")
 					(unit 1)
 				)
 			)
@@ -14921,7 +14921,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "fed5ce26-c050-4bc2-b2b3-54c501c13f63")
-		(property "Reference" "#PWR03"
+		(property "Reference" "#PWR017"
 			(at 41.91 111.76 0)
 			(effects
 				(font
@@ -14970,7 +14970,7 @@
 		(instances
 			(project "Shield"
 				(path "/59dd5f85-d566-474b-a3a3-140a22574e0d"
-					(reference "#PWR03")
+					(reference "#PWR017")
 					(unit 1)
 				)
 			)
