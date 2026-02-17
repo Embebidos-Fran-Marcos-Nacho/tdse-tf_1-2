@@ -1,0 +1,7 @@
+La configuración del módulo Bluetooth se realizó mediante comandos AT utilizando un Arduino como interfaz USB–UART auxiliar. 
+El módulo identificado corresponde a un HC-06, el cual opera en modo AT únicamente cuando no existe una conexión Bluetooth activa y requiere el envío de comandos sin caracteres de fin de línea (CR/LF).
+ La comunicación se estableció a la velocidad configurada previamente en el módulo (57600 baudios), empleando una interfaz SoftwareSerial del Arduino. 
+Los comandos AT se transmitieron de forma “raw”, respetando retardos superiores a 650 ms entre comandos para asegurar su correcta interpretación. 
+Mediante este procedimiento se configuró el nombre del dispositivo como “Dimmer_BL” y el código PIN de emparejamiento como “1111”. 
+Finalizada la configuración, el módulo queda operando en modo DATA, funcionando como un enlace serie inalámbrico transparente.
+

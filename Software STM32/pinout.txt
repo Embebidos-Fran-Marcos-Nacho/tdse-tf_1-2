@@ -1,0 +1,29 @@
+PA0   -> Potenciómetro (ADC)
+
+PC0   -> DIP switch 1
+PC1   -> DIP switch 2
+PB0   -> DIP switch 3
+PA4   -> DIP switch 4
+
+PC12  -> Botón 1
+PC9   -> Botón 2
+
+PC2   -> ZCS – cruce por cero (EXTI2)
+
+PB3 -> TRIAC 1 (GPIO Output)
+PB4 -> TRIAC 2 (GPIO Output)
+
+PA9   -> USART1_TX  → conectar al RX del Bluetooth
+PA10  -> USART1_RX  → conectar al TX del Bluetooth
+
+PB13  -> LED
+
+PA8   -> Buzzer (TIM1_CH1, salida por timer)
+
+PC8   -> Señal de prueba/debug 100 Hz (solo modo test)
+
+
+
+potenciómetro usa 3.3V
+GW040 VCC  -> +5V
+GW040 GND  -> GND

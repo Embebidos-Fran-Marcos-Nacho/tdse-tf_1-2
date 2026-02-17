@@ -1,9 +1,0 @@
-- para fabricar se usó el pnp blue que está bueno, con cloruro férrico de acido. 
-- el circuito de ZCD es más complejo de lo necesario. con un rectificador normal podes hacer la estadística de la frecuencia para triggear siempre bien en el 2do semiciclo (que no lo recibis como interrupción)
-- si lo haces como está ahora la macana es que tenes que tener una idea del timing para ver realmente cuando está el zero. 
-- en nuestro caso tenemos que esperar 500us desde el flanco ascendente para estar sobre el verdadero cruce por cero.
-- las simulaciones dieron muy parecidas
-- como se usó 24 VAC las resistencais de 10K se cortocirtuitaron por debajo de la placa con unas resistencias de 0 ohms. 
-- 1ero se probó el ZCD, luego se soldadron los de triacs y se probó todo con 24VAC
-- proxima versión podría tener el usb C uart module removible (solo los pines) con un micro tipo attiny en la misma placa para directamente hacer todo dimming ahí, luego solo se habla con la placa con una tensión analógica o algo así
-- proxima versión debe tener los agujeros de diametro correcto para los varistores y componentes más grades, todo mal excepto para las resistencias chicas de 1/4 o 1/2 de watt. 
