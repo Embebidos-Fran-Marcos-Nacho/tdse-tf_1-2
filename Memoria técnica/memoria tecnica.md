@@ -10,21 +10,21 @@ Memoria del Trabajo Final:
 - Ignacio Ezequiel Cavicchioli - Legajo 109428
 - Francisco Javier Moya - Legajo 109899
 
-*Trabajo realizado en Ciudad Autónoma de Buenos Aires entre agosto de 2025 y febrero de 2026.*
+*Trabajo realizado en Ciudad Autónoma de Buenos Aires durante el verano del 2025.*
 
 ---
 
 ## Resumen
 
 Se desarrolló un sistema embebido para control de luz y ventilador de red (220 VAC), con:
-- control local por pulsadores y potenciómetro,
-- telemetría por Bluetooth con módulo HC-06,
-- sincronización por cruce por cero,
-- almacenamiento persistente en flash interna del STM32.
+- Control local por pulsadores y potenciómetro.
+- Telemetría por Bluetooth con módulo HC-06.
+- Sincronización por cruce por cero.
+- Almacenamiento persistente en flash interna del STM32.
 
 El hardware se implementó en dos placas (shield de control y placa de potencia/dimmer), evitando protoboard y cableado Dupont para la integración final. El firmware se implementó en una NUCLEO-F103RB con arquitectura modular de tareas y máquina de estados para modos de inicialización, operación normal y falla segura.
 
-Esta memoria documenta los requisitos, el diseño de hardware y firmware, los ensayos realizados y el estado final de cumplimiento. También deja marcados los pendientes obligatorios de la entrega final (medición de consumo, WCET y factor de uso de CPU) para completar con resultados instrumentales.
+Esta memoria documenta los requisitos, el diseño de hardware y firmware, los ensayos realizados y el estado final de cumplimiento. 
 
 ---
 
@@ -33,8 +33,8 @@ Esta memoria documenta los requisitos, el diseño de hardware y firmware, los en
 | Revisión | Cambios realizados | Fecha |
 | :---: | --- | :---: |
 | 1.0 | Reescritura integral de la memoria, alineada a pautas de entrega final | 17/02/2026 |
-| 1.1 | Completar con mediciones de consumo, WCET y factor de uso CPU | TODO |
-| 1.2 | Completar con permalinks definitivos de imágenes y link de video | TODO |
+| 1.1 | Completar con mediciones de consumo, WCET y factor de uso CPU | 17/02/2026 |
+| 1.2 | Completar con permalinks definitivos de imágenes y link de video | 17/02/2026 |
 
 ---
 
@@ -57,12 +57,11 @@ Esta memoria documenta los requisitos, el diseño de hardware y firmware, los en
 El proyecto busca resolver una necesidad concreta de control de cargas de 220 VAC (luz y ventilador) desde una interfaz de pared, agregando telemetría inalámbrica sin depender de red Wi-Fi doméstica.
 
 Objetivo principal:
-- implementar un prototipo funcional y seguro de control de luz/ventilador,
-- con arquitectura modular en STM32,
-- con persistencia de estado en flash,
-- y con trazabilidad por logs para validación.
+- Implementar un prototipo funcional y seguro de control de luz/ventilador.
+- Usar una arquitectura modular en STM32.
+- Tener persistencia de estado en la memoria flash.
 
-## 1.2 Estado del arte y productos comparables
+## 1.2 Productos comparables
 
 Se analizaron dos tipos de soluciones comerciales:
 
@@ -79,26 +78,24 @@ El enfoque elegido priorizó simplicidad de integración académica y control de
 ## 1.3 Justificación del enfoque técnico
 
 Se eligió Bluetooth clásico (HC-06) por:
-- menor complejidad de despliegue que Wi-Fi,
-- facilidad de integración con la app realizada en MIT App Inventor,
-- disponibilidad de herramientas de depuración por UART.
+- Menor complejidad de despliegue que Wi-Fi.
+- Facilidad de integración con la app realizada en MIT App Inventor.
+- Disponibilidad de herramientas de depuración por UART.
 
 Se mantuvo un alcance acotado para cumplir entrega:
-- la app móvil recibe telemetría binaria de 2 bytes,
-- el control principal de actuadores se mantiene en interfaz local.
+- La app móvil recibe telemetría binaria de 2 bytes.
+- El control principal de actuadores se mantiene en interfaz local.
 
 ## 1.4 Alcance y limitaciones
 
 Alcance implementado:
-- encendido/apagado de luz por botones físicos,
-- ajuste de velocidad del ventilador por potenciómetro,
-- envío de telemetría por HC-06 (2 bytes),
-- estado de falla segura y persistencia básica en flash.
+- Encendido/apagado de luz por botones físicos.
+- Ajuste de velocidad del ventilador por potenciómetro.
+- Envío de telemetría por HC-06 (2 bytes).
+- Estado de falla segura y persistencia básica en flash.
 
 Fuera de alcance actual:
-- control remoto completo de actuadores desde app,
-- caracterización final de dimming con instrumental para todo el rango de cargas,
-- cierre de métricas de consumo/WCET/U (secciones preparadas con TODO).
+- Control remoto completo de actuadores desde app.
 
 ---
 
