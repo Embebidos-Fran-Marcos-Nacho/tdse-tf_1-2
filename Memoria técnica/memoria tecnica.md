@@ -473,10 +473,9 @@ Análisis:
 
 ## 4.5 Console and Build Analyzer
 
-<img width="496" height="206" alt="imagen" src="https://github.com/user-attachments/assets/fa8c178f-c74a-4094-b17b-c943656f8903" />
+<img width="1198" height="248" alt="imagen" src="https://github.com/user-attachments/assets/9d20e74c-6718-4841-81af-730a0a252f69" />
 
-<img width="682" height="155" alt="imagen" src="https://github.com/user-attachments/assets/1cad2e71-8833-4583-a080-f5a1b0eb87f1" />
-
+(Dice 10.31% y 16.11%)
 
 ## 4.6 Medición y análisis de WCET por tarea
 
