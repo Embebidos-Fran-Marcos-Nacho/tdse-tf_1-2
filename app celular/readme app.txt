@@ -1,0 +1,1 @@
+el .apk es para instalar en el celular, el .aia es para poder importar a la web
