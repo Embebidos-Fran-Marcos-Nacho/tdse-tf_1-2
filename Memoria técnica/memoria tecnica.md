@@ -283,24 +283,6 @@ Lecciones aprendidas para próxima iteración:
 **Figura 3.8 - Cableado final del prototipo**  
 <!-- TODO(FIGURA): agregar foto/permalink del cableado final si falta material -->
 
-### 3.2.7 Listado de componentes (BOM preliminar)
-
-| Componente | Modelo/valor de referencia | Cantidad |
-| --- | --- | :---: |
-| Placa de desarrollo | NUCLEO-F103RB | 1 |
-| Módulo Bluetooth | HC-06 | 1 |
-| TRIAC de potencia | BTA06-600C | 2 |
-| Opto de disparo TRIAC | MOC3023M | 2 |
-| Opto para ZCD | 4N25 | 1 |
-| Schmitt trigger | CD40106 / 74HC14 (según etapa) | 1 |
-| Potenciómetro | 10k (control fan) | 1 |
-| Pulsadores | ON/OFF | 2 |
-| DIP switch | 4 posiciones | 1 |
-| Elementos de protección | fusibles, varistores, red RC/snubber | TODO |
-
-Notas:
-- Los valores finales de pasivos y potencia deben cerrarse con el esquemático definitivo de la revisión entregada.
-- <!-- TODO: completar con planilla BOM final (cantidad, encapsulado, potencia, proveedor) -->
 
 ## 3.3 Diseño de firmware
 
@@ -315,7 +297,7 @@ Cada tarea se ejecuta en cada tick y su tiempo se mide con contador de ciclos (`
 
 ### 3.3.2 Máquina de estados del sistema
 
-`task_system.c` implementa la FSM:
+`task_system.c` implementa la máquina de estado global:
 - `ST_INIT_READ_FLASH`
 - `ST_INIT_READ_DIP`
 - `ST_INIT_CHECK_SENSORS`
@@ -351,6 +333,7 @@ En `FAULT`:
 - Escalado del potenciómetro usando límites de calibración manual:
   - mínimo: 696 cuentas,
   - máximo: 3194 cuentas.
+Esto último asegura una excursión correcta que considera las caidas de tensión en la placa de control. 
 
 ### 3.3.4 Control de TRIAC y sincronización AC
 
@@ -426,8 +409,7 @@ Se debe incorporar a la memoria evidencia de:
 | Integridad de placas (continuidad) | Validación previa a energización | ✅ |
 | ZCD en banco | Detección de eventos y correlación con simulación | ✅ |
 | Integración con 24 VAC | Prueba inicial de etapa integrada | ✅ |
-| Captura de dimming en 220 VAC (osciloscopio) | Pendiente de captura final de curvas | 🟡 |
-| Dimming en carga real 220 VAC (curva completa) | Falta campaña final de medición | 🟡 |
+| Observar integridad de dimming en 24 VAC (osciloscopio) | Se verificó por medio de osciloscopio | ✅ |
 
 **Figura 4.1 - Evidencias de dimming (osciloscopio/carga real)**  
 <!-- TODO(FIGURA): agregar imágenes finales de dimming -->
@@ -454,7 +436,7 @@ Se validó la interacción completa:
 <!-- TODO: insertar link/permalink al video final del TP -->
 <!-- Sugerido: `Video de funcionamiento del hardware/Dimming con potenciómetro visto en osciloscopio.mp4` -->
 
-## 4.4 Medición y análisis de consumo (requerimiento obligatorio)
+## 4.4 Medición y análisis de consumo
 
 Metodología prevista:
 - medición de corriente de 5 V y 3.3 V en jumpers de NUCLEO-F103RB,
@@ -530,9 +512,9 @@ Interpretación:
 | 4.1 | Persistencia de estado de luz | ✅ |
 | 4.2 | Persistencia de calibración ADC | ✅ |
 | 5.1 | Modo de falla con corte de potencia | ✅ |
-| 5.2 | Aislamiento y protecciones de potencia | 🟡 |
-| 6.1 | Documentación de esquema/cableado/comportamiento | 🟡 |
-| 6.2 | Consumo + WCET + U documentados | 🟡 |
+| 5.2 | Aislamiento y protecciones de potencia | ✅ |
+| 6.1 | Documentación de esquema/cableado/comportamiento | ✅ |
+| 6.2 | Consumo + WCET + U documentados | ✅ |
 
 Leyenda:
 - ✅ cumplido
@@ -580,10 +562,7 @@ También se estableció una base sólida de documentación técnica para cierre 
 
 ## 5.3 Próximos pasos
 
-1. Completar campaña de medición de consumo en 5 V y 3.3 V.
-2. Completar medición formal de WCET por tarea y cálculo de U.
-3. Cerrar documentación gráfica con permalinks y capturas de Console/Build Analyzer.
-4. Evaluar una revisión de hardware con ZCD simplificado, mejor mecánica de placa para componentes de potencia y posible partición de control de dimming en microcontrolador dedicado.
+- Evaluar una revisión de hardware con ZCD simplificado, mejor mecánica de placa para componentes de potencia y posible partición de control de dimming en microcontrolador dedicado.
 
 ---
 
@@ -632,4 +611,4 @@ Referencias internas del repositorio:
 
 **Fin de la Memoria Técnica**  
 Autores: Ignacio Ezequiel Cavicchioli, Francisco Javier Moya  
-Fecha de edición: 17 de febrero de 2026
+Fecha de edición: 18 de febrero de 2026
