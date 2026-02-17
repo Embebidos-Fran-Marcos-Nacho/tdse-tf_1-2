@@ -353,16 +353,14 @@ static void triac_cancel_fan_events(void)
 
 static void bt_send_status(const shared_data_type *shared_data)
 {
-    uint8_t tx[3];
-    tx[0] = (uint8_t)(shared_data->fault_mode ? 1u : 0u);                /* flag falla: 0/1 */
-    tx[1] = (uint8_t)clamp_u32(shared_data->adc_percent, 0u, 100u);       /* valor 0..100 */
-    tx[2] = (uint8_t)(shared_data->light_enabled ? 1u : 0u);              /* estado luz: 0/1 */
+    uint8_t tx[2];
+    tx[0] = (uint8_t)clamp_u32(shared_data->adc_percent, 0u, 100u);       /* valor 0..100 */
+    tx[1] = (uint8_t)(shared_data->light_enabled ? 1u : 0u);              /* estado luz: 0/1 */
 
     if (HAL_UART_Transmit(&huart1, tx, (uint16_t)sizeof(tx), UART_TX_TIMEOUT_MS) == HAL_OK) {
-        TEST_LOG("[BT] TX BIN fault=%u value=%u light=%u\r\n",
+        TEST_LOG("[BT] TX BIN value=%u light=%u\r\n",
                  (unsigned int)tx[0],
-                 (unsigned int)tx[1],
-                 (unsigned int)tx[2]);
+                 (unsigned int)tx[1]);
     }
 }
 

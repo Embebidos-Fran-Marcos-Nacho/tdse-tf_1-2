@@ -64,7 +64,7 @@ Las macros se configuran en:
 4. Probar:
    - Botón de luz (PC12): debe togglear estado de luz.
    - Dimmer fijo (demo): el porcentaje se fija en `APP_DIMMER_FIXED_PERCENT`.
-   - Bluetooth (DIP1=1): deben aparecer TX binarios en logs (`fault_mode`, `adc_percent` y `light_enabled`).
+   - Bluetooth (DIP1=1): deben aparecer TX binarios en logs (`adc_percent` y `light_enabled`).
    - Falla (DIP4=1): LED/Buzzer de alarma según DIP3/DIP2.
 
 
@@ -85,10 +85,9 @@ Las macros se configuran en:
 
 8) Formato de telemetria Bluetooth (salida STM32 -> app)
 --------------------------------------------------------
-- Trama fija de 3 bytes por USART1 (HC-06), sin JSON:
-  - Byte 0: `fault_mode` (0 normal, 1 falla).
-  - Byte 1: `adc_percent` (0..100).
-  - Byte 2: `light_enabled` (0 apagada, 1 encendida).
+- Trama fija de 2 bytes por USART1 (HC-06), sin JSON:
+  - Byte 0: `adc_percent` (0..100).
+  - Byte 1: `light_enabled` (0 apagada, 1 encendida).
 - El orden de bytes es fijo y debe respetarse en MIT App Inventor.
 
 
