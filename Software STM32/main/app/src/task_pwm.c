@@ -24,6 +24,12 @@
 #define TEST_LOG_PWM(...)
 #endif
 
+#if APP_TEST_MODE && APP_TEST_BT_VERBOSE_LOGS
+#define TEST_LOG_BT(...) LOGGER_LOG(__VA_ARGS__)
+#else
+#define TEST_LOG_BT(...)
+#endif
+
 /********************** macros and definitions *******************************/
 #define UART_TX_TIMEOUT_MS  20u
 #define BUZZER_FREQ_HZ      2000u
@@ -370,9 +376,9 @@ static void bt_send_status(const shared_data_type *shared_data)
     tx[1] = (uint8_t)(shared_data->light_enabled ? 1u : 0u);              /* estado luz: 0/1 */
 
     if (HAL_UART_Transmit(&huart1, tx, (uint16_t)sizeof(tx), UART_TX_TIMEOUT_MS) == HAL_OK) {
-        TEST_LOG("[BT] TX BIN value=%u light=%u\r\n",
-                 (unsigned int)tx[0],
-                 (unsigned int)tx[1]);
+        TEST_LOG_BT("[BT] TX BIN value=%u light=%u\r\n",
+                    (unsigned int)tx[0],
+                    (unsigned int)tx[1]);
     }
 }
 

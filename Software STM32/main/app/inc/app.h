@@ -43,6 +43,13 @@ extern "C" {
  */
 #define APP_TEST_PWM_VERBOSE_LOGS (0)
 
+/* Verbosidad de trazas ADC/SYS/BT en modo test.
+ * Recomendado en 0 para medir WCET real de tareas (sin costo de UART por logs).
+ */
+#define APP_TEST_ADC_VERBOSE_LOGS (0)
+#define APP_TEST_SYS_VERBOSE_LOGS (0)
+#define APP_TEST_BT_VERBOSE_LOGS  (0)
+
 /* Verificación simple de vida del módulo BT al iniciar (USART1).
  * Envía "AT" (sin CR/LF) y espera "OK".
  * APP_BT_AT_PROBE_STRICT:
@@ -68,6 +75,10 @@ extern "C" {
 
 /* Rango mínimo aceptable de calibración ADC para usar escala min/max. */
 #define APP_ADC_CALIB_MIN_SPAN      (200u)
+/* Deadband para generar evento de cambio de potenciómetro (en %).
+ * Evita oscilaciones 99<->100 por ruido ADC.
+ */
+#define APP_ADC_PERCENT_EVENT_DEADBAND (2u)
 
 /* Estrategia ante fallo al guardar en flash:
  * 1 -> entra en ST_FAULT

@@ -14,6 +14,12 @@
 #define TEST_LOG(...)
 #endif
 
+#if APP_TEST_MODE && APP_TEST_SYS_VERBOSE_LOGS
+#define TEST_LOG_SYS(...) LOGGER_LOG(__VA_ARGS__)
+#else
+#define TEST_LOG_SYS(...)
+#endif
+
 /********************** macros and definitions *******************************/
 #define FLASH_MAGIC_WORD             0xA5A55A5Au
 #define FLASH_LAYOUT_VERSION         0x00000002u
@@ -81,7 +87,7 @@ void task_system_update(void *parameters)
     bool ok = true;
 
     if (state != last_state) {
-        TEST_LOG("[SYS] state -> %lu t=%lu ms\r\n", (uint32_t)state, HAL_GetTick());
+        TEST_LOG_SYS("[SYS] state -> %lu t=%lu ms\r\n", (uint32_t)state, HAL_GetTick());
         last_state = state;
     }
 
@@ -124,7 +130,7 @@ void task_system_update(void *parameters)
 #if APP_BT_AT_PROBE_ON_INIT
         if (shared_data->bt_enabled) {
             bool bt_ok = bt_probe_hc06_at();
-            TEST_LOG("[SYS] BT probe AT -> %s\r\n", bt_ok ? "OK" : "FAIL");
+            TEST_LOG_SYS("[SYS] BT probe AT -> %s\r\n", bt_ok ? "OK" : "FAIL");
 #if APP_BT_AT_PROBE_STRICT
             if (!bt_ok) {
                 fault_elapsed_ms = 0u;
@@ -153,7 +159,7 @@ void task_system_update(void *parameters)
             fault_blink_ms = 0u;
             fault_led_on = true;
             shared_data->alarm_on = true;
-            TEST_LOG("[SYS] DIP4=1 -> force ST_FAULT\r\n");
+            TEST_LOG_SYS("[SYS] DIP4=1 -> force ST_FAULT\r\n");
             state = ST_FAULT;
             break;
         }
@@ -164,7 +170,7 @@ void task_system_update(void *parameters)
             shared_data->light_enabled = true;
             shared_data->ev_send_bt_update_light = true;
             shared_data->flash_save_light_request = true;
-            TEST_LOG("[SYS] light ON t=%lu ms\r\n", HAL_GetTick());
+            TEST_LOG_SYS("[SYS] light ON t=%lu ms\r\n", HAL_GetTick());
         }
 
         if (shared_data->ev_light_off_pressed) {
@@ -173,20 +179,20 @@ void task_system_update(void *parameters)
             shared_data->light_enabled = false;
             shared_data->ev_send_bt_update_light = true;
             shared_data->flash_save_light_request = true;
-            TEST_LOG("[SYS] light OFF t=%lu ms\r\n", HAL_GetTick());
+            TEST_LOG_SYS("[SYS] light OFF t=%lu ms\r\n", HAL_GetTick());
         }
 
         if (shared_data->ev_send_bt_update_light) {
-            TEST_LOG("[SYS] light state=%u\r\n",
-                     shared_data->light_enabled ? 1u : 0u);
+            TEST_LOG_SYS("[SYS] light state=%u\r\n",
+                         shared_data->light_enabled ? 1u : 0u);
         }
 
         if (shared_data->ev_pote_changed) {
             shared_data->ev_pote_changed = false;
             shared_data->ev_send_bt_update_pote = true;
-            TEST_LOG("[SYS] pote changed adc=%u%% delay=%u us\r\n",
-                     shared_data->adc_percent,
-                     shared_data->fan_delay_us);
+            TEST_LOG_SYS("[SYS] pote changed adc=%u%% delay=%u us\r\n",
+                         shared_data->adc_percent,
+                         shared_data->fan_delay_us);
         }
 
         if (shared_data->flash_save_light_request || shared_data->flash_save_adc_calib_request) {
@@ -210,15 +216,15 @@ void task_system_update(void *parameters)
                     state = ST_FAULT;
                 }
 #endif
-                TEST_LOG("[SYS] flash save FAILED (light_req=%u calib_req=%u)\r\n",
-                         light_save_req ? 1u : 0u,
-                         adc_calib_save_req ? 1u : 0u);
+                TEST_LOG_SYS("[SYS] flash save FAILED (light_req=%u calib_req=%u)\r\n",
+                             light_save_req ? 1u : 0u,
+                             adc_calib_save_req ? 1u : 0u);
             } else {
-                TEST_LOG("[SYS] flash save OK light=%u calib=%u min=%u max=%u\r\n",
-                         shared_data->light_enabled ? 1u : 0u,
-                         shared_data->adc_calib_valid ? 1u : 0u,
-                         shared_data->adc_calib_min,
-                         shared_data->adc_calib_max);
+                TEST_LOG_SYS("[SYS] flash save OK light=%u calib=%u min=%u max=%u\r\n",
+                             shared_data->light_enabled ? 1u : 0u,
+                             shared_data->adc_calib_valid ? 1u : 0u,
+                             shared_data->adc_calib_min,
+                             shared_data->adc_calib_max);
             }
         }
         break;
@@ -235,7 +241,7 @@ void task_system_update(void *parameters)
             fault_elapsed_ms = 0u;
             fault_blink_ms = 0u;
             fault_led_on = false;
-            TEST_LOG("[SYS] DIP4=0 -> leave ST_FAULT\r\n");
+            TEST_LOG_SYS("[SYS] DIP4=0 -> leave ST_FAULT\r\n");
             state = ST_NORMAL;
             break;
         }

@@ -13,6 +13,12 @@
 #define TEST_LOG(...)
 #endif
 
+#if APP_TEST_MODE && APP_TEST_ADC_VERBOSE_LOGS
+#define TEST_LOG_ADC(...) LOGGER_LOG(__VA_ARGS__)
+#else
+#define TEST_LOG_ADC(...)
+#endif
+
 /********************** macros and definitions *******************************/
 #define ADC_PERIOD_MS            50u
 #define BTN_DEBOUNCE_TICKS       50u
@@ -86,12 +92,12 @@ void task_adc_update(void *parameters)
     if (update_button_fsm(&btn_on)) {
         shared_data->ev_light_on_pressed = true;
         shared_data->ev_sys_pressed = true; /* compatibilidad con logs existentes */
-        TEST_LOG("[ADC] EV_LIGHT_ON_PRESSED t=%lu ms\r\n", HAL_GetTick());
+        TEST_LOG_ADC("[ADC] EV_LIGHT_ON_PRESSED t=%lu ms\r\n", HAL_GetTick());
     }
     if (update_button_fsm(&btn_off)) {
         shared_data->ev_light_off_pressed = true;
         shared_data->ev_sys_pressed = true; /* compatibilidad con logs existentes */
-        TEST_LOG("[ADC] EV_LIGHT_OFF_PRESSED t=%lu ms\r\n", HAL_GetTick());
+        TEST_LOG_ADC("[ADC] EV_LIGHT_OFF_PRESSED t=%lu ms\r\n", HAL_GetTick());
     }
 
     /* Muestreo periódico del potenciómetro (ADC). */
@@ -106,27 +112,30 @@ void task_adc_update(void *parameters)
             shared_data->fan_delay_us = (uint16_t)(APP_FAN_DIM_DELAY_MIN_US +
                                           (((uint32_t)adc_percent * (APP_FAN_DIM_DELAY_MAX_US - APP_FAN_DIM_DELAY_MIN_US)) / 100u));
 
-            /* Solo levanta evento si hubo cambio real en el valor mapeado. */
-            if (adc_percent != last_percent) {
+            /* Solo levanta evento si el cambio supera deadband configurable. */
+            uint8_t diff = (adc_percent > last_percent) ?
+                           (adc_percent - last_percent) :
+                           (last_percent - adc_percent);
+            if (diff >= APP_ADC_PERCENT_EVENT_DEADBAND) {
                 last_percent = adc_percent;
                 shared_data->ev_pote_changed = true;
-                TEST_LOG("[ADC] EV_POTE_CHANGED adc=%u%% delay=%u us t=%lu ms\r\n",
-                         shared_data->adc_percent,
-                         shared_data->fan_delay_us,
-                         HAL_GetTick());
+                TEST_LOG_ADC("[ADC] EV_POTE_CHANGED adc=%u%% delay=%u us t=%lu ms\r\n",
+                             shared_data->adc_percent,
+                             shared_data->fan_delay_us,
+                             HAL_GetTick());
             }
         }
     }
 
     if ((HAL_GetTick() - last_sensor_log_ms) >= 1000u) {
         last_sensor_log_ms = HAL_GetTick();
-        TEST_LOG("[ADC] heartbeat dip=0x%X adc=%u%% min=%u max=%u on_ev=%u off_ev=%u\r\n",
-                 shared_data->dip_value,
-                 shared_data->adc_percent,
-                 shared_data->adc_calib_min,
-                 shared_data->adc_calib_max,
-                 shared_data->ev_light_on_pressed ? 1u : 0u,
-                 shared_data->ev_light_off_pressed ? 1u : 0u);
+        TEST_LOG_ADC("[ADC] heartbeat dip=0x%X adc=%u%% min=%u max=%u on_ev=%u off_ev=%u\r\n",
+                     shared_data->dip_value,
+                     shared_data->adc_percent,
+                     shared_data->adc_calib_min,
+                     shared_data->adc_calib_max,
+                     shared_data->ev_light_on_pressed ? 1u : 0u,
+                     shared_data->ev_light_off_pressed ? 1u : 0u);
     }
 }
 
