@@ -36,7 +36,7 @@ Esta memoria documenta los requisitos, el diseño de hardware y firmware, los en
 | 1.0 | Reescritura integral de la memoria, alineada a pautas de entrega final | 17/02/2026 |
 | 1.1 | Completar con mediciones de consumo, WCET y factor de uso CPU | 17/02/2026 |
 | 1.2 | Completar con permalinks definitivos de imágenes y link de video | 17/02/2026 |
-| 1.2 | Entrega | 17/02/2026 |
+| 1.2 | Entrega N°1 | 17/02/2026 |
 
 ---
 
@@ -97,7 +97,7 @@ Alcance implementado:
 - Estado de falla segura y persistencia básica en flash.
 
 Fuera de alcance actual:
-- Control remoto completo de actuadores desde app.
+- Control remoto completo de actuadores desde app. 
 
 ---
 
@@ -187,12 +187,14 @@ Fuera de alcance actual:
 ## 3.1 Arquitectura general
 
 El sistema se organiza en dos dominios:
-- dominio lógico de 3.3 V (STM32 + entradas + comunicaciones).
-- dominio de potencia AC (TRIAC + ZCD + protecciones).
+- Dominio lógico de 3.3 V (STM32 + entradas + comunicaciones).
+- Dominio de potencia AC (TRIAC + ZCD + protecciones).
 
 **Figura 3.1 - Diagrama en bloques general**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/imgs/diagrama%20en%20bloques.jpg)
-*Epígrafe: completar.*
+
+*Epígrafe: Diagrama de bloques general.*
+
 
 
 ## 3.2 Diseño de hardware
@@ -205,81 +207,108 @@ Se usaron dos placas:
 - placa shield para interfaz y conexión con NUCLEO.
 - placa dimmer para potencia, ZCD y protecciones.
 
+### Etapa de conversión de niveles
+
+![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/esquema%20niveles.png)
+*Epígrafe: Esquemático del conversor de niveles.*
+
+se requirió para poder unir la placa f103rb (3.3V) con la diseñada. 
+
+### Etapa de Triacs 
+
+![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/esquem%20triac.png)
+*Epígrafe: Esquemático de driver de TRIAC.*
+
+diseño tomado de las notas de aplicación que se encuentran en este mismo repositorio. 
+
 ### 3.2.2 Etapa ZCD (detección de cruce por cero)
 
 La etapa de ZCD fue validada progresivamente en banco antes de integrar potencia. Se observó que:
 - la salida detectada requiere compensación temporal aproximada de 500 us para ubicar el cruce real.
 - las simulaciones resultaron consistentes con la tendencia medida.
 
+**Figura - Esquemático del ZCD**
+
+![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/esquematico%20ZCD.png)
+*Epígrafe: Esquemático del ZCD.*
+
+
+
 **Figura 3.2 - Banco inicial de pruebas ZCD**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/banco%20de%20trabajo%20inicial.jpeg)
-*Epígrafe: completar.*
+*Epígrafe: Banco de trabajo durante las verificaciones del ZCD con osciloscopio.*
 
 
 **Figura 3.3 - Mediciones de pulsos ZCD (osciloscopio)**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/mediciones%20pulsos.jpeg)
-*Epígrafe: completar.*
+*Epígrafe: Pulsos de salida del ZCD - cursor midiendo tiempo entre pulsos.*
+
+Nótese que el ZCD actua cada cruce por cero, generando una señal de 100 Hz.
 
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/mediciones%20pulsos%201.jpeg)
-*Epígrafe: completar.*
+*Epígrafe: Salida del ZCD con la senoidal aplicada - cursor midiendo ancho de pulso.*
 
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/mediciones%20pulsos%202.jpeg)
-*Epígrafe: completar.*
+*Epígrafe: Salida del ZCD con la senoidal aplicada - cursor midiendo tiempo de disparo previo al cruce por cero real con senoidal negativa.*
 
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/mediciones%20pulsos%204.jpeg)
-*Epígrafe: completar.*
+*Epígrafe: Salida del ZCD con la senoidal aplicada - cursor midiendo tiempo de disparo previo al cruce por cero real con senoidal positiva.*
+
+El retardo fijo de disparo de los triacs se estimó tomando de referencia los tiempos de disparo del ZCD respecto del cruce real mostrados en estas imágenes. 
 
 
 ### 3.2.3 Etapa de potencia y protecciones
 
 Según esquemático principal (`Hardware/placa dimmer/dimmer.kicad_sch`), el canal de potencia integra:
 - TRIAC de potencia (`BTA06-600C`).
-- optoacoplador de disparo (`MOC3023M`).
-- elementos de protección (varistor, fusible, red RC/snubber).
+- Optoacoplador de disparo (`MOC3023M`).
+- Elementos de protección (varistor, fusible, red RC/snubber opcional).
 
 Notas de fabricación y prueba:
-- primero se validó ZCD, luego se integraron TRIACs.
-- las primeras pruebas integradas se hicieron en 24 VAC.
+- Primero se validó el correcto funcionamiento del ZCD, luego se integraron TRIACs.
+- Las primeras pruebas integradas se hicieron en 24 VAC. Esto conllebó una ligera y reversible modificación del circuito de ZCD. 
 
 **Figura 3.4 - Ensayo de salida de optoacoplador**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/salida%20real%20del%20opto.jpeg)
-*Epígrafe: completar.*
+*Epígrafe:  Señal a la salida del 4N25 en configuración de emisor común/negador.*
 
 **Figura 3.5 - Simulación de ZCD y salida de opto**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/simu%20ZCD%20proper.jpeg)
-*Epígrafe: completar.*
+*Epígrafe: Simulación de la entrada y salida ideal del ZCD.*
+
+Nótense que es muy parecida a la medida. 
 
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/simu%20salida%20del%20optoacoplador.jpeg)
-*Epígrafe: completar.*
+*Epígrafe: Salida simulada del 4N25.*
 
-![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/simu%20completa%20de%20salida%2C%20tension%20y%20correiente%20por%20diodo%20.jpeg)
-*Epígrafe: completar.*
+No se parece mucho a la real pero igual funcionó, la tensión daió para triggear los schmitt triggers
+
 
 ### 3.2.4 Fabricación de placas
 
 Se documentó el proceso de fabricación con transferencia y ataque químico:
-- uso de PnP Blue.
-- correcciones manuales de transferencia.
-- control de continuidad previo a energizar.
+- Primero se imprimió el diseño sobre un papel PnP Blue.
+- Luego se trasnfirió por medio de calor. 
+- Se hicieron las correcciones manuales de transferencia.
+- Por último, se realizó un control de continuidad previo a energizar.
 
 Lecciones aprendidas para próxima iteración:
-- revisar diámetros de agujeros para componentes de potencia (varistores y componentes grandes).
-- simplificar topología de ZCD.
-- evaluar integración de control de dimming en una etapa dedicada.
+- Revisar diámetros de agujeros para componentes de potencia (varistores y componentes grandes).
+- Simplificar topología de ZCD.
+- Evaluar integración de control de dimming en una etapa dedicada.
 
 **Figura 3.6 - Proceso de fabricación (transferencia y cobre)**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/p%20n%20p%20blue.jpeg)
-*Epígrafe: completar.*
+*Epígrafe: Papel de trasnferencia con el diseño impreso.*
 
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/trasferencia%20a%20cobre.jpeg)
-*Epígrafe: completar.*
-
-
-![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/cobre%20etched.jpeg)
-*Epígrafe: completar.*
+*Epígrafe: Transferencia previa a correcciones.*
 
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/correci%C3%B3n%20de%20desperfectos%20de%20trasnferencia.jpeg)
-*Epígrafe: completar.*
+*Epígrafe: Transferencia corregida.*
+
+![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/cobre%20etched.jpeg)
+*Epígrafe: Placa fabricada.*
 
 
 ### 3.2.5 Pinout del sistema (STM32F103RB)
@@ -304,13 +333,22 @@ Lecciones aprendidas para próxima iteración:
 
 ### 3.2.6 Cableado e imágenes del montaje
 
-**Figura 3.7 - Banco de trabajo y armado físico**  
-![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/banco%20de%20trabajo%20desprolijo/WhatsApp%20Image%202026-02-03%20at%2016.04.08.jpeg)
-*Epígrafe: completar.*
-
 **Figura 3.8 - Cableado final del prototipo**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/banco%20de%20trabajo%20desprolijo/banco%20final.jpeg)
 *Epígrafe: completar.*
+
+
+**Figura 3.8 - Diagrama de conexión entre placas simplificado**  
+![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/00693ac864a65b0389699a47c52606a88d0adbb9/Diagrama%20de%20conexi%C3%B3n%20simplificado/conexionado.png)
+*Diagrama simplificado.*
+
+**Figura 3.8 - Overview de ambas placas y conexionado a cargas**  
+![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Diagrama%20de%20conexi%C3%B3n%20simplificado/f103rb.jpg)
+*Overview y conexionado de Shield para F103RB.*
+
+![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Diagrama%20de%20conexi%C3%B3n%20simplificado/triacs.jpg)
+*Conexionado de placa con TRIACs.*
+
 
 ## 3.3 Diseño de firmware
 
@@ -341,23 +379,18 @@ En `FAULT`:
 
 **Figura 3.9 - Statechart general (Harel/Itemis)**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/Statechart.png)
-*Epígrafe: completar.*
 
 **Figura 3.10 - Subestados de inicialización**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/State%20Init.png)
-*Epígrafe: completar.*
 
 **Figura 3.11 - Estado normal**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/State%20Normal.png)
-*Epígrafe: completar.*
 
 **Figura 3.12 - Estado de falla**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/State%20Fault_ST.png)
-*Epígrafe: completar.*
 
 **Figura 3.13 - FSM de debounce de botón**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/ST_BTN.png)
-*Epígrafe: completar.*
 
 ### 3.3.3 Entradas y acondicionamiento lógico
 
@@ -411,20 +444,20 @@ La app fue desarrollada en MIT App Inventor. Se documentan interfaz y bloques de
 
 **Figura 3.14 - Pantalla principal app**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/566a7314061481abbec17f240388ee198cea82ee/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/captura%20app.jpeg)
-*Epígrafe: completar.*
+*Epígrafe: Pantalla principal de la App.*
 
 
 **Figura 3.15 - Bloques MIT App Inventor (parte 1)**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/65b6a1be5b7a1b68e959d041707e17e00ebe5659/Memoria%20t%C3%A9cnica/imgs/mit%20app%20bloque%201.png)
-*Epígrafe: completar.*
+*Epígrafe: Bloques de inicialización de la pantalla principal.*
 
 **Figura 3.16 - Bloques MIT App Inventor (parte 2)**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/65b6a1be5b7a1b68e959d041707e17e00ebe5659/Memoria%20t%C3%A9cnica/imgs/mit%20app%20bloque%202.png)
-*Epígrafe: completar.*
+*Epígrafe: Lógica de actualización de datos y pantalla.*
 
 **Figura 3.17 - Bloques MIT App Inventor (parte 3)**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/65b6a1be5b7a1b68e959d041707e17e00ebe5659/Memoria%20t%C3%A9cnica/imgs/mit%20app%20bloque%203.png)
-*Epígrafe: completar.*
+*Epígrafe: Lógica de selección de dispositivo bluetooth.*
 
 ---
 
@@ -457,10 +490,10 @@ Se validó la interacción completa:
 - telemetría hacia app.
 
 **Video de integración en funcionamiento**  
-<!-- TODO: insertar link/permalink al video final del TP -->
-<!-- Sugerido: `Video de funcionamiento del hardware/Dimming con potenciómetro visto en osciloscopio.mp4` -->
 
 https://youtu.be/iv2bGrqrMtU
+
+
 
 ## 4.4 Medición y análisis de consumo
 
@@ -506,8 +539,8 @@ Análisis:
 Resultado consolidado de herramientas de análisis de consola y build.
 
 **Figura 4.1 - Console and Build Analyzer**  
-![Imagen](PEGAR_AQUI_PERMALINK_DE_CAPTURA)
-*Epígrafe: completar.*
+![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/build%20console%20y%20analyzer.png)
+*Epígrafe: Build console y build analyzer.*
 
 ## 4.6 Medición y análisis de WCET por tarea
 
