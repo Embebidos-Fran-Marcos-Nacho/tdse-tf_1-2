@@ -16,7 +16,7 @@
 #include "task_system.h"
 #include "task_pwm.h"
 
-#if APP_TEST_MODE
+#if APP_TEST_MODE || APP_PROFILE_ENABLE
 #define TEST_LOG(...) LOGGER_LOG(__VA_ARGS__)
 #else
 #define TEST_LOG(...)
@@ -107,7 +107,19 @@ void app_init(void)
 void app_update(void)
 {
     uint32_t index;
+#if !APP_PROFILE_ENABLE
     static uint32_t last_health_log_ms = 0u;
+#endif
+#if APP_PROFILE_ENABLE
+    static uint32_t profile_last_log_ms = 0u;
+    static uint32_t profile_cycle_count = 0u;
+    static uint32_t profile_runtime_acc_us = 0u;
+    static uint32_t profile_runtime_peak_us = 0u;
+    static uint32_t profile_overrun_count = 0u;
+    static uint32_t profile_tick_backlog_max = 0u;
+    static uint32_t profile_task_acc_us[TASK_QTY] = {0u};
+    static uint32_t profile_task_wcet_win_us[TASK_QTY] = {0u};
+#endif
 #if APP_TEST_MODE && APP_TEST_SIMULATE_ZC
     static uint32_t last_simulated_zc_ms = 0u;
 #endif
@@ -121,6 +133,12 @@ void app_update(void)
 
     /* Ejecuta un ciclo del scheduler cada tick de SysTick (1 ms). */
     if (G_APP_TICK_CNT_INI < g_app_tick_cnt) {
+#if APP_PROFILE_ENABLE
+        uint32_t tick_backlog = g_app_tick_cnt;
+        if (tick_backlog > profile_tick_backlog_max) {
+            profile_tick_backlog_max = tick_backlog;
+        }
+#endif
         g_app_tick_cnt--;
         g_app_cnt++;
         g_app_time_us = 0u;
@@ -180,8 +198,77 @@ void app_update(void)
             if (task_dta_list[index].WCET < elapsed_us) {
                 task_dta_list[index].WCET = elapsed_us;
             }
+
+#if APP_PROFILE_ENABLE
+            profile_task_acc_us[index] += elapsed_us;
+            if (profile_task_wcet_win_us[index] < elapsed_us) {
+                profile_task_wcet_win_us[index] = elapsed_us;
+            }
+#endif
         }
 
+#if APP_PROFILE_ENABLE
+        profile_cycle_count++;
+        profile_runtime_acc_us += g_app_time_us;
+
+        if (g_app_time_us > profile_runtime_peak_us) {
+            profile_runtime_peak_us = g_app_time_us;
+        }
+
+        if (g_app_time_us > APP_PROFILE_TASK_PERIOD_US) {
+            profile_overrun_count++;
+        }
+
+        if ((HAL_GetTick() - profile_last_log_ms) >= APP_PROFILE_LOG_PERIOD_MS) {
+            uint32_t i;
+            uint32_t avg_window_us;
+            uint32_t cpu_avg_permille;
+            uint32_t cpu_peak_permille;
+            uint32_t u_wcet_permille = 0u;
+            uint32_t u_avg_permille = 0u;
+            uint32_t task_avg_us[TASK_QTY] = {0u};
+
+            avg_window_us = profile_cycle_count * APP_PROFILE_TASK_PERIOD_US;
+            if (avg_window_us == 0u) {
+                avg_window_us = 1u;
+            }
+
+            cpu_avg_permille = (profile_runtime_acc_us * 1000u) / avg_window_us;
+            cpu_peak_permille = (profile_runtime_peak_us * 1000u) / APP_PROFILE_TASK_PERIOD_US;
+
+            for (i = 0; i < TASK_QTY; i++) {
+                u_wcet_permille += (profile_task_wcet_win_us[i] * 1000u) / APP_PROFILE_TASK_PERIOD_US;
+                u_avg_permille += (profile_task_acc_us[i] * 1000u) / avg_window_us;
+                task_avg_us[i] = (profile_cycle_count > 0u) ? (profile_task_acc_us[i] / profile_cycle_count) : 0u;
+            }
+
+            TEST_LOG("[PROF] n=%lu ov=%lu qmax=%lu Cavg={%lu,%lu,%lu} WCETw={%lu,%lu,%lu} CPU={%lu.%lu,%lu.%lu} U={%lu.%lu,%lu.%lu}\r\n",
+                     profile_cycle_count,
+                     profile_overrun_count,
+                     profile_tick_backlog_max,
+                     task_avg_us[0],
+                     task_avg_us[1],
+                     task_avg_us[2],
+                     profile_task_wcet_win_us[0],
+                     profile_task_wcet_win_us[1],
+                     profile_task_wcet_win_us[2],
+                     cpu_avg_permille / 10u, cpu_avg_permille % 10u,
+                     cpu_peak_permille / 10u, cpu_peak_permille % 10u,
+                     u_avg_permille / 10u, u_avg_permille % 10u,
+                     u_wcet_permille / 10u, u_wcet_permille % 10u);
+
+            profile_last_log_ms = HAL_GetTick();
+            profile_cycle_count = 0u;
+            profile_runtime_acc_us = 0u;
+            profile_runtime_peak_us = 0u;
+            profile_overrun_count = 0u;
+            profile_tick_backlog_max = 0u;
+            for (i = 0; i < TASK_QTY; i++) {
+                profile_task_acc_us[i] = 0u;
+                profile_task_wcet_win_us[i] = 0u;
+            }
+        }
+#else
         if ((HAL_GetTick() - last_health_log_ms) >= 1000u) {
             last_health_log_ms = HAL_GetTick();
             TEST_LOG("[APP] t=%lu ms cnt=%lu runtime=%lu us wcet={%lu,%lu,%lu}\r\n",
@@ -192,6 +279,7 @@ void app_update(void)
                      task_dta_list[1].WCET,
                      task_dta_list[2].WCET);
         }
+#endif
     }
 }
 

@@ -332,6 +332,7 @@ En `FAULT`:
 - Escalado del potenciómetro usando límites de calibración manual:
   - mínimo: 696 cuentas.
   - máximo: 3194 cuentas.
+- Filtro por deadband para evento de potenciómetro (`APP_ADC_PERCENT_EVENT_DEADBAND = 2%`) para evitar oscilaciones por ruido (ej. 99% <-> 100%).
 Esto último asegura una excursión correcta que considera las caidas de tensión en la placa de control. 
 
 ### 3.3.4 Control de TRIAC y sincronización AC
@@ -366,6 +367,7 @@ Funcionamiento en firmware:
 - 2 bytes por frame:
   - byte 0: `adc_percent` (0..100).
   - byte 1: `light_enabled` (0/1).
+- Envío periódico por tiempo (no por cambio), configurable con `APP_BT_TELEMETRY_PERIOD_MS` (actualmente `50 ms`).
 
 Nota: actualmente la app se usa como receptor de estado, no como control remoto completo de actuadores.
 
@@ -422,7 +424,7 @@ Se debe incorporar a la memoria evidencia de:
 | Muestreo ADC + mapeo | Escalado operativo 0..100% | ✅ |
 | FSM de sistema (`INIT/NORMAL/FAULT`) | Transiciones válidas en logs | ✅ |
 | Persistencia flash | Lectura/escritura de estado y calibración | ✅ |
-| Telemetría BT (2 bytes) | Trama enviada por cambios de estado | ✅ |
+| Telemetría BT (2 bytes) | Trama enviada en forma periódica (`APP_BT_TELEMETRY_PERIOD_MS`) | ✅ |
 
 ## 4.3 Pruebas de integración
 
@@ -461,16 +463,17 @@ Análisis:
 
 ## 4.6 Medición y análisis de WCET por tarea
 
-El firmware ya instrumenta WCET por tarea en `app.c` usando `DWT->CYCCNT` y log periódico a través del build `main_wcet_cpu_profile`:
+El firmware instrumenta WCET por tarea en `app.c` usando `DWT->CYCCNT` y un modo de perfilado limpio en el build principal (`Software STM32/main`) con `APP_PROFILE_ENABLE = 1`:
 - `WCETw` = WCET en ventana (steady-state, últimos 1000 ciclos)
 - `WCETb` = WCET acumulado desde boot
 - `Cavg` = tiempo promedio de ejecución
 
 Metodología realizada:
-1. Flashear build `main_wcet_cpu_profile` en NUCLEO-F103RB.
+1. Flashear build `Software STM32/main` en NUCLEO-F103RB.
 2. Abrir consola serial (USART2, 115200 baud).
-3. Dejar correr el sistema en estado idle (sin pulsaciones ni cambios ADC).
-4. Registrar logs `[PROF]` por 10+ segundos.
+3. Ejecutar con trazas de test desactivadas (`APP_TEST_MODE = 0`) para evitar contaminación por logs de eventos.
+4. Dejar correr el sistema en estado idle (sin pulsaciones ni cambios ADC).
+5. Registrar logs `[PROF]` por 10+ segundos.
 
 **Resultados medidos (estado idle/estable):**
 
@@ -511,7 +514,7 @@ Donde:
 - **U = 48.2%** indica que el sistema utiliza aproximadamente el 48% del presupuesto de CPU disponible basándose en tiempos de peor caso.
 - El utilización basada en promedios (`Uavg = 13.3%`) es significativamente menor, mostrando que el sistema opera con amplios márgenes de seguridad.
 - **Conclusión**: El sistema es estable y predecible con margen suficiente (51.8% slack) para manejar cargas transitorias o futuras extensiones sin riesgo de sobrecarga.
-- Los logs de telemetría también confirman: `Uwcet=48.2% Uavg=13.3%` en estado normal sin overruns.
+- Los logs de profiling (`[PROF]`) también confirman: `Uwcet=48.2% Uavg=13.3%` en estado normal sin overruns.
 
 ## 4.8 Cumplimiento de requisitos
 

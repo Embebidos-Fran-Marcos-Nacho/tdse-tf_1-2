@@ -98,6 +98,7 @@ void task_pwm_init(void *parameters)
 void task_pwm_update(void *parameters)
 {
     static bool buzzer_running = false;
+    static uint32_t last_bt_tx_ms = 0u;
     shared_data_type *shared_data = (shared_data_type *)parameters;
     bool zc_pending = false;
 #if APP_TEST_MODE && APP_TEST_PWM_VERBOSE_LOGS
@@ -161,10 +162,19 @@ void task_pwm_update(void *parameters)
                           (shared_data->led_enabled && shared_data->light_enabled) ? GPIO_PIN_SET : GPIO_PIN_RESET);
     }
 
-    if (shared_data->bt_enabled &&
-        (shared_data->ev_send_bt_update_light || shared_data->ev_send_bt_update_pote)) {
-        /* Telemetría BT solo cuando hay cambios relevantes. */
-        bt_send_status(shared_data);
+    if (shared_data->bt_enabled && !shared_data->fault_mode) {
+        uint32_t now_ms = HAL_GetTick();
+
+        /* Telemetría periódica por tiempo (no por evento). */
+        if ((last_bt_tx_ms == 0u) || ((now_ms - last_bt_tx_ms) >= APP_BT_TELEMETRY_PERIOD_MS)) {
+            bt_send_status(shared_data);
+            last_bt_tx_ms = now_ms;
+            shared_data->ev_send_bt_update_light = false;
+            shared_data->ev_send_bt_update_pote = false;
+        }
+    } else {
+        /* Al deshabilitar BT, reinicia el período para envío inmediato al reactivar. */
+        last_bt_tx_ms = 0u;
         shared_data->ev_send_bt_update_light = false;
         shared_data->ev_send_bt_update_pote = false;
     }

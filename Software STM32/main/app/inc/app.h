@@ -22,7 +22,7 @@ extern "C" {
  * 0 = desactivado (normal)
  * 1 = activado (debug de recorrido de tareas/estados/eventos)
  */
-#define APP_TEST_MODE (1)
+#define APP_TEST_MODE (0)
 
 /* Simulación de cruce por cero para pruebas sin cableado externo.
  * Solo se usa si APP_TEST_MODE == 1.
@@ -58,6 +58,8 @@ extern "C" {
  */
 #define APP_BT_AT_PROBE_ON_INIT (0)
 #define APP_BT_AT_PROBE_STRICT  (0)
+/* Período de telemetría BT en modo operación normal (ms). */
+#define APP_BT_TELEMETRY_PERIOD_MS (50u)
 
 /* Temporización de control por cruce por cero (50 Hz -> 10 ms por semiciclo). */
 #define APP_ZC_HALF_CYCLE_US       (10000u)
@@ -85,6 +87,16 @@ extern "C" {
  * 0 -> sigue operando y solo informa por log
  */
 #define APP_FLASH_STORE_STRICT      (1)
+
+/* Perfilado temporal limpio (scheduler/tareas).
+ * Cuando está en 1, emite una única línea por ventana con:
+ * - Cavg y WCET de ventana por tarea
+ * - uso promedio y pico de CPU
+ * - overruns y backlog de ticks
+ */
+#define APP_PROFILE_ENABLE          (1)
+#define APP_PROFILE_LOG_PERIOD_MS   (1000u)
+#define APP_PROFILE_TASK_PERIOD_US  (1000u)
 
 /********************** typedef **********************************************/
 
