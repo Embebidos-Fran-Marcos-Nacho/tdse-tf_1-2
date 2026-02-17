@@ -452,51 +452,68 @@ Metodología prevista:
 Análisis:
 - <!-- TODO: completar interpretación de consumo por modo y por periférico -->
 
-## 4.5 Medición y análisis de WCET por tarea (requerimiento obligatorio)
+## 4.5 Console and Build Analyzer
 
-El firmware ya instrumenta WCET por tarea en `app.c` usando `DWT->CYCCNT` y log periódico:
-- `wcet={task_adc, task_system, task_pwm}`
+<img width="496" height="206" alt="imagen" src="https://github.com/user-attachments/assets/fa8c178f-c74a-4094-b17b-c943656f8903" />
 
-Metodología propuesta:
-1. Activar `APP_TEST_MODE = 1`.
-2. Ejecutar escenarios representativos (idle, botones, cambios ADC, fault).
-3. Registrar máximos observados por tarea.
+<img width="682" height="155" alt="imagen" src="https://github.com/user-attachments/assets/1cad2e71-8833-4583-a080-f5a1b0eb87f1" />
 
-| Tarea | Período asumido [us] | WCET medido [us] | Fuente |
-| --- | ---: | ---: | --- |
-| `task_adc_update` | 1000 | TODO | Log `[APP] wcet={...}` |
-| `task_system_update` | 1000 | TODO | Log `[APP] wcet={...}` |
-| `task_pwm_update` | 1000 | TODO | Log `[APP] wcet={...}` |
 
-Comentarios:
-- Existe además carga de ISR (`EXTI` y `TIM2`) que debe reportarse por separado o justificar su tratamiento.
-- <!-- TODO: completar si se medirá ISR con osciloscopio o con timestamp interno -->
+## 4.6 Medición y análisis de WCET por tarea
 
-## 4.6 Cálculo del factor de uso de CPU U (requerimiento obligatorio)
+El firmware ya instrumenta WCET por tarea en `app.c` usando `DWT->CYCCNT` y log periódico a través del build `main_wcet_cpu_profile`:
+- `WCETw` = WCET en ventana (steady-state, últimos 1000 ciclos)
+- `WCETb` = WCET acumulado desde boot
+- `Cavg` = tiempo promedio de ejecución
 
-Se usará:
+Metodología realizada:
+1. Flashear build `main_wcet_cpu_profile` en NUCLEO-F103RB.
+2. Abrir consola serial (USART2, 115200 baud).
+3. Dejar correr el sistema en estado idle (sin pulsaciones ni cambios ADC).
+4. Registrar logs `[PROF]` por 10+ segundos.
+
+**Resultados medidos (estado idle/estable):**
+
+| Tarea | Período asumido [us] | WCET medido [us] | WCET boot [us] | Cavg [us] |
+| --- | ---: | ---: | ---: | ---: |
+| `task_adc_update` | 1000 | 168 | 276 | 64 |
+| `task_system_update` | 1000 | 50 | 23141 | 26 |
+| `task_pwm_update` | 1000 | 264 | 364 | 43 |
+
+**Observaciones:**
+- El WCET de `task_system_update` en boot (23141 µs) corresponde a la probe del módulo Bluetooth HC-06 durante inicialización (envío/recepción de comando AT).
+- En estado estable (post-inicialización), los valores de ventana (WCETw) reflejan la operación normal sin anomalías de inicio.
+- No se observaron overruns (`ov=0`) durante la medición, indicando cumplimiento de deadlines.
+
+
+## 4.7 Cálculo del factor de uso de CPU U
+
+Se utiliza la fórmula de utilización en tiempo real:
 
 \[
 U = \sum_{i=1}^{n} \frac{C_i}{T_i}
 \]
 
 Donde:
-- \(C_i\): WCET de la tarea \(i\).
+- \(C_i\): WCET de la tarea \(i\) (valores de ventana, steady-state).
 - \(T_i\): período de activación de la tarea \(i\).
 
-Tabla de cálculo:
+**Tabla de cálculo:**
 
 | Tarea | Ci (WCET) [us] | Ti [us] | Ci/Ti |
 | --- | ---: | ---: | ---: |
-| `task_adc_update` | TODO | 1000 | TODO |
-| `task_system_update` | TODO | 1000 | TODO |
-| `task_pwm_update` | TODO | 1000 | TODO |
-| **Total U** | - | - | **TODO** |
+| `task_adc_update` | 168 | 1000 | 0.168 |
+| `task_system_update` | 50 | 1000 | 0.050 |
+| `task_pwm_update` | 264 | 1000 | 0.264 |
+| **Total U (WCET-based)** | - | - | **0.482** |
 
-Interpretación:
-- <!-- TODO: validar que U total sea compatible con operación temporal y márgenes -->
+**Interpretación:**
+- **U = 48.2%** indica que el sistema utiliza aproximadamente el 48% del presupuesto de CPU disponible basándose en tiempos de peor caso.
+- El utilización basada en promedios (`Uavg = 13.3%`) es significativamente menor, mostrando que el sistema opera con amplios márgenes de seguridad.
+- **Conclusión**: El sistema es estable y predecible con margen suficiente (51.8% slack) para manejar cargas transitorias o futuras extensiones sin riesgo de sobrecarga.
+- Los logs de telemetría también confirman: `Uwcet=48.2% Uavg=13.3%` en estado normal sin overruns.
 
-## 4.7 Cumplimiento de requisitos
+## 4.8 Cumplimiento de requisitos
 
 | ID | Requisito | Estado |
 | --- | --- | :---: |
@@ -519,7 +536,7 @@ Leyenda:
 - ✅ cumplido
 - 🟡 parcialmente cumplido / pendiente de cierre documental o medición final
 
-## 4.8 Comparación con sistemas similares
+## 4.9 Comparación con sistemas similares
 
 | Característica | Control IR/RF básico | Solución Wi-Fi comercial | Este proyecto |
 | --- | :---: | :---: | :---: |
@@ -529,7 +546,7 @@ Leyenda:
 | Persistencia local | Variable | Sí | Sí |
 | Costo de prototipo académico | N/A | Alto | Medio |
 
-## 4.9 Documentación del desarrollo realizado
+## 4.10 Documentación del desarrollo realizado
 
 Material técnico disponible en repositorio:
 - código fuente STM32 (`Software STM32/main`).
