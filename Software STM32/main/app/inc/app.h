@@ -94,7 +94,7 @@ extern "C" {
  * - uso promedio y pico de CPU
  * - overruns y backlog de ticks
  */
-#define APP_PROFILE_ENABLE          (1)
+#define APP_PROFILE_ENABLE          (0)
 #define APP_PROFILE_LOG_PERIOD_MS   (1000u)
 #define APP_PROFILE_TASK_PERIOD_US  (1000u)
 

@@ -439,10 +439,27 @@ Se validó la interacción completa:
 
 ## 4.4 Medición y análisis de consumo
 
-Metodología prevista:
-- medición de corriente de 5 V y 3.3 V en jumpers de NUCLEO-F103RB.
-- instrumentación con miliamperímetro según UM1724/MB1136.
-- captura en modos `NORMAL` y `FAULT`.
+Metodología aplicada:
+- medición de consumo total en la entrada de `5V` del sistema (NUCLEO + shield).
+- alimentación desde fuente externa conectada a pines `5V` y `GND`.
+- medición de corriente con multímetro en serie sobre la línea de `5V`.
+- medición de tensión en bornes de entrada para estimar potencia (`P = V * I`).
+
+Procedimiento realizado:
+1. Desconectar USB/ST-Link para evitar doble alimentación.
+2. Conectar fuente externa a `5V` y `GND`.
+3. Intercalar amperímetro en serie en la línea de `5V`.
+4. Medir tensión de entrada en paralelo sobre `5V-GND`.
+5. Registrar datos en los modos:
+   - inicialización.
+   - normal sin Bluetooth.
+   - normal con Bluetooth.
+   - fault con alarma activa.
+6. Repetir al menos 3 veces por modo y promediar.
+
+Alcance de la medición:
+- Esta medición representa el consumo total a `5V` del conjunto montado.
+- El riel de `3.3V` queda incluido indirectamente, ya que se genera desde `5V` mediante el regulador de la placa.
 
 | Modo | I(5V) [mA] | I(3.3V) [mA] | Observaciones |
 | --- | ---: | ---: | --- |
@@ -463,7 +480,7 @@ Análisis:
 
 ## 4.6 Medición y análisis de WCET por tarea
 
-El firmware instrumenta WCET por tarea en `app.c` usando `DWT->CYCCNT` y un modo de perfilado limpio en el build principal (`Software STM32/main`) con `APP_PROFILE_ENABLE = 1`:
+El firmware instrumenta WCET por tarea en `app.c` usando `DWT->CYCCNT` y un modo de perfilado limpio (`[PROF]`) activado temporalmente durante ensayo:
 - `WCETw` = WCET en ventana (steady-state, últimos 1000 ciclos)
 - `WCETb` = WCET acumulado desde boot
 - `Cavg` = tiempo promedio de ejecución
@@ -471,22 +488,37 @@ El firmware instrumenta WCET por tarea en `app.c` usando `DWT->CYCCNT` y un modo
 Metodología realizada:
 1. Flashear build `Software STM32/main` en NUCLEO-F103RB.
 2. Abrir consola serial (USART2, 115200 baud).
-3. Ejecutar con trazas de test desactivadas (`APP_TEST_MODE = 0`) para evitar contaminación por logs de eventos.
+3. Ejecutar con trazas de test desactivadas (`APP_TEST_MODE = 0`) y perfil limpio activo durante la medición.
 4. Dejar correr el sistema en estado idle (sin pulsaciones ni cambios ADC).
-5. Registrar logs `[PROF]` por 10+ segundos.
+5. Registrar múltiples ventanas `[PROF]` (n~1010 por ventana).
 
-**Resultados medidos (estado idle/estable):**
+Formato de log utilizado y significado de parámetros:
+- `n`: cantidad de ciclos de scheduler medidos en la ventana.
+- `ov`: cantidad de overruns (ciclos cuyo runtime total supera 1 ms).
+- `qmax`: máximo backlog observado en la cola de ticks (`g_app_tick_cnt`) durante la ventana.
+- `Cavg={adc,sys,pwm}`: tiempo promedio por tarea en la ventana (us).
+- `WCETw={adc,sys,pwm}`: peor tiempo por tarea dentro de la ventana (us).
+- `CPU={avg,peak}`: utilización total promedio y pico del scheduler en la ventana (%).
+- `U={avg,wcet}`: factor de uso promedio y por peor caso reportado para la ventana.
 
-| Tarea | Período asumido [us] | WCET medido [us] | WCET boot [us] | Cavg [us] |
-| --- | ---: | ---: | ---: | ---: |
-| `task_adc_update` | 1000 | 168 | 276 | 64 |
-| `task_system_update` | 1000 | 50 | 23141 | 26 |
-| `task_pwm_update` | 1000 | 264 | 364 | 43 |
+Criterio de consolidación de resultados:
+- Se tomaron 15 líneas consecutivas `[PROF]`.
+- Para `Cavg típico` se reportó el rango estable observado.
+- Para `WCETw máx observado` se tomó el máximo absoluto entre las 15 ventanas.
+- Para `U` se reportó rango observado por ventana y cota conservadora adicional.
+
+**Resultados medidos (estado idle/estable, 15 ventanas):**
+
+| Tarea | Período asumido [us] | Cavg típico [us] | WCETw máx observado [us] |
+| --- | ---: | ---: | ---: |
+| `task_adc_update` | 1000 | 64..66 | 268 |
+| `task_system_update` | 1000 | 26 | 125 |
+| `task_pwm_update` | 1000 | 46..48 | 292 |
 
 **Observaciones:**
-- El WCET de `task_system_update` en boot (23141 µs) corresponde a la probe del módulo Bluetooth HC-06 durante inicialización (envío/recepción de comando AT).
-- En estado estable (post-inicialización), los valores de ventana (WCETw) reflejan la operación normal sin anomalías de inicio.
-- No se observaron overruns (`ov=0`) durante la medición, indicando cumplimiento de deadlines.
+- No se observaron overruns (`ov=0`) en ninguna ventana.
+- `qmax=10` se mantuvo estable en todas las ventanas registradas.
+- Uso de CPU: `CPU avg` entre `13.6%` y `14.0%`; `CPU peak` entre `35.6%` y `38.0%`.
 
 
 ## 4.7 Cálculo del factor de uso de CPU U
@@ -505,16 +537,15 @@ Donde:
 
 | Tarea | Ci (WCET) [us] | Ti [us] | Ci/Ti |
 | --- | ---: | ---: | ---: |
-| `task_adc_update` | 168 | 1000 | 0.168 |
-| `task_system_update` | 50 | 1000 | 0.050 |
-| `task_pwm_update` | 264 | 1000 | 0.264 |
-| **Total U (WCET-based)** | - | - | **0.482** |
+| `task_adc_update` | 268 | 1000 | 0.268 |
+| `task_system_update` | 125 | 1000 | 0.125 |
+| `task_pwm_update` | 292 | 1000 | 0.292 |
+| **Total U (WCET-based, conservador)** | - | - | **0.685** |
 
 **Interpretación:**
-- **U = 48.2%** indica que el sistema utiliza aproximadamente el 48% del presupuesto de CPU disponible basándose en tiempos de peor caso.
-- El utilización basada en promedios (`Uavg = 13.3%`) es significativamente menor, mostrando que el sistema opera con amplios márgenes de seguridad.
-- **Conclusión**: El sistema es estable y predecible con margen suficiente (51.8% slack) para manejar cargas transitorias o futuras extensiones sin riesgo de sobrecarga.
-- Los logs de profiling (`[PROF]`) también confirman: `Uwcet=48.2% Uavg=13.3%` en estado normal sin overruns.
+- En observación real por ventana, los logs mostraron `Uwcet` entre `46.5%` y `66.1%`, y `Uavg` entre `13.6%` y `13.9%`.
+- El valor `0.685` es una cota conservadora construida con máximos individuales observados en ventanas distintas.
+- **Conclusión**: El sistema opera con margen temporal holgado en estado estable (sin overruns), incluso considerando una cota conservadora.
 
 ## 4.8 Cumplimiento de requisitos
 
