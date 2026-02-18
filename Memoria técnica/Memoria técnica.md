@@ -467,20 +467,28 @@ Nota: actualmente la app se usa como receptor de estado, no como control remoto 
 La app fue desarrollada en MIT App Inventor. Se documentan interfaz y bloques de procesamiento de bytes.
 
 **Figura 3.26 - Pantalla principal app**  
+
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/566a7314061481abbec17f240388ee198cea82ee/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/captura%20app.jpeg)
+
 *Epígrafe: Pantalla principal de la App.*
 
 
 **Figura 3.27 - Bloques MIT App Inventor (parte 1)**  
+
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/65b6a1be5b7a1b68e959d041707e17e00ebe5659/Memoria%20t%C3%A9cnica/imgs/mit%20app%20bloque%201.png)
+
 *Epígrafe: Bloques de inicialización de la pantalla principal.*
 
 **Figura 3.28 - Bloques MIT App Inventor (parte 2)**  
+
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/65b6a1be5b7a1b68e959d041707e17e00ebe5659/Memoria%20t%C3%A9cnica/imgs/mit%20app%20bloque%202.png)
+
 *Epígrafe: Lógica de actualización de datos y pantalla.*
 
 **Figura 3.29 - Bloques MIT App Inventor (parte 3)**  
+
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/65b6a1be5b7a1b68e959d041707e17e00ebe5659/Memoria%20t%C3%A9cnica/imgs/mit%20app%20bloque%203.png)
+
 *Epígrafe: Lógica de selección de dispositivo bluetooth.*
 
 ---
@@ -563,7 +571,9 @@ Análisis:
 Resultado consolidado de herramientas de análisis de consola y build.
 
 **Figura 4.1 - Console and Build Analyzer**  
+
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/build%20console%20y%20analyzer.png)
+
 *Epígrafe: Build console y build analyzer.*
 
 ## 4.6 Medición y análisis de WCET por tarea
