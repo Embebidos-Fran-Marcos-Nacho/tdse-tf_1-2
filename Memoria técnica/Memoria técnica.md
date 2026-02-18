@@ -458,7 +458,7 @@ Funcionamiento en firmware:
 - 2 bytes por frame:
   - byte 0: `adc_percent` (0..100).
   - byte 1: `light_enabled` (0/1).
-- Envío periódico por tiempo (no por cambio), configurable con `APP_BT_TELEMETRY_PERIOD_MS` (actualmente `50 ms`).
+- Envío periódico por tiempo (no por cambio), configurable con `APP_BT_TELEMETRY_PERIOD_MS` (actualmente `50 ms`). Esto ayudó mucho a mejorar los WCET debido a que el uso de la consola parece tomar mucho tiempo.
 
 Nota: actualmente la app se usa como receptor de estado, no como control remoto completo de actuadores.
 
