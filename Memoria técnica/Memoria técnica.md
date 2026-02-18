@@ -105,7 +105,7 @@ Fuera de alcance actual:
 
 # Capítulo 2: Introducción específica
 
-## 2.1 Requisitos (versión final)
+## 2.1 Requisitos (versión final del informe de avances)
 
 | Grupo | ID | Descripción |
 | --- | --- | --- |
