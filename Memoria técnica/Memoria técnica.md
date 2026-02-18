@@ -227,7 +227,7 @@ Se requirió para unir la placa F103RB (3.3 V) con la placa diseñada (5 V).
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/esquem%20triac.png)
 *Epígrafe: Esquemático de driver de TRIAC.*
 
-Diseño tomado de las notas de aplicación que se encuentran en este mismo repositorio. 
+Diseño tomado de las notas de aplicación que se encuentran en este mismo repositorio en la sección de hardware. 
 
 ### 3.2.2 Etapa ZCD (detección de cruce por cero)
 
