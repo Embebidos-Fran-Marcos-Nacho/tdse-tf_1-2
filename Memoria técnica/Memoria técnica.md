@@ -310,15 +310,15 @@ Lecciones aprendidas para próxima iteración:
 - Evaluar integración de control de dimming en una etapa dedicada.
 
 **Figura 3.13 - Papel de transferencia con diseño impreso**  
-![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/p%20n%20p%20blue.jpeg)
+![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/1030475e09d21a3204b19eb7996e9f11bb688033/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/p%20n%20p%20blue.jpeg)
 *Epígrafe: Papel de transferencia con el diseño impreso.*
 
 **Figura 3.14 - Transferencia previa a correcciones**
-![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/trasferencia%20a%20cobre.jpeg)
+![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/1030475e09d21a3204b19eb7996e9f11bb688033/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/trasferencia%20a%20cobre.jpeg)
 *Epígrafe: Transferencia previa a correcciones.*
 
 **Figura 3.15 - Transferencia corregida**
-![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/correci%C3%B3n%20de%20desperfectos%20de%20trasnferencia.jpeg)
+![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/1030475e09d21a3204b19eb7996e9f11bb688033/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/correci%C3%B3n%20de%20desperfectos%20de%20trasnferencia.jpeg)
 *Epígrafe: Transferencia corregida.*
 
 **Figura 3.16 - Placa fabricada**
