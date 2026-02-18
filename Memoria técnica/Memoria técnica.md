@@ -542,7 +542,6 @@ Procedimiento realizado:
 4. Intercalar amperímetro en serie en la línea de `5V`.
 5. Medir tensión de entrada en paralelo sobre `5V-GND`.
 6. Registrar datos en los modos:
-   - inicialización.
    - normal sin módulo Bluetooth conectado.
    - normal con módulo Bluetooth conectado pero desactivado.
    - normal con Bluetooth activo enviando datos.
@@ -551,7 +550,7 @@ Procedimiento realizado:
 
 Alcance de la medición:
 - Esta medición representa el consumo total a `5V` del conjunto montado.
-- El riel de `3.3V` queda incluido indirectamente, ya que se genera desde `5V` mediante el regulador de la placa.
+- El riel de `3.3V` queda incluido indirectamente, ya que se genera desde `5V` mediante el regulador de la placa. Además, registrar el consumo de 3.3V solo no tiene sentido para un sistema que se alimenta com 5V. 
 
 | Modo | I pico @5V [mA] | P pico @5V [W] | Observaciones |
 | --- | ---: | ---: | --- |
@@ -574,7 +573,9 @@ Resultado consolidado de herramientas de análisis de consola y build.
 
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/build%20console%20y%20analyzer.png)
 
-*Epígrafe: Build console y build analyzer.*
+*Epígrafe: Build console y build analyzer. Dice RAM: 10.31% y FLASH: 16.11% *
+
+
 
 ## 4.6 Medición y análisis de WCET por tarea
 
@@ -589,6 +590,8 @@ Metodología realizada:
 3. Ejecutar con trazas de test desactivadas (`APP_TEST_MODE = 0`) y perfil limpio activo durante la medición.
 4. Dejar correr el sistema en estado idle (sin pulsaciones ni cambios ADC).
 5. Registrar múltiples ventanas `[PROF]` (n~1010 por ventana).
+
+Es decir, se usó el mismo programa pero con un modo de estimación del WCET. 
 
 Formato de log utilizado y significado de parámetros:
 - `n`: cantidad de ciclos de scheduler medidos en la ventana.
@@ -621,31 +624,27 @@ Es muy importante destacar que el uso de la consola eleva masivamente los WCET, 
 - Uso de CPU: `CPU avg` entre `13.6%` y `14.0%`; `CPU peak` entre `35.6%` y `38.0%`.
 
 
-## 4.7 Cálculo del factor de uso de CPU U
+## 4.7 Cálculo del factor de uso de CPU (U)
 
-Se utiliza la fórmula de utilización en tiempo real:
+Para evaluar la carga temporal del sistema se calculó el factor de utilización de CPU utilizando la expresión clásica de sistemas en tiempo real:
 
-\[
-U = \sum_{i=1}^{n} \frac{C_i}{T_i}
-\]
+$$U = \sum_{i=1}^{n} \frac{C_i}{T_i}$$
 
-Donde:
-- \(C_i\): WCET de la tarea \(i\) (valores de ventana, steady-state).
-- \(T_i\): período de activación de la tarea \(i\).
+donde (C_i) representa el WCET de la tarea (i), medido a partir de ventanas de ejecución en régimen estacionario, y (T_i) su período de activación.
 
-**Tabla de cálculo:**
+La Tabla siguiente resume los valores utilizados para el cálculo:
 
-| Tarea | Ci (WCET) [us] | Ti [us] | Ci/Ti |
-| --- | ---: | ---: | ---: |
-| `task_adc_update` | 268 | 1000 | 0.268 |
-| `task_system_update` | 125 | 1000 | 0.125 |
-| `task_pwm_update` | 292 | 1000 | 0.292 |
-| **Total U (WCET-based, conservador)** | - | - | **0.685** |
+| Tarea                                   | (C_i) (WCET) [µs] | (T_i) [µs] | (C_i/T_i) |
+| --------------------------------------- | ----------------: | ---------: | --------: |
+| `task_adc_update`                       |               268 |       1000 |     0.268 |
+| `task_system_update`                    |               125 |       1000 |     0.125 |
+| `task_pwm_update`                       |               292 |       1000 |     0.292 |
+| **Total (U) (WCET-based, conservador)** |                 – |          – | **0.685** |
 
-**Interpretación:**
-- En observación real por ventana, los logs mostraron `Uwcet` entre `46.5%` y `66.1%`, y `Uavg` entre `13.6%` y `13.9%`.
-- El valor `0.685` es una cota conservadora construida con máximos individuales observados en ventanas distintas.
-- **Conclusión**: El sistema opera con margen temporal holgado en estado estable (sin overruns), incluso considerando una cota conservadora.
+El valor total obtenido, ($U = 0.685$), corresponde a una cota conservadora, ya que se construyó combinando los máximos tiempos de ejecución observados para cada tarea en ventanas temporales distintas y no a partir de una ocurrencia simultánea real de dichos máximos.
+
+En contraste, las mediciones experimentales mostraron valores de utilización sensiblemente menores: la utilización basada en ventanas (($U_{wcet}$)) se mantuvo entre $46,5$ % y $66,1$ %, mientras que la utilización promedio (($U_{avg}$)) se ubicó en torno al 14 % en régimen permanente. En el caso particular del STM32F103RB, estos resultados indican un comportamiento temporal estable, con un margen de CPU suficiente para absorber variaciones transitorias de ejecución sin comprometer el cumplimiento de los períodos de las tareas, validando así la factibilidad temporal del diseño.
+
 
 ## 4.8 Gestión de bajo consumo y justificación
 
@@ -659,9 +658,10 @@ No obstante, se evaluó el impacto energético real del sistema y los resultados
 Esto es consistente con el factor de uso medido (`Uavg` alrededor de `14%` y cota conservadora `Uwcet = 0.685`): la carga temporal del microcontrolador no aparece como cuello de botella energético principal en el prototipo actual.
 
 En una versión orientada a producto (placa dedicada, sin sobrecarga de NUCLEO y periféricos de laboratorio), sí corresponde aplicar optimización sistemática de consumo:
--Reducir frecuencia de reloj del MCU al mínimo compatible con temporización y control de TRIAC;
-- Incorporar política de idle de bajo consumo (entrada a `Sleep` entre eventos periódicos/interrupts);
-- Migrar de HC-06 (Bluetooth clásico) a BLE para telemetría de bajo consumo;
+
+- Reducir frecuencia de reloj del MCU al mínimo compatible con temporización y control de TRIAC.
+- Incorporar política de idle de bajo consumo (entrada a `Sleep` entre eventos periódicos/interrupts).
+- Migrar de HC-06 (Bluetooth clásico) a BLE para telemetría de bajo consumo.
 - Revisar arquitectura de hardware auxiliar (drivers, conversores, etapas de acondicionamiento y protecciones) para eliminar consumo no esencial.
 
 Conclusión: para el alcance académico de esta entrega, el consumo observado está mayormente determinado por decisiones de hardware e instrumentación de prototipo. La optimización fina de bajo consumo queda planificada como mejora de próxima revisión de diseño.
