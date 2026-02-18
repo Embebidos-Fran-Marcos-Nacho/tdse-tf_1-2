@@ -111,18 +111,16 @@ Fuera de alcance actual:
 | --- | --- | --- |
 | Control | 1.1 | El sistema permitirá encender y apagar las luces mediante un botón físico. |
 |  | 1.2 | El sistema permitirá ajustar la velocidad del ventilador mediante un potenciómetro. |
-|  | 1.3 | El sistema permitirá visualizar por Bluetooth el estado de ventilador y luces. |
+|  | 1.3 | El sistema permitirá ver el estado del ventilador y las luces vía Bluetooth. |
 | Bluetooth | 2.1 | El sistema contará con un DIP switch para habilitar o deshabilitar el Bluetooth. |
-|  | 2.2 | El sistema implementará la configuración base del módulo HC-06 mediante comandos AT. |
-|  | 2.3 | El sistema enviará telemetría binaria de 2 bytes por Bluetooth. |
-| Indicadores | 3.1 | El sistema contará con un LED habilitable por DIP para indicar estado. |
+|  | 2.2 | El DIP switch permitirá seleccionar configuraciones o canales del módulo Bluetooth. |
+| Indicadores | 3.1 | El sistema contará con LEDs que indiquen el estado del Bluetooth. |
 |  | 3.2 | El sistema contará con un buzzer para señalizar eventos del sistema. |
-| Memoria | 4.1 | El sistema deberá guardar en memoria flash estado de luz y calibración ADC. |
-|  | 4.2 | El sistema deberá restaurar automáticamente la información guardada al encender. |
+| Memoria | 4.1 | El sistema deberá guardar en memoria flash el último valor de PWM utilizado. |
+|  | 4.2 | El sistema deberá restaurar automáticamente el último valor guardado al encender. |
 | Seguridad eléctrica | 5.1 | El sistema deberá operar de forma segura sobre cargas de 220 VAC. |
-|  | 5.2 | El sistema deberá contar con modo de falla con corte de potencia. |
-| Aplicación móvil | 6.1 | La aplicación mostrará los estados disponibles (luz y porcentaje de ventilador). |
-|  | 6.2 | El sistema deberá evitar conflictos entre control físico y comunicación Bluetooth. |
+| Aplicación móvil | 6.1 | La aplicación dará información sobre los estados disponibles, que incluyen la velocidad del ventilador y el estado de luces. |
+|  | 6.2 | El sistema deberá evitar conflictos entre el control físico y la comunicación Bluetooth, incluyendo conflictos de timings. |
 
 ## 2.2 Casos de uso
 
@@ -150,7 +148,7 @@ Fuera de alcance actual:
 | --- | --- |
 | Disparador | Cambio de estado de luz o de porcentaje del potenciómetro. |
 | Precondiciones | BT habilitado por DIP1, módulo HC-06 conectado. |
-| Flujo básico | Firmware arma trama binaria de 2 bytes y transmite por USART1. |
+| Flujo básico | Firmware arma trama binaria de 2 bytes y transmite por USART1 para que la app informe el estado del sistema. |
 | Alternativas | Si BT deshabilitado, no se transmite. |
 
 ### Caso de uso 4: Recuperación tras falla
@@ -161,6 +159,10 @@ Fuera de alcance actual:
 | Precondiciones | Sistema energizado. |
 | Flujo básico | Corte de salidas de potencia, alarma visual/sonora según DIP, reintento de inicialización luego de timeout. |
 | Alternativas | Si DIP4 vuelve a 0, salida de `FAULT` y retorno a `NORMAL`. |
+
+Nota de trazabilidad de alcance:
+- El informe de avances redefinió el alcance Bluetooth para visualización de estado (sin control remoto completo de actuadores).
+- Los casos de uso y la app se documentan en consecuencia: recepción de telemetría y presentación de estado.
 
 ## 2.3 Descripción de módulos principales
 
@@ -650,26 +652,32 @@ Conclusión: para el alcance académico de esta entrega, el consumo observado es
 
 | ID | Requisito (versión final) | Hardware | Software | Estado final |
 | --- | --- | :---: | :---: | :---: |
-| 1.1 | Encendido/apagado de luces por botón local | 🟢 | 🟢 | ✅ |
-| 1.2 | Control de ventilador por potenciómetro | 🟢 | 🟢 | ✅ |
-| 1.3 | Visualización de estado por Bluetooth | 🟢 | 🟢 | ✅ |
-| 2.1 | Habilitación de Bluetooth por DIP1 | 🟢 | 🟢 | ✅ |
-| 2.2 | Configuración base de HC-06 por AT | 🟢 | 🟢 | ✅ |
-| 2.3 | Telemetría periódica de 2 bytes | 🟢 | 🟢 | ✅ |
-| 3.1 | LED habilitable por DIP3 | 🟢 | 🟢 | ✅ |
-| 3.2 | Buzzer habilitable por DIP2 | 🟢 | 🟢 | ✅ |
-| 4.1 | Persistencia flash de estado/calibración | 🟢 | 🟢 | ✅ |
-| 4.2 | Restauración automática al arranque | 🟢 | 🟢 | ✅ |
-| 5.1 | Operación segura sobre 220 VAC en prototipo | 🟢 | N/A | 🟡 |
-| 5.2 | Modo de falla con corte de potencia | 🟢 | 🟢 | ✅ |
-| 6.1 | App móvil con visualización de estados | N/A | 🟢 | ✅ |
-| 6.2 | Sin conflicto entre control físico y comunicación BT | N/A | 🟢 | ✅ |
+| 1.1 | El sistema permitirá encender y apagar las luces mediante un botón físico. | 🟢 | 🟢 | ✅ |
+| 1.2 | El sistema permitirá ajustar la velocidad del ventilador mediante un potenciómetro. | 🟢 | 🟢 | ✅ |
+| 1.3 | El sistema permitirá ver el estado del ventilador y las luces vía Bluetooth. | 🟢 | 🟢 | ✅ |
+| 2.1 | El sistema contará con un DIP switch para habilitar o deshabilitar el Bluetooth. | 🟢 | 🟢 | ✅ |
+| 2.2 | El DIP switch permitirá seleccionar configuraciones o canales del módulo Bluetooth. | 🔴 | 🔴 | 🔴 |
+| 3.1 | El sistema contará con LEDs que indiquen el estado del Bluetooth. | 🟢 | 🟢 | ✅ |
+| 3.2 | El sistema contará con un buzzer para señalizar eventos del sistema. | 🟢 | 🟢 | ✅ |
+| 4.1 | El sistema deberá guardar en memoria flash el último valor de PWM utilizado. | 🟢 | 🟢 | ✅ |
+| 4.2 | El sistema deberá restaurar automáticamente el último valor guardado al encender. | 🟢 | 🟢 | ✅ |
+| 5.1 | El sistema deberá operar de forma segura sobre cargas de 220 VAC. | 🟡 | N/A | 🟡 |
+| 6.1 | La aplicación dará información sobre los estados disponibles, que incluyen la velocidad del ventilador y el estado de luces. | N/A | 🟢 | ✅ |
+| 6.2 | El sistema deberá evitar conflictos entre el control físico y la comunicación Bluetooth, incluyendo conflictos de timings. | N/A | 🟢 | ✅ |
 
 Leyenda:
 - 🟢 implementado
 - 🟡 parcialmente cumplido / con alcance acotado en prototipo
 - 🔴 no implementado / descartado
 - ✅ cumplido
+
+Observación sobre el requisito 5.1 (220 VAC):
+- La validación final sobre red de 220 VAC queda planificada para la etapa posterior a la aprobación académica del trabajo.
+- Esta decisión se toma para reducir el riesgo de daño de la placa durante la instancia de entrega y evaluación.
+
+Observación sobre el requisito 2.2 (canales/configuración Bluetooth):
+- En la implementación final no se desarrolló la selección de canales/configuraciones por DIP para Bluetooth.
+- Se descartó por no ser necesario para el funcionamiento objetivo del sistema (telemetría de estado).
 
 ## 4.10 Comparación con sistemas similares
 
