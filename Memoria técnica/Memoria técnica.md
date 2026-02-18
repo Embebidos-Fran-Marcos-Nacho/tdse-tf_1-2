@@ -293,7 +293,7 @@ Nótese que es muy parecida a la medida.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/simu%20salida%20del%20optoacoplador.jpeg)
 *Epígrafe: Salida simulada del 4N25.*
 
-No se parece mucho a la real, pero funcionó igual: la tensión dio para disparar los Schmitt trigger.
+No se parece mucho a la real, pero funcionó igual: la tensión alcanzó el umbral para disparar los Schmitt triggers.
 
 
 ### 3.2.4 Fabricación de placas
@@ -310,15 +310,15 @@ Lecciones aprendidas para próxima iteración:
 - Evaluar integración de control de dimming en una etapa dedicada.
 
 **Figura 3.13 - Papel de transferencia con diseño impreso**  
-![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/p%20n%20p%20blue.jpeg)
+![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/1030475e09d21a3204b19eb7996e9f11bb688033/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/p%20n%20p%20blue.jpeg)
 *Epígrafe: Papel de transferencia con el diseño impreso.*
 
 **Figura 3.14 - Transferencia previa a correcciones**
-![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/trasferencia%20a%20cobre.jpeg)
+![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/1030475e09d21a3204b19eb7996e9f11bb688033/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/trasferencia%20a%20cobre.jpeg)
 *Epígrafe: Transferencia previa a correcciones.*
 
 **Figura 3.15 - Transferencia corregida**
-![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/correci%C3%B3n%20de%20desperfectos%20de%20trasnferencia.jpeg)
+![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/1030475e09d21a3204b19eb7996e9f11bb688033/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/correci%C3%B3n%20de%20desperfectos%20de%20trasnferencia.jpeg)
 *Epígrafe: Transferencia corregida.*
 
 **Figura 3.16 - Placa fabricada**
@@ -349,20 +349,28 @@ Lecciones aprendidas para próxima iteración:
 ### 3.2.6 Cableado e imágenes del montaje
 
 **Figura 3.17 - Cableado final del prototipo**  
+
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/banco%20de%20trabajo%20desprolijo/banco%20final.jpeg)
+
 *Epígrafe: Montaje final del prototipo durante ensayo integrado.*
 
 
 **Figura 3.18 - Diagrama de conexión entre placas simplificado**  
+
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/00693ac864a65b0389699a47c52606a88d0adbb9/Diagrama%20de%20conexi%C3%B3n%20simplificado/conexionado.png)
+
 *Epígrafe: Diagrama simplificado de conexión entre placas.*
 
 **Figura 3.19 - Overview de placa shield y conexionado**  
+
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Diagrama%20de%20conexi%C3%B3n%20simplificado/f103rb.jpg)
+
 *Epígrafe: Vista general y conexionado de la shield para F103RB.*
 
 **Figura 3.20 - Conexionado de placa de TRIACs**
+
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Diagrama%20de%20conexi%C3%B3n%20simplificado/triacs.jpg)
+
 *Epígrafe: Conexionado de la placa de TRIACs y cargas.*
 
 
