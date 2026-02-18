@@ -656,7 +656,7 @@ Conclusión: para el alcance académico de esta entrega, el consumo observado es
 | 1.2 | El sistema permitirá ajustar la velocidad del ventilador mediante un potenciómetro. | 🟢 | 🟢 | ✅ |
 | 1.3 | El sistema permitirá ver el estado del ventilador y las luces vía Bluetooth. | 🟢 | 🟢 | ✅ |
 | 2.1 | El sistema contará con un DIP switch para habilitar o deshabilitar el Bluetooth. | 🟢 | 🟢 | ✅ |
-| 2.2 | El DIP switch permitirá seleccionar configuraciones o canales del módulo Bluetooth. | 🔴 | 🔴 | 🔴 |
+| 2.2 | El DIP switch permitirá seleccionar configuraciones o canales del módulo Bluetooth. | 🟢 | 🔴 | 🔴 |
 | 3.1 | El sistema contará con LEDs que indiquen el estado del Bluetooth. | 🟢 | 🟢 | ✅ |
 | 3.2 | El sistema contará con un buzzer para señalizar eventos del sistema. | 🟢 | 🟢 | ✅ |
 | 4.1 | El sistema deberá guardar en memoria flash el último valor de PWM utilizado. | 🟢 | 🟢 | ✅ |
@@ -692,11 +692,11 @@ Observación sobre el requisito 2.2 (canales/configuración Bluetooth):
 ## 4.11 Documentación del desarrollo realizado
 
 Material técnico disponible en repositorio:
-- código fuente STM32 (`Software STM32/main`).
-- esquemáticos y PCB (`Hardware/placa dimmer`, `Hardware/placa shield`).
-- diagramas de estado (`Diagrama de Harel`).
-- app móvil (`app celular`).
-- memoria técnica y contenido gráfico (`Memoria técnica`).
+- Código fuente STM32 (`Software STM32/main`).
+- Esquemáticos y PCB (`Hardware/placa dimmer`, `Hardware/placa shield`).
+- Diagramas de estado (`Diagrama de Harel`).
+- App móvil (`app celular`).
+- Memoria técnica y contenido gráfico (`Memoria técnica`).
 
 ---
 
@@ -705,12 +705,14 @@ Material técnico disponible en repositorio:
 ## 5.1 Resultados obtenidos
 
 Se obtuvo un prototipo funcional que integra:
--Ccontrol local de luz y ventilador.
+- Control local de luz y ventilador.
 - Sincronización con cruce por cero para disparo de TRIAC.
 - Telemetría por Bluetooth HC-06.
 - Persistencia en flash y manejo de falla segura.
 
 También se estableció una base sólida de documentación técnica para cierre de entrega final.
+
+El proyecto permitió conocer los Triacs como componentes de control de potencia, además de permitir ahondar en lo que es el desarrollo de sistemas embebidos a pequeña escala. 
 
 ## 5.2 Lecciones aprendidas
 
