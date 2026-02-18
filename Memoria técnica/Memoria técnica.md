@@ -405,7 +405,7 @@ En `FAULT`:
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/Statechart.png)
 
 **Figura 3.22 - Subestados de inicialización**  
-![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/State%20Init.png)
+![Imagen]([https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/State%20Init.png](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/169b5aabae5e8c5a7af391914271a01397db4f61/Memoria%20t%C3%A9cnica/imgs/State%20Init.png))
 
 **Figura 3.23 - Estado normal**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/State%20Normal.png)
