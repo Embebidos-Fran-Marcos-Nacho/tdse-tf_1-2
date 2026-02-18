@@ -293,7 +293,7 @@ Nótese que es muy parecida a la medida.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/simu%20salida%20del%20optoacoplador.jpeg)
 *Epígrafe: Salida simulada del 4N25.*
 
-No se parece mucho a la real, pero funcionó igual: la tensión dio para disparar los Schmitt trigger.
+No se parece mucho a la real, pero funcionó igual: la tensión alcanzó el umbral para disparar los Schmitt triggers.
 
 
 ### 3.2.4 Fabricación de placas
