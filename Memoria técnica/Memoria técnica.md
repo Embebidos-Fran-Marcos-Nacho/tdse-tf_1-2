@@ -44,8 +44,10 @@ Esta memoria documenta los requisitos, el diseño de hardware y firmware, los en
 
 - [Capítulo 1: Introducción general](#capítulo-1-introducción-general)
 - [Capítulo 2: Introducción específica](#capítulo-2-introducción-específica)
+- [2.1 Requisitos (versión final)](#21-requisitos-versión-final)
 - [Capítulo 3: Diseño e implementación](#capítulo-3-diseño-e-implementación)
 - [Capítulo 4: Ensayos y resultados](#capítulo-4-ensayos-y-resultados)
+- [4.9 Cumplimiento de requisitos](#49-cumplimiento-de-requisitos)
 - [Capítulo 5: Conclusiones](#capítulo-5-conclusiones)
 - [Uso de herramientas de IA](#uso-de-herramientas-de-ia)
 - [Bibliografía y referencias](#bibliografía-y-referencias)
@@ -103,22 +105,24 @@ Fuera de alcance actual:
 
 # Capítulo 2: Introducción específica
 
-## 2.1 Requisitos
+## 2.1 Requisitos (versión final)
 
 | Grupo | ID | Descripción |
 | --- | --- | --- |
 | Control | 1.1 | El sistema permitirá encender y apagar las luces mediante un botón físico. |
 |  | 1.2 | El sistema permitirá ajustar la velocidad del ventilador mediante un potenciómetro. |
-|  | 1.3 | El sistema permitirá controlar el ventilador y las luces vía Bluetooth. |
+|  | 1.3 | El sistema permitirá visualizar por Bluetooth el estado de ventilador y luces. |
 | Bluetooth | 2.1 | El sistema contará con un DIP switch para habilitar o deshabilitar el Bluetooth. |
-|  | 2.2 | El DIP switch permitirá seleccionar configuraciones o canales del módulo Bluetooth. |
-| Indicadores | 3.1 | El sistema contará con LEDs que indiquen el estado del Bluetooth. |
+|  | 2.2 | El sistema implementará la configuración base del módulo HC-06 mediante comandos AT. |
+|  | 2.3 | El sistema enviará telemetría binaria de 2 bytes por Bluetooth. |
+| Indicadores | 3.1 | El sistema contará con un LED habilitable por DIP para indicar estado. |
 |  | 3.2 | El sistema contará con un buzzer para señalizar eventos del sistema. |
-| Memoria | 4.1 | El sistema deberá guardar en memoria flash el último valor de PWM utilizado. |
-|  | 4.2 | El sistema deberá restaurar automáticamente el último valor guardado al encender. |
+| Memoria | 4.1 | El sistema deberá guardar en memoria flash estado de luz y calibración ADC. |
+|  | 4.2 | El sistema deberá restaurar automáticamente la información guardada al encender. |
 | Seguridad eléctrica | 5.1 | El sistema deberá operar de forma segura sobre cargas de 220 VAC. |
-| Aplicación móvil | 6.1 | La aplicación permitirá realizar todas las acciones disponibles desde los controles físicos. |
-|  | 6.2 | El sistema deberá evitar conflictos entre control físico y control Bluetooth. |
+|  | 5.2 | El sistema deberá contar con modo de falla con corte de potencia. |
+| Aplicación móvil | 6.1 | La aplicación mostrará los estados disponibles (luz y porcentaje de ventilador). |
+|  | 6.2 | El sistema deberá evitar conflictos entre control físico y comunicación Bluetooth. |
 
 ## 2.2 Casos de uso
 
@@ -209,17 +213,19 @@ Se usaron dos placas:
 
 ### Etapa de conversión de niveles
 
+**Figura 3.2 - Esquemático del conversor de niveles**
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/esquema%20niveles.png)
 *Epígrafe: Esquemático del conversor de niveles.*
 
-se requirió para poder unir la placa f103rb (3.3V) con la diseñada. 
+Se requirió para unir la placa F103RB (3.3 V) con la placa diseñada. 
 
 ### Etapa de Triacs 
 
+**Figura 3.3 - Esquemático de driver de TRIAC**
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/esquem%20triac.png)
 *Epígrafe: Esquemático de driver de TRIAC.*
 
-diseño tomado de las notas de aplicación que se encuentran en este mismo repositorio. 
+Diseño tomado de las notas de aplicación que se encuentran en este mismo repositorio. 
 
 ### 3.2.2 Etapa ZCD (detección de cruce por cero)
 
@@ -227,30 +233,33 @@ La etapa de ZCD fue validada progresivamente en banco antes de integrar potencia
 - la salida detectada requiere compensación temporal aproximada de 500 us para ubicar el cruce real.
 - las simulaciones resultaron consistentes con la tendencia medida.
 
-**Figura - Esquemático del ZCD**
+**Figura 3.4 - Esquemático del ZCD**
 
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/esquematico%20ZCD.png)
 *Epígrafe: Esquemático del ZCD.*
 
 
 
-**Figura 3.2 - Banco inicial de pruebas ZCD**  
+**Figura 3.5 - Banco inicial de pruebas ZCD**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/banco%20de%20trabajo%20inicial.jpeg)
 *Epígrafe: Banco de trabajo durante las verificaciones del ZCD con osciloscopio.*
 
 
-**Figura 3.3 - Mediciones de pulsos ZCD (osciloscopio)**  
+**Figura 3.6 - Mediciones de pulsos ZCD (osciloscopio)**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/mediciones%20pulsos.jpeg)
 *Epígrafe: Pulsos de salida del ZCD - cursor midiendo tiempo entre pulsos.*
 
-Nótese que el ZCD actua cada cruce por cero, generando una señal de 100 Hz.
+Nótese que el ZCD actúa en cada cruce por cero, generando una señal de 100 Hz.
 
+**Figura 3.7 - Medición de ancho de pulso del ZCD**
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/mediciones%20pulsos%201.jpeg)
 *Epígrafe: Salida del ZCD con la senoidal aplicada - cursor midiendo ancho de pulso.*
 
+**Figura 3.8 - Disparo previo al cruce real (senoidal negativa)**
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/mediciones%20pulsos%202.jpeg)
 *Epígrafe: Salida del ZCD con la senoidal aplicada - cursor midiendo tiempo de disparo previo al cruce por cero real con senoidal negativa.*
 
+**Figura 3.9 - Disparo previo al cruce real (senoidal positiva)**
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/mediciones%20pulsos%204.jpeg)
 *Epígrafe: Salida del ZCD con la senoidal aplicada - cursor midiendo tiempo de disparo previo al cruce por cero real con senoidal positiva.*
 
@@ -266,29 +275,30 @@ Según esquemático principal (`Hardware/placa dimmer/dimmer.kicad_sch`), el can
 
 Notas de fabricación y prueba:
 - Primero se validó el correcto funcionamiento del ZCD, luego se integraron TRIACs.
-- Las primeras pruebas integradas se hicieron en 24 VAC. Esto conllebó una ligera y reversible modificación del circuito de ZCD. 
+- Las primeras pruebas integradas se hicieron en 24 VAC. Esto conllevó una ligera y reversible modificación del circuito de ZCD. 
 
-**Figura 3.4 - Ensayo de salida de optoacoplador**  
+**Figura 3.10 - Ensayo de salida de optoacoplador**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/salida%20real%20del%20opto.jpeg)
-*Epígrafe:  Señal a la salida del 4N25 en configuración de emisor común/negador.*
+*Epígrafe: Señal a la salida del 4N25 en configuración de emisor común/negador.*
 
-**Figura 3.5 - Simulación de ZCD y salida de opto**  
+**Figura 3.11 - Simulación de ZCD y salida de opto**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/simu%20ZCD%20proper.jpeg)
 *Epígrafe: Simulación de la entrada y salida ideal del ZCD.*
 
-Nótense que es muy parecida a la medida. 
+Nótese que es muy parecida a la medida. 
 
+**Figura 3.12 - Salida simulada del 4N25**
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/simu%20salida%20del%20optoacoplador.jpeg)
 *Epígrafe: Salida simulada del 4N25.*
 
-No se parece mucho a la real pero igual funcionó, la tensión daió para triggear los schmitt triggers
+No se parece mucho a la real, pero funcionó igual: la tensión dio para disparar los Schmitt trigger.
 
 
 ### 3.2.4 Fabricación de placas
 
 Se documentó el proceso de fabricación con transferencia y ataque químico:
 - Primero se imprimió el diseño sobre un papel PnP Blue.
-- Luego se trasnfirió por medio de calor. 
+- Luego se transfirió por medio de calor. 
 - Se hicieron las correcciones manuales de transferencia.
 - Por último, se realizó un control de continuidad previo a energizar.
 
@@ -297,16 +307,19 @@ Lecciones aprendidas para próxima iteración:
 - Simplificar topología de ZCD.
 - Evaluar integración de control de dimming en una etapa dedicada.
 
-**Figura 3.6 - Proceso de fabricación (transferencia y cobre)**  
+**Figura 3.13 - Papel de transferencia con diseño impreso**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/p%20n%20p%20blue.jpeg)
-*Epígrafe: Papel de trasnferencia con el diseño impreso.*
+*Epígrafe: Papel de transferencia con el diseño impreso.*
 
+**Figura 3.14 - Transferencia previa a correcciones**
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/trasferencia%20a%20cobre.jpeg)
 *Epígrafe: Transferencia previa a correcciones.*
 
+**Figura 3.15 - Transferencia corregida**
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/correci%C3%B3n%20de%20desperfectos%20de%20trasnferencia.jpeg)
 *Epígrafe: Transferencia corregida.*
 
+**Figura 3.16 - Placa fabricada**
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/cobre%20etched.jpeg)
 *Epígrafe: Placa fabricada.*
 
@@ -333,21 +346,22 @@ Lecciones aprendidas para próxima iteración:
 
 ### 3.2.6 Cableado e imágenes del montaje
 
-**Figura 3.8 - Cableado final del prototipo**  
+**Figura 3.17 - Cableado final del prototipo**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/banco%20de%20trabajo%20desprolijo/banco%20final.jpeg)
-*Epígrafe: completar.*
+*Epígrafe: Montaje final del prototipo durante ensayo integrado.*
 
 
-**Figura 3.8 - Diagrama de conexión entre placas simplificado**  
+**Figura 3.18 - Diagrama de conexión entre placas simplificado**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/00693ac864a65b0389699a47c52606a88d0adbb9/Diagrama%20de%20conexi%C3%B3n%20simplificado/conexionado.png)
-*Diagrama simplificado.*
+*Epígrafe: Diagrama simplificado de conexión entre placas.*
 
-**Figura 3.8 - Overview de ambas placas y conexionado a cargas**  
+**Figura 3.19 - Overview de placa shield y conexionado**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Diagrama%20de%20conexi%C3%B3n%20simplificado/f103rb.jpg)
-*Overview y conexionado de Shield para F103RB.*
+*Epígrafe: Vista general y conexionado de la shield para F103RB.*
 
+**Figura 3.20 - Conexionado de placa de TRIACs**
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Diagrama%20de%20conexi%C3%B3n%20simplificado/triacs.jpg)
-*Conexionado de placa con TRIACs.*
+*Epígrafe: Conexionado de la placa de TRIACs y cargas.*
 
 
 ## 3.3 Diseño de firmware
@@ -377,19 +391,19 @@ En `FAULT`:
 - se activa patrón de alarma.
 - se reintenta inicialización por timeout.
 
-**Figura 3.9 - Statechart general (Harel/Itemis)**  
+**Figura 3.21 - Statechart general (Harel/Itemis)**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/Statechart.png)
 
-**Figura 3.10 - Subestados de inicialización**  
+**Figura 3.22 - Subestados de inicialización**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/State%20Init.png)
 
-**Figura 3.11 - Estado normal**  
+**Figura 3.23 - Estado normal**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/State%20Normal.png)
 
-**Figura 3.12 - Estado de falla**  
+**Figura 3.24 - Estado de falla**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/State%20Fault_ST.png)
 
-**Figura 3.13 - FSM de debounce de botón**  
+**Figura 3.25 - FSM de debounce de botón**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/ST_BTN.png)
 
 ### 3.3.3 Entradas y acondicionamiento lógico
@@ -442,20 +456,20 @@ Nota: actualmente la app se usa como receptor de estado, no como control remoto 
 
 La app fue desarrollada en MIT App Inventor. Se documentan interfaz y bloques de procesamiento de bytes.
 
-**Figura 3.14 - Pantalla principal app**  
+**Figura 3.26 - Pantalla principal app**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/566a7314061481abbec17f240388ee198cea82ee/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/captura%20app.jpeg)
 *Epígrafe: Pantalla principal de la App.*
 
 
-**Figura 3.15 - Bloques MIT App Inventor (parte 1)**  
+**Figura 3.27 - Bloques MIT App Inventor (parte 1)**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/65b6a1be5b7a1b68e959d041707e17e00ebe5659/Memoria%20t%C3%A9cnica/imgs/mit%20app%20bloque%201.png)
 *Epígrafe: Bloques de inicialización de la pantalla principal.*
 
-**Figura 3.16 - Bloques MIT App Inventor (parte 2)**  
+**Figura 3.28 - Bloques MIT App Inventor (parte 2)**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/65b6a1be5b7a1b68e959d041707e17e00ebe5659/Memoria%20t%C3%A9cnica/imgs/mit%20app%20bloque%202.png)
 *Epígrafe: Lógica de actualización de datos y pantalla.*
 
-**Figura 3.17 - Bloques MIT App Inventor (parte 3)**  
+**Figura 3.29 - Bloques MIT App Inventor (parte 3)**  
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/65b6a1be5b7a1b68e959d041707e17e00ebe5659/Memoria%20t%C3%A9cnica/imgs/mit%20app%20bloque%203.png)
 *Epígrafe: Lógica de selección de dispositivo bluetooth.*
 
@@ -571,6 +585,8 @@ Criterio de consolidación de resultados:
 - Para `WCETw máx observado` se tomó el máximo absoluto entre las 15 ventanas.
 - Para `U` se reportó rango observado por ventana y cota conservadora adicional.
 
+Es muy importante destacar que el uso de la consola eleva masivamente los WCET, por lo que se minimizó en las evaluaciones. 
+
 **Resultados medidos (estado idle/estable, 15 ventanas):**
 
 | Tarea | Período asumido [us] | Cavg típico [us] | WCETw máx observado [us] |
@@ -623,35 +639,37 @@ No obstante, se evaluó el impacto energético real del sistema y los resultados
 Esto es consistente con el factor de uso medido (`Uavg` alrededor de `14%` y cota conservadora `Uwcet = 0.685`): la carga temporal del microcontrolador no aparece como cuello de botella energético principal en el prototipo actual.
 
 En una versión orientada a producto (placa dedicada, sin sobrecarga de NUCLEO y periféricos de laboratorio), sí corresponde aplicar optimización sistemática de consumo:
-- reducir frecuencia de reloj del MCU al mínimo compatible con temporización y control de TRIAC;
-- incorporar política de idle de bajo consumo (entrada a `Sleep` entre eventos periódicos/interrupts);
-- migrar de HC-06 (Bluetooth clásico) a BLE para telemetría de bajo consumo;
-- revisar arquitectura de hardware auxiliar (drivers, conversores, etapas de acondicionamiento y protecciones) para eliminar consumo no esencial.
+-Reducir frecuencia de reloj del MCU al mínimo compatible con temporización y control de TRIAC;
+- Incorporar política de idle de bajo consumo (entrada a `Sleep` entre eventos periódicos/interrupts);
+- Migrar de HC-06 (Bluetooth clásico) a BLE para telemetría de bajo consumo;
+- Revisar arquitectura de hardware auxiliar (drivers, conversores, etapas de acondicionamiento y protecciones) para eliminar consumo no esencial.
 
 Conclusión: para el alcance académico de esta entrega, el consumo observado está mayormente determinado por decisiones de hardware e instrumentación de prototipo. La optimización fina de bajo consumo queda planificada como mejora de próxima revisión de diseño.
 
 ## 4.9 Cumplimiento de requisitos
 
-| ID | Requisito | Estado |
-| --- | --- | :---: |
-| 1.1 | Luz ON por botón local | ✅ |
-| 1.2 | Luz OFF por botón local | ✅ |
-| 1.3 | Control ventilador por potenciómetro | ✅ |
-| 2.1 | Habilitación BT por DIP1 | ✅ |
-| 2.2 | Telemetría por HC-06 | ✅ |
-| 2.3 | Trama fija de 2 bytes | ✅ |
-| 3.1 | LED habilitable por DIP3 | ✅ |
-| 3.2 | Buzzer habilitable por DIP2 | ✅ |
-| 4.1 | Persistencia de estado de luz | ✅ |
-| 4.2 | Persistencia de calibración ADC | ✅ |
-| 5.1 | Modo de falla con corte de potencia | ✅ |
-| 5.2 | Aislamiento y protecciones de potencia | ✅ |
-| 6.1 | Documentación de esquema/cableado/comportamiento | ✅ |
-| 6.2 | Consumo + WCET + U documentados | ✅ |
+| ID | Requisito (versión final) | Hardware | Software | Estado final |
+| --- | --- | :---: | :---: | :---: |
+| 1.1 | Encendido/apagado de luces por botón local | 🟢 | 🟢 | ✅ |
+| 1.2 | Control de ventilador por potenciómetro | 🟢 | 🟢 | ✅ |
+| 1.3 | Visualización de estado por Bluetooth | 🟢 | 🟢 | ✅ |
+| 2.1 | Habilitación de Bluetooth por DIP1 | 🟢 | 🟢 | ✅ |
+| 2.2 | Configuración base de HC-06 por AT | 🟢 | 🟢 | ✅ |
+| 2.3 | Telemetría periódica de 2 bytes | 🟢 | 🟢 | ✅ |
+| 3.1 | LED habilitable por DIP3 | 🟢 | 🟢 | ✅ |
+| 3.2 | Buzzer habilitable por DIP2 | 🟢 | 🟢 | ✅ |
+| 4.1 | Persistencia flash de estado/calibración | 🟢 | 🟢 | ✅ |
+| 4.2 | Restauración automática al arranque | 🟢 | 🟢 | ✅ |
+| 5.1 | Operación segura sobre 220 VAC en prototipo | 🟢 | N/A | 🟡 |
+| 5.2 | Modo de falla con corte de potencia | 🟢 | 🟢 | ✅ |
+| 6.1 | App móvil con visualización de estados | N/A | 🟢 | ✅ |
+| 6.2 | Sin conflicto entre control físico y comunicación BT | N/A | 🟢 | ✅ |
 
 Leyenda:
+- 🟢 implementado
+- 🟡 parcialmente cumplido / con alcance acotado en prototipo
+- 🔴 no implementado / descartado
 - ✅ cumplido
-- 🟡 parcialmente cumplido / pendiente de cierre documental o medición final
 
 ## 4.10 Comparación con sistemas similares
 
@@ -679,10 +697,10 @@ Material técnico disponible en repositorio:
 ## 5.1 Resultados obtenidos
 
 Se obtuvo un prototipo funcional que integra:
-- control local de luz y ventilador.
-- sincronización con cruce por cero para disparo de TRIAC.
-- telemetría por Bluetooth HC-06.
-- persistencia en flash y manejo de falla segura.
+-Ccontrol local de luz y ventilador.
+- Sincronización con cruce por cero para disparo de TRIAC.
+- Telemetría por Bluetooth HC-06.
+- Persistencia en flash y manejo de falla segura.
 
 También se estableció una base sólida de documentación técnica para cierre de entrega final.
 
@@ -719,7 +737,6 @@ Se documenta el uso de IA según requerimiento docente y archivo `listado de cos
   - apoyo extensivo en programación STM32 (estructura, módulos y ajustes).
   - apoyo para redacción de descripciones de PR.
 
-Estimación de costo total de IA del proyecto: bajo (aprox. USD 0 a USD 10, según herramienta/plan).
 
 ---
 
