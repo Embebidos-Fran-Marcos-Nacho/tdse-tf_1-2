@@ -219,7 +219,7 @@ Se usaron dos placas:
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/esquema%20niveles.png)
 *Epígrafe: Esquemático del conversor de niveles.*
 
-Se requirió para unir la placa F103RB (3.3 V) con la placa diseñada. 
+Se requirió para unir la placa F103RB (3.3 V) con la placa diseñada (5 V). 
 
 ### Etapa de Triacs 
 
