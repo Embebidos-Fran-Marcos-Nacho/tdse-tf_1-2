@@ -552,6 +552,7 @@ En `FAULT`:
 
 La Figura 3.21 presenta el statechart general del sistema; define el flujo de inicialización, operación normal y transición a falla segura.
 <img src="imgs/Statechart.png" width="500" /> 
+
 <em>Figura 3.21 — Statechart general (Harel/Itemis).</em><br><br>
 
 En la Figura 3.22 se detallan los subestados de inicialización, donde se leen DIP, se verifican condiciones y se restaura configuración persistida.
