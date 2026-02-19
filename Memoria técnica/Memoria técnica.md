@@ -350,7 +350,7 @@ Se usaron dos placas:
 - placa shield para interfaz y conexión con NUCLEO.
 - placa dimmer para potencia, ZCD y protecciones.
 
-### 3.2.2 Etapa de conversión de niveles
+### 3.2.2 $\mu s$ conversión de niveles
 
 La Figura 3.2 muestra el conversor de niveles utilizado para adaptar señales entre la NUCLEO-F103RB (3,3 V) y la placa diseñada (5 V), evitando sobrevoltajes en entradas digitales. 
 
@@ -358,7 +358,7 @@ La Figura 3.2 muestra el conversor de niveles utilizado para adaptar señales en
 <em>Figura 3.2 — Esquemático del conversor de niveles.</em><br><br>
 
 
-### 3.2.3 Etapa de TRIACs
+### 3.2.3 $\mu s$ TRIACs
 
 La Figura 3.3 presenta el driver de disparo de TRIAC basado en optoacoplador, elegido para aislar el dominio lógico y permitir el control de cargas de 220 VAC con disparos sincronizados. El diseño fue tomado de las notas de aplicación que se encuentran en este mismo repositorio en la sección de hardware. 
 
@@ -369,8 +369,8 @@ La Figura 3.3 presenta el driver de disparo de TRIAC basado en optoacoplador, el
 
 ### 3.2.4 Etapa ZCD (detección de cruce por cero)
 
-La etapa de ZCD fue validada progresivamente en banco antes de integrar potencia. Se observó que:
-- la salida detectada requiere compensación temporal aproximada de 500 us para ubicar el cruce real.
+La $\mu s$ ZCD fue validada progresivamente en banco antes de integrar potencia. Se observó que:
+- la salida detectada requiere compensación temporal aproximada de 500 $\mu s$ para ubicar el cruce real.
 - las simulaciones resultaron consistentes con la tendencia medida.
 
 En la Figura 3.4 se observa el circuito del detector de cruce por cero (ZCD), cuya salida se utiliza como referencia temporal para disparar los TRIACs con un retardo controlado.
@@ -410,22 +410,23 @@ La Figura 3.9 muestra el mismo fenómeno que la imagen 3.8 pero para la semionda
 
 ### 3.2.5 Etapa de potencia y protecciones
 
-El esquemático principal (Hardware/placa dimmer/dimmer.kicad_sch) fue diseñado por el equipo para integrar en un único canal de potencia los componentes necesarios para el control por TRIAC y sus protecciones. En particular, el canal de potencia incluye:
+El esquemático principal (Hardware/placa dimmer/dimmer.kicad_sch) muestra los componentes que realizan el manejo de la potencia y su interconexión, además de incluir los elementos de protección básicos, como fusibles, varistores y snubbers RC. Cada uno de los 2 canales de potencia de la placa incluye:
 
-- TRIAC de potencia (`BTA06-600C`).
-- Optoacoplador de disparo (`MOC3023M`).
-- Elementos de protección (varistor, fusible, red RC/snubber opcional).
+- Un TRIAC de potencia (`BTA06-600C`) elegido por su corriente de disparo y corriente de canal máxima muy superior a 1 A. 
+- Optoacoplador de disparo (`MOC3023M`), que aisla galvánicamente la lógica de 5 V de la parte de potencia.
+- Elementos de protección (varistor, fusible, red RC/snubber opcional - puede no soldarse).
 
-Notas de fabricación y prueba:
-- Primero se validó el correcto funcionamiento del ZCD, luego se integraron TRIACs.
-- Las primeras pruebas integradas se hicieron en 24 VAC. Esto conllevó una ligera y reversible modificación del circuito de ZCD. 
+Ambos canales tienen la capacidad de hacer _dimming_ de su respectiva carga, aunque en este caso solo se usó para una. 
+
+Notas de fabricación:
+- Las pruebas se hicieron en 24 VAC. Esto conllevó una ligera y reversible modificación del circuito de ZCD. 
 
 La Figura 3.10 muestra la señal a la salida del 4N25 (emisor común/negador) durante ensayo, confirmando niveles y forma de onda compatibles con el acondicionamiento digital.
 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/salida%20real%20del%20opto.jpeg" width="600" /> 
 <em>Figura 3.10 — Ensayo de salida de optoacoplador.</em><br><br>
 
-La Figura 3.11 presenta la simulación de la entrada/salida del ZCD y la etapa de opto, utilizada como referencia para contrastar con las mediciones. En este caso las simualciones concuerdan con los fenómenos medidos en las figuras 3.7 a 3.9. 
+La Figura 3.11 presenta la simulación de la entrada/salida del ZCD y la etapa de opto, utilizada como referencia para contrastar con las mediciones. En este caso las simulaciones son acordes a fenómenos medidos en las figuras 3.7 a 3.9. 
 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/30fe670b3a0bb71f531d25c21496764f675e7d96/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/simu%20ZCD%20proper.jpeg" width="600" /> 
 <em>Figura 3.11 — Simulación de ZCD y salida de opto.</em><br><br>
@@ -450,8 +451,6 @@ Lecciones aprendidas para la próxima iteración:
 - Simplificar topología de ZCD: se puede cambiar por un detector de 1 solo diodo, que actue cada ciclo y no por semiciclo. EL segundo disparo se puede resover por software estimando el período de la señal con un filtro de media móvil (o complementario). 
 - Evaluar integración de control de dimming en una etapa dedicada: En un futuro la idea es que la solución comercial tenga su propio microcontrolador en la placa, y que solo requiera 220 VAC para funcionar.<br><br>
 
-
-
 La Figura 3.13 muestra el papel de transferencia _p n p blue_ con el diseño impreso, paso previo al copiado del patrón a la placa cobreada.
 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/1030475e09d21a3204b19eb7996e9f11bb688033/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/p%20n%20p%20blue.jpeg" width="600" /> 
@@ -472,11 +471,11 @@ La Figura 3.16 presenta la placa fabricada tras el ataque y limpieza, lista para
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/cobre%20etched.jpeg" width="600" /> 
 <em>Figura 3.16 — Placa fabricada.</em><br><br>
 
-El soldado de la placa se dió en etapas, lo que permitió asegurarse de que cada etapa funcione previo a soldar la siguiente. En nuestro caso todo funcionó a la primera, excepto por una resistencia mal soldada que se corregió fácilmente.
+El soldado de la placa se dió en etapas, lo que permitió asegurarse de que cada etapa funcione previo a soldar la siguiente. En nuestro caso todo funcionó a la primera, excepto por una resistencia mal soldada que se corregió fácilmente. La solución final se alimentó con un transformador de 220 VAC a 24 VAC de 48 Watts. 
 
 ### 3.2.7 Pinout del sistema (STM32F103RB)
 
-La Tabla 3.1 lista el pinout relevante del sistema para entradas, salidas, DIP switches y comunicaciones.
+La Tabla 3.1 lista el pinout relevante del sistema para entradas, salidas, DIP switches y comunicaciones. El _shield_ fabricado para este proyecto respeta todas estas conexiones, y además están reflejadas en el el header del main del firmware. 
 
 | Pin | Función |
 | --- | --- |
@@ -487,7 +486,7 @@ La Tabla 3.1 lista el pinout relevante del sistema para entradas, salidas, DIP s
 | `PA4` | DIP4: forzado de estado `FAULT` |
 | `PC12` | Botón ON de luz |
 | `PC9` | Botón OFF de luz |
-| `PC2` | ZCD (EXTI) |
+| `PC2` | ZCD (a circuito de detección de cruces por cero) (EXTI) |
 | `PB3` | TRIAC canal ventilador |
 | `PB4` | TRIAC canal luz |
 | `PB13` | LED |
@@ -500,20 +499,26 @@ La Tabla 3.1 lista el pinout relevante del sistema para entradas, salidas, DIP s
 
 ### 3.2.8 Cableado e imágenes del montaje
 
+En esta parte del documento se detalla el montaje y conexionado de las placas. 
+
 La Figura 3.17 muestra el cableado final del prototipo en banco; se destaca el uso de conexiones soldadas y el montaje sin protoboard en la integración objetivo.
+
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/banco%20de%20trabajo%20desprolijo/banco%20final.jpeg" width="600" /> 
 <em>Figura 3.17 — Cableado final del prototipo.</em><br><br>
 
 
 La Figura 3.18 resume el conexionado simplificado entre placas, útil como referencia de integración (señales de control, alimentación y retornos).
+
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/00693ac864a65b0389699a47c52606a88d0adbb9/Diagrama%20de%20conexi%C3%B3n%20simplificado/conexionado.png" width="600" /> 
 <em>Figura 3.18 — Diagrama de conexión entre placas simplificado.</em><br><br>
 
-En la Figura 3.19 se observa la shield (NUCLEO-F103RB) y su conexionado, donde se distinguen entradas (DIP, botones, ADC) y salidas hacia potencia.
+En la Figura 3.19 se observa el shield del NUCLEO-F103RB y su conexionado, donde se distinguen entradas (DIP, botones, ADC) y salidas hacia potencia.
+
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Diagrama%20de%20conexi%C3%B3n%20simplificado/f103rb.jpg" width="600" /> 
 <em>Figura 3.19 — Overview de placa shield y conexionado.</em><br><br>
 
 La Figura 3.20 muestra el conexionado de la placa de TRIACs y las cargas, con especial atención a la separación entre el dominio de 220 VAC y el de control.
+
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Diagrama%20de%20conexi%C3%B3n%20simplificado/triacs.jpg" width="600" /> 
 <em>Figura 3.20 — Conexionado de placa de TRIACs.</em><br><br>
 
@@ -578,8 +583,8 @@ Esto último asegura una excursión correcta que considera las caidas de tensió
 ### 3.3.4 Control de TRIAC y sincronización AC
 
 `task_pwm.c` usa `TIM2` para programar ventanas ON/OFF por semiciclo:
-- retardo fijo de referencia: `APP_TRIAC_FIXED_WAIT_US = 700 us`.
-- ancho de pulso de gate: `APP_TRIAC_PULSE_US = 1000 us`.
+- retardo fijo de referencia: `APP_TRIAC_FIXED_WAIT_US = 700 $\mu s$`.
+- ancho de pulso de gate: `APP_TRIAC_PULSE_US = 1000 $\mu s$`.
 - retardo variable del ventilador por porcentaje (`fan_delay_us`).
 
 El evento de cruce por cero llega por EXTI en `PC2`.
@@ -599,7 +604,7 @@ Si el guardado crítico falla (según configuración estricta), la FSM puede ent
 Configuración:
 - nombre: `Dimmer_BL`.
 - PIN: `1111`.
-- comandos AT enviados sin CR/LF y con retardos adecuados.
+- comandos AT enviados sin CR/LF y con retardos adecuados (desde un Arduino, previo a armado).
 
 Funcionamiento en firmware:
 - UART por `USART1`.
@@ -609,32 +614,37 @@ Funcionamiento en firmware:
   - byte 1: `light_enabled` (0/1).
 - Envío periódico por tiempo (no por cambio), configurable con `APP_BT_TELEMETRY_PERIOD_MS` (actualmente `50 ms`). Esto ayudó mucho a mejorar los WCET debido a que el uso de la consola parece tomar mucho tiempo.
 
-Nota: actualmente la app se usa como receptor de estado, no como control remoto completo de actuadores.
 
 ### 3.3.7 Aplicación móvil
 
 La app fue desarrollada en MIT App Inventor. Se documentan interfaz y bloques de procesamiento de bytes.
 
-La Figura 3.26 muestra la pantalla principal de la app, donde se visualiza el porcentaje del ventilador y el estado de luz recibido por telemetría.
+La Figura 3.26 muestra la pantalla principal de la app, donde se visualiza la velocidad del ventilador en un formato de procentaje según el ADC, y el estado de luz recibido por telemetría.
+
 > <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/566a7314061481abbec17f240388ee198cea82ee/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/captura%20app.jpeg" width="400" />
 <em>Figura 3.26 — Pantalla principal app.</em><br><br>
 
 
-La Figura 3.27 presenta los bloques de inicialización, incluyendo configuración de Bluetooth y preparación de variables.
+La Figura 3.27 presenta los bloques de inicialización de la app, incluyendo configuración de Bluetooth y preparación de variables.
+
 > <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/65b6a1be5b7a1b68e959d041707e17e00ebe5659/Memoria%20t%C3%A9cnica/imgs/mit%20app%20bloque%201.png" width="600" />
 <em>Figura 3.27 — Bloques MIT App Inventor (parte 1).</em><br><br>
 
 La Figura 3.28 muestra la lógica de decodificación/actualización de los 2 bytes de telemetría y el refresco de UI.
+
 > <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/65b6a1be5b7a1b68e959d041707e17e00ebe5659/Memoria%20t%C3%A9cnica/imgs/mit%20app%20bloque%202.png" width="600" />
 <em>Figura 3.28 — Bloques MIT App Inventor (parte 2).</em><br><br>
 
 La Figura 3.29 detalla la lógica de selección del dispositivo Bluetooth, utilizada para vincularse al HC-06.
+
 > <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/65b6a1be5b7a1b68e959d041707e17e00ebe5659/Memoria%20t%C3%A9cnica/imgs/mit%20app%20bloque%203.png" width="600" />
 <em>Figura 3.29 — Bloques MIT App Inventor (parte 3).</em><br><br>
 
 ---
 
 # Capítulo 4: Ensayos y resultados
+
+Esta sección presenta todos los ensayos requeridos como parte del proyecto, incluyendo el uso de CPU, WCET, etc. 
 
 ## 4.1 Pruebas funcionales de hardware
 
@@ -672,22 +682,21 @@ Se validó la interacción completa:
 
 **Video de integración en funcionamiento**  
 
-<iframe width="600" height="254" src="https://www.youtube.com/embed/iv2bGrqrMtU" title="YouTube video player" frameborder="0" allowfullscreen></iframe> <br><br>
-
-
+[Link al video
+](https://youtu.be/iv2bGrqrMtU)<br>
 
 ## 4.4 Medición y análisis de consumo
 
 Metodología aplicada:
-- medición de consumo total en la entrada de `5 V` del sistema (NUCLEO + shield).
-- alimentación desde fuente externa conectada a pines `5 V` y `GND`.
-- medición de corriente con multímetro en serie sobre la línea de `5 V`.
-- medición de tensión en bornes de entrada para estimar potencia (`P = V * I`).
+- Medición de consumo total en la entrada de `5 V` del sistema (NUCLEO + shield).
+- Alimentación desde fuente externa conectada a pines `5 V` y `GND`.
+- Medición de corriente con multímetro en serie sobre la línea de `5 V`.
+- Medición de tensión en bornes de entrada para estimar potencia (`P = V * I`).
 
 Procedimiento realizado:
 1. Desconectar USB/ST-Link para evitar doble alimentación.
 2. Conectar fuente externa a `5 V` y `GND`.
-3. Ajustar la fuente para garantizar `5 V` en el pin `5 V` de la placa (compensando caídas en cables).
+3. Ajustar la fuente para garantizar `5 V` en el pin `5 V` de la placa (compensando las caídas de tensión en los cables).
 4. Intercalar amperímetro en serie en la línea de `5 V`.
 5. Medir tensión de entrada en paralelo sobre `5 V-GND`.
 6. Registrar datos en los modos:
@@ -699,7 +708,7 @@ Procedimiento realizado:
 
 Alcance de la medición:
 - Esta medición representa el consumo total a `5 V` del conjunto montado.
-- El riel de `3,3 V` queda incluido indirectamente, ya que se genera desde `5 V` mediante el regulador de la placa. Además, registrar el consumo de 3,3 V solo no tiene sentido para un sistema que se alimenta con 5 V. 
+- El riel de `3,3 V` queda incluido indirectamente, ya que se genera desde `5 V` mediante el regulador de la placa. Además, registrar el consumo de 3,3 V solo no tiene sentido para un sistema que requiere de 5 V para funcionar normalmente. 
 
 La Tabla 4.3 resume los valores pico de corriente y potencia medidos en distintos modos de operación del sistema.
 
@@ -713,16 +722,15 @@ La Tabla 4.3 resume los valores pico de corriente y potencia medidos en distinto
 <em>Tabla 4.3 — Consumo total medido a 5 V (valores pico).</em><br><br>
 
 Análisis:
-- Potencia calculada como `P = V * I`, usando `V = 5 V` y corriente pico medida en cada modo.
+- La potencia se calculó como `P = V * I`, usando `V = 5 V` y corriente pico medida en cada modo.
 - El peor caso medido fue `145 mA` a `5 V`, equivalente a `0.725 W`.
-- El sistema se mantiene por debajo de `1 W`, por lo que puede alimentarse sin inconvenientes con fuentes comerciales 220VAC->5 V de baja potencia.
-- La diferencia entre BT desactivado y BT transmitiendo (`104 mA` -> `107 mA`) es baja, consistente con carga adicional moderada por comunicación.
+- El sistema se mantiene por debajo de `1 W`, por lo que puede alimentarse sin inconvenientes con fuentes comerciales 220VAC->5 V de baja potencia (o incluso las integradas para PCBs).
+- La diferencia entre el HC-06 desactivado y transmitiendo (`104 mA` -> `107 mA`) es baja, consistente con carga adicional moderada por comunicación. Suponemos que el consumo no es menor al no transmitir porque está haciendo broadcast de su existencia constantemente. 
 
 ## 4.5 Console and Build Analyzer
 
-Resultado consolidado de herramientas de análisis de consola y build.
+La Figura 4.1 muestra el reporte de uso de memoria del build; se observa un uso bajo de RAM y FLASH (≈10,31% y ≈16,11%), dejando margen para futuras extensiones.
 
-La Figura 4.1 muestra el reporte de uso de memoria del build; se observa un uso bajo de RAM y FLASH (≈10.31% y ≈16.11%), dejando margen para futuras extensiones.
 > <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/build%20console%20y%20analyzer.png" width="800" />
 <em>Figura 4.1 — Console and Build Analyzer.</em><br><br>
 
@@ -748,8 +756,8 @@ Formato de log utilizado y significado de parámetros:
 - `n`: cantidad de ciclos de scheduler medidos en la ventana.
 - `ov`: cantidad de overruns (ciclos cuyo runtime total supera 1 ms).
 - `qmax`: máximo backlog observado en la cola de ticks (`g_app_tick_cnt`) durante la ventana.
-- `Cavg={adc,sys,pwm}`: tiempo promedio por tarea en la ventana (us).
-- `WCETw={adc,sys,pwm}`: peor tiempo por tarea dentro de la ventana (us).
+- `Cavg={adc,sys,pwm}`: tiempo promedio por tarea en la ventana ($\mu s$).
+- `WCETw={adc,sys,pwm}`: peor tiempo por tarea dentro de la ventana ($\mu s$).
 - `CPU={avg,peak}`: utilización total promedio y pico del scheduler en la ventana (%).
 - `U={avg,wcet}`: factor de uso promedio y por peor caso reportado para la ventana.
 
@@ -765,7 +773,7 @@ Es muy importante destacar que el uso de la consola eleva masivamente los WCET, 
 
 La Tabla 4.4 resume los resultados consolidados de tiempo de ejecución por tarea (promedio y peor caso en ventana).
 
-| Tarea | Período asumido [us] | Cavg típico [us] | WCETw máx observado [us] |
+| Tarea | Período asumido [$\mu s$] | Cavg típico [$\mu s$] | WCETw máx observado [$\mu s$] |
 | --- | ---: | ---: | ---: |
 | `task_adc_update` | 1000 | 64..66 | 268 |
 | `task_system_update` | 1000 | 26 | 125 |
@@ -776,7 +784,7 @@ La Tabla 4.4 resume los resultados consolidados de tiempo de ejecución por tare
 **Observaciones:**
 - No se observaron overruns (`ov=0`) en ninguna ventana.
 - `qmax=10` se mantuvo estable en todas las ventanas registradas.
-- Uso de CPU: `CPU avg` entre `13.6%` y `14.0%`; `CPU peak` entre `35.6%` y `38.0%`.
+- Uso de CPU: `CPU avg` entre `13,6%` y `14,0%`; `CPU peak` entre `35,6%` y `38,0%`.
 
 
 ## 4.7 Cálculo del factor de uso de CPU (U)
@@ -794,13 +802,13 @@ La Tabla 4.5 resume los valores utilizados para el cálculo:
 | `task_adc_update`                       |               268 |       1000 |     0.268 |
 | `task_system_update`                    |               125 |       1000 |     0.125 |
 | `task_pwm_update`                       |               292 |       1000 |     0.292 |
-| **Total (U) (WCET-based, conservador)** |                 – |          – | **0.685** |
+| **Total (U) (WCET-based, conservador)** |                 – |          – | **0,685** |
 
 <em>Tabla 4.5 — Parámetros utilizados para el cálculo de U (cota conservadora).</em><br><br>
 
 El valor total obtenido, ($U = 0.685$), corresponde a una cota conservadora, ya que se construyó combinando los máximos tiempos de ejecución observados para cada tarea en ventanas temporales distintas y no a partir de una ocurrencia simultánea real de dichos máximos.
 
-En contraste, las mediciones experimentales mostraron valores de utilización sensiblemente menores: la utilización basada en ventanas (($U_{wcet}$)) se mantuvo entre $46,5$ % y $66,1$ %, mientras que la utilización promedio (($U_{avg}$)) se ubicó en torno al 14 % en régimen permanente. En el caso particular del STM32F103RB, estos resultados indican un comportamiento temporal estable, con un margen de CPU suficiente para absorber variaciones transitorias de ejecución sin comprometer el cumplimiento de los períodos de las tareas, validando así la factibilidad temporal del diseño.
+En contraste, las mediciones experimentales mostraron valores de utilización sensiblemente menores: la utilización basada en ventanas ($U_{wcet}$) se mantuvo entre $46,5$ % y $66,1$ %, mientras que la utilización promedio ($U_{avg}$) se ubicó en torno al 14 % en régimen permanente. En el caso particular del STM32F103RB, estos resultados indican un comportamiento temporal estable, con un margen de CPU suficiente para absorber variaciones transitorias de ejecución sin comprometer el cumplimiento de los períodos de las tareas, validando así la factibilidad temporal del diseño.
 
 
 ## 4.8 Gestión de bajo consumo y justificación
@@ -812,7 +820,7 @@ No obstante, se evaluó el impacto energético real del sistema y los resultados
 - La diferencia entre Bluetooth desactivado y transmitiendo es menor (`104 mA` -> `107 mA`).
 - En falla, el mayor consumo se explica por actuadores/indicadores (`buzzer + LED`), no por carga computacional del CPU.
 
-Esto es consistente con el factor de uso medido (`Uavg` alrededor de `14%` y cota conservadora `Uwcet = 0.685`): la carga temporal del microcontrolador no aparece como cuello de botella energético principal en el prototipo actual.
+Esto es consistente con el factor de uso medido (`Uavg` alrededor de `14%` y cota conservadora `Uwcet = 0,685`): la carga temporal del microcontrolador no aparece como cuello de botella energético principal en el prototipo actual.
 
 En una versión orientada a producto (placa dedicada, sin sobrecarga de NUCLEO y periféricos de laboratorio), sí corresponde aplicar optimización sistemática de consumo:
 
@@ -850,13 +858,11 @@ Leyenda:
 - 🔴 no implementado / descartado
 - ✅ cumplido
 
-Observación sobre el requisito 5.1 (220 VAC):
-- La validación final sobre red de 220 VAC queda planificada para la etapa posterior a la aprobación académica del trabajo.
-- Esta decisión se toma para reducir el riesgo de daño de la placa durante la instancia de entrega y evaluación.
+Los requisitos cumplidos no requieren de mayor explicación, por lo que nos centramos en los que no se llegaron a cumplir:
+- Requisito 2.2 (canales/configuración Bluetooth): En la implementación final no se desarrolló la selección de canales/configuraciones por DIP para Bluetooth. Se descartó por no ser necesario para el funcionamiento objetivo del sistema (telemetría de estado).
 
-Observación sobre el requisito 2.2 (canales/configuración Bluetooth):
-- En la implementación final no se desarrolló la selección de canales/configuraciones por DIP para Bluetooth.
-- Se descartó por no ser necesario para el funcionamiento objetivo del sistema (telemetría de estado).
+- Requisito 5.1 (220 VAC): La validación final sobre red de 220 VAC queda planificada para la etapa posterior a la aprobación académica del trabajo. Esta decisión se toma para reducir el riesgo de daño de la placa durante la instancia de entrega y evaluación.
+
 
 ## 4.10 Comparación con sistemas similares
 
@@ -900,13 +906,16 @@ El proyecto permitió conocer los Triacs como componentes de control de potencia
 ## 5.2 Lecciones aprendidas
 
 - El circuito de ZCD actual funciona, pero resulta más complejo de lo necesario para una próxima iteración.
-- La compensación temporal del cruce por cero (aprox. 500 us) es crítica para estabilidad del dimming.
+- La compensación temporal del cruce por cero (aprox. 500 $\mu s$) es crítica para estabilidad del dimming.
 - La fabricación de PCB artesanal aceleró iteraciones, pero exige mayor cuidado mecánico en footprints de componentes de potencia.
 - La telemetría binaria de 2 bytes simplificó integración y depuración con app móvil.
 
 ## 5.3 Próximos pasos
 
-- Evaluar una revisión de hardware con ZCD simplificado, mejor mecánica de placa para componentes de potencia y posible partición de control de dimming en microcontrolador dedicado.
+Los próximos pasos podrían ser:
+- Evaluar una revisión de hardware con ZCD simplificado.
+- Mejor mecánica de placa para componentes de potencia (los agujeros).
+- Posible control de dimming en microcontrolador dedicado (tal vez un ESP32 o ESP8266) y fuente en la misma placa. 
 
 ---
 
@@ -954,4 +963,4 @@ Referencias internas del repositorio:
 
 **Fin de la Memoria Técnica**  
 Autores: Ignacio Ezequiel Cavicchioli, Francisco Javier Moya  
-Fecha de edición: 18 de febrero de 2026
+Fecha de edición: 19 de febrero de 2026
