@@ -679,17 +679,17 @@ Se validó la interacción completa:
 ## 4.4 Medición y análisis de consumo
 
 Metodología aplicada:
-- medición de consumo total en la entrada de `5V` del sistema (NUCLEO + shield).
-- alimentación desde fuente externa conectada a pines `5V` y `GND`.
-- medición de corriente con multímetro en serie sobre la línea de `5V`.
+- medición de consumo total en la entrada de `5 V` del sistema (NUCLEO + shield).
+- alimentación desde fuente externa conectada a pines `5 V` y `GND`.
+- medición de corriente con multímetro en serie sobre la línea de `5 V`.
 - medición de tensión en bornes de entrada para estimar potencia (`P = V * I`).
 
 Procedimiento realizado:
 1. Desconectar USB/ST-Link para evitar doble alimentación.
-2. Conectar fuente externa a `5V` y `GND`.
-3. Ajustar la fuente para garantizar `5V` en el pin `5V` de la placa (compensando caídas en cables).
-4. Intercalar amperímetro en serie en la línea de `5V`.
-5. Medir tensión de entrada en paralelo sobre `5V-GND`.
+2. Conectar fuente externa a `5 V` y `GND`.
+3. Ajustar la fuente para garantizar `5 V` en el pin `5 V` de la placa (compensando caídas en cables).
+4. Intercalar amperímetro en serie en la línea de `5 V`.
+5. Medir tensión de entrada en paralelo sobre `5 V-GND`.
 6. Registrar datos en los modos:
    - normal sin módulo Bluetooth conectado.
    - normal con módulo Bluetooth conectado pero desactivado.
@@ -698,12 +698,12 @@ Procedimiento realizado:
 7. Debido a que el consumo oscila rápidamente en el tiempo, se tomó como referencia el valor pico observado en cada modo.
 
 Alcance de la medición:
-- Esta medición representa el consumo total a `5V` del conjunto montado.
-- El riel de `3.3V` queda incluido indirectamente, ya que se genera desde `5V` mediante el regulador de la placa. Además, registrar el consumo de 3.3V solo no tiene sentido para un sistema que se alimenta com 5V. 
+- Esta medición representa el consumo total a `5 V` del conjunto montado.
+- El riel de `3,3 V` queda incluido indirectamente, ya que se genera desde `5 V` mediante el regulador de la placa. Además, registrar el consumo de 3,3 V solo no tiene sentido para un sistema que se alimenta con 5 V. 
 
 La Tabla 4.3 resume los valores pico de corriente y potencia medidos en distintos modos de operación del sistema.
 
-| Modo | I pico @5V [mA] | P pico @5V [W] | Observaciones |
+| Modo | I pico @ 5 V [mA] | P pico @ 5 V [W] | Observaciones |
 | --- | ---: | ---: | --- |
 | Normal sin módulo BT (desconectado) | 64 | 0.320 | Escenario de menor consumo; representa una forma válida de uso sin telemetría Bluetooth. |
 | Normal con módulo BT conectado y desactivado | 104 | 0.520 | Aumento de consumo por presencia/alimentación del módulo Bluetooth. |
@@ -713,9 +713,9 @@ La Tabla 4.3 resume los valores pico de corriente y potencia medidos en distinto
 <em>Tabla 4.3 — Consumo total medido a 5 V (valores pico).</em><br><br>
 
 Análisis:
-- Potencia calculada como `P = V * I`, usando `V = 5V` y corriente pico medida en cada modo.
-- El peor caso medido fue `145 mA` a `5V`, equivalente a `0.725 W`.
-- El sistema se mantiene por debajo de `1 W`, por lo que puede alimentarse sin inconvenientes con fuentes comerciales 220VAC->5V de baja potencia.
+- Potencia calculada como `P = V * I`, usando `V = 5 V` y corriente pico medida en cada modo.
+- El peor caso medido fue `145 mA` a `5 V`, equivalente a `0.725 W`.
+- El sistema se mantiene por debajo de `1 W`, por lo que puede alimentarse sin inconvenientes con fuentes comerciales 220VAC->5 V de baja potencia.
 - La diferencia entre BT desactivado y BT transmitiendo (`104 mA` -> `107 mA`) es baja, consistente con carga adicional moderada por comunicación.
 
 ## 4.5 Console and Build Analyzer
