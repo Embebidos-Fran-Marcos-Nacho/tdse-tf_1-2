@@ -1,18 +1,28 @@
+# Dimmer + Switch (Ventilador & Luces)  
+Control de ventilador y luces de línea (220 V) desde pared y vía Bluetooth
+
+<div align="center">
+
+<img width="535"  alt="image" src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/08290a7a62c8a7d3fcd22fc57871dafbbf35ab15/logo-fiuba.png" />
+
 **UNIVERSIDAD DE BUENOS AIRES**  
 **Facultad de Ingeniería**  
-**TA134 - Taller de Sistemas Embebidos**
+**TA134 – Sistemas Embebidos**  
+Curso 1 – Grupo 2
 
-Memoria del Trabajo Final:
+</div>
 
-***Dimmer + Switch* (Ventilador y Luces 220 VAC)**
+## Autores
+- Ignacio Ezequiel Cavicchioli — Legajo 109428  
+- Francisco Javier Moya — Legajo 109899  
 
-**Autores**
-- Ignacio Ezequiel Cavicchioli - Legajo 109428
-- Francisco Javier Moya - Legajo 109899
+**Fecha:** 25/01/2026  
+**Cuatrimestre de cursada:** 2do cuatrimestre 2025  
 
-*Trabajo realizado durante el verano del 2025.*
+*Trabajo realizado entre diciembre 2025 y febrero 2026.*
 
 ---
+
 
 ## Resumen
 
@@ -58,26 +68,33 @@ Esta memoria documenta los requisitos, el diseño de hardware y firmware, los en
 
 ## 1.1 Análisis de necesidad y objetivo
 
-El proyecto busca resolver una necesidad concreta de control de cargas de 220 VAC (luz y ventilador) desde una interfaz de pared, agregando telemetría inalámbrica sin depender de red Wi-Fi doméstica.
+El proyecto busca resolver una necesidad concreta de control de cargas de 220 VAC (luz y ventilador) desde una interfaz de pared, agregando telemetría inalámbrica sin depender de la red Wi-Fi doméstica.
 
-Objetivo principal:
+Objetivos principales:
 - Implementar un prototipo funcional y seguro de control de luz/ventilador.
 - Usar una arquitectura modular en STM32.
 - Tener persistencia de estado en la memoria flash.
 
 ## 1.2 Productos comparables
 
-Se analizaron dos tipos de soluciones comerciales:
+Se analizaron dos tipos de soluciones comerciales disponibles en la Argentina:
 
-1. Controles remotos IR/RF locales:
-- bajo costo y disponibilidad alta.
-- poca capacidad de integración y configuración.
+1. **Ventilador con control remoto IR/RF**  
+   Existen en el mercado local ventiladores controlados por control remoto dedicado. 
+   Este tipo de control funciona correctamente, pero presenta limitaciones importantes:
+   - Solo tiene control remoto, no tiene control fijo. 
+   - No ofrece conectividad con el celular.  
+   - No guarda configuraciones ni estados previos del ventilador.  
+   - Solo tiene 3 velocidades de ventilador. 
 
-2. Soluciones domóticas Wi-Fi:
-- mayor funcionalidad global.
-- costo y complejidad de integración superiores.
 
-El enfoque elegido priorizó simplicidad de integración académica y control de alcance: interfaz local + Bluetooth HC-06.
+2. **Controladores disponibles internacionalmente (Amazon)**  
+   En el mercado internacional existen productos más avanzados, capaces de integrar control de luces y ventilador, conectividad Wi-Fi, y aplicaciones móviles.  
+   Sin embargo:
+   - Tienen costos significativamente más altos o no cuentan con disponibilidad local inmediata. 
+   - En general los que usan wi-fi no tienen tecla y representan una amenaza a la seguridad de la red doméstica del usuario.  
+
+Ante la gran brecha de funcionalidad entre estos dos dispositivos, se optó por utilizar una interfaz local combinada con un módulo Bluetooth clásico HC-06. Esta solución híbrida prioriza la simplicidad de integración, combinando la comodidad del control de pared con la telemetría inalámbrica por medio de bleutooth. La siguiente sección brinda más detalles sobre estas decisiones de diseño. 
 
 ## 1.3 Justificación del enfoque técnico
 
@@ -89,6 +106,8 @@ Se eligió Bluetooth clásico (HC-06) por:
 Se mantuvo un alcance acotado para cumplir entrega:
 - La app móvil recibe telemetría binaria de 2 bytes.
 - El control principal de actuadores se mantiene en interfaz local.
+
+En una futura versión, el producto debería permitir el control por medio de la conexión inalámbrica, equiparandolo a la solución comercial mostrada más completa. 
 
 ## 1.4 Alcance y limitaciones
 
