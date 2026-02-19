@@ -222,7 +222,6 @@ Más adelante, en la sección "4.9 Cumplimiento de requisitos", se detalla si se
 
 _Tabla 2.1 — Requisitos iniciales del proyecto (versión original)._<br><br>
 
-
 | Grupo | ID | Descripción |
 | --- | --- | --- |
 | Control | 1.1 | El sistema permitirá encender y apagar las luces mediante un botón físico. |
