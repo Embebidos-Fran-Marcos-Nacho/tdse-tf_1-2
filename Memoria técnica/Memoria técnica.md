@@ -201,7 +201,7 @@ Este tema se vuelve a detallar en la sección "4.9 Cumplimiento de requisitos", 
 Esta sección contiene los requisitos originales y los modificados en el informe de avances, además de los casos de uso. 
 
 ## 2.1 Requisitos
-En la Tabla 2.1 se listan los requisitos originalmente definidos al inicio del proyecto (versión base, incluida también en `README.md`). Durante la elaboración del informe de avances (primera semana de febrero de 2026), el alcance se ajustó para asegurar una integración completa a tiempo para la entrega; dichos cambios se resumen en la Tabla 2.2, y se resumen a cambios en el control local, telemetría y persistencia, reduciendo el alcance de funciones no críticas para la entrega.
+En la Tabla 2.1 se listan los requisitos originalmente definidos al inicio del proyecto (versión base, incluida también en `README.md`). Durante la elaboración del informe de avances (primera semana de febrero de 2026), el alcance se ajustó para asegurar una integración completa a tiempo para la entrega; dichos cambios se pueden ver en la Tabla 2.2, y se resumen a cambios en el control local, telemetría y persistencia, reduciendo el alcance de funciones no críticas para la entrega.
 
 Más adelante, en la sección "4.9 Cumplimiento de requisitos", se detalla si se cumplieron o no, y se da la razón en caso de no haberse implementado.
 
@@ -240,6 +240,8 @@ _Tabla 2.1 — Requisitos iniciales del proyecto (versión original)._<br><br>
 _Tabla 2.2 — Requisitos ajustados en el informe de avances (alcance reducido por tiempos)._<br><br>
 
 ## 2.2 Casos de uso
+
+Esta sección detalla los varios casos de uso previstos para el sistema creado. 
 
 ### 2.2.1 Control local de luz
 
