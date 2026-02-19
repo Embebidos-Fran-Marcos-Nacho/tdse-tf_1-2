@@ -43,6 +43,8 @@ Esta memoria documenta los requisitos, el diseño de hardware y firmware, los en
 
 *Historial de revisiones del documento.*
 
+La Tabla 0.1 resume el historial de revisiones y entregas de esta memoria.
+
 | Revisión | Cambios realizados | Fecha |
 | :---: | --- | :---: |
 | 1.0 | Reescritura integral de la memoria, alineada a pautas de entrega final | 17/02/2026 |
@@ -51,6 +53,8 @@ Esta memoria documenta los requisitos, el diseño de hardware y firmware, los en
 | 1.2 | Entrega N°1 | 17/02/2026 |
 | 1.3 | Correcciones| 19/02/2026 |
 | 1.4 | Entrega N°2 | 19/02/2026 |
+
+_Tabla 0.1 — Registro de versiones del documento._<br><br>
 
 ---
 
@@ -64,7 +68,7 @@ Esta memoria documenta los requisitos, el diseño de hardware y firmware, los en
   - [1.3 Justificación del enfoque técnico](#13-justificación-del-enfoque-técnico)
   - [1.4 Alcance y limitaciones](#14-alcance-y-limitaciones)
 - [Capítulo 2: Introducción específica](#capítulo-2-introducción-específica)
-  - [2.1 Requisitos (versión final del informe de avances)](#21-requisitos-versión-final-del-informe-de-avances)
+  - [2.1 Requisitos](#21-requisitos)
   - [2.2 Casos de uso](#22-casos-de-uso)
     - [2.2.1 Control local de luz](#221-control-local-de-luz)
     - [2.2.2 Ajuste local de ventilador](#222-ajuste-local-de-ventilador)
@@ -191,12 +195,11 @@ Este tema se vuelve a detallar en la sección "4.9 Cumplimiento de requisitos", 
 
 # Capítulo 2: Introducción específica
 
-Esta sección contiene los requisitos ya mencionados en el informe de avances, además de los casos de uso. 
+Esta sección contiene los requisitos originales y los modificados en el informe de avances, además de los casos de uso. 
 
-## 2.1 Requisitos originales y modificados en la versión final del informe de avances
+## 2.1 Requisitos
+En la Tabla 2.1 se listan los requisitos originalmente definidos al inicio del proyecto (versión base, incluida también en `README.md`). Durante la elaboración del informe de avances (primera semana de febrero de 2026), el alcance se ajustó para asegurar una integración completa a tiempo para la entrega; dichos cambios se resumen en la Tabla 2.2. En el Capítulo 4, sección "4.9 Cumplimiento de requisitos", se detalla para cada requisito si se implementó o no, y la justificación correspondiente.
 
-
-tabla original:
 | Grupo | ID | Descripción |
 |-------|-----|-------------|
 | Control | 1.1 | El sistema permitirá encender y apagar las **luces** mediante un botón físico. |
@@ -211,9 +214,11 @@ tabla original:
 | Seguridad | 5.1 | El sistema deberá operar de forma segura sobre cargas de **220 V**. |
 | Aplicación | 6.1 | La aplicación móvil deberá permitir realizar todas las acciones disponibles desde los controles físicos (encendido/apagado de luces y ajuste de velocidad del ventilador). |
 |  | 6.2 | El sistema deberá garantizar que el control físico y el control desde la aplicación sean intercambiables: cuando se utilice uno, el otro deberá quedar temporalmente inhabilitado para evitar conflictos de comando. |
----
 
-tabla modificada a principio de febrero para llegar con el tiempo:
+_Tabla 2.1 — Requisitos iniciales del proyecto (versión original)._<br><br>
+
+En el informe de avances se redefinieron algunos requisitos para priorizar la integración completa del prototipo (control local, telemetría y persistencia), reduciendo el alcance de funciones no críticas para la entrega.
+
 | Grupo | ID | Descripción |
 | --- | --- | --- |
 | Control | 1.1 | El sistema permitirá encender y apagar las luces mediante un botón físico. |
@@ -229,9 +234,13 @@ tabla modificada a principio de febrero para llegar con el tiempo:
 | Aplicación móvil | 6.1 | La aplicación dará información sobre los estados disponibles, que incluyen la velocidad del ventilador y el estado de luces. |
 |  | 6.2 | El sistema deberá evitar conflictos entre el control físico y la comunicación Bluetooth, incluyendo conflictos de timings. |
 
+_Tabla 2.2 — Requisitos ajustados en el informe de avances (alcance reducido por tiempos)._<br><br>
+
 ## 2.2 Casos de uso
 
 ### 2.2.1 Control local de luz
+
+La Tabla 2.3 describe el caso de uso de control local de la luz mediante botones físicos.
 
 | Elemento | Definición |
 | --- | --- |
@@ -240,7 +249,11 @@ tabla modificada a principio de febrero para llegar con el tiempo:
 | Flujo básico | Debounce de botón -> evento -> actualización de estado de luz -> actualización de salida TRIAC -> solicitud de guardado en flash -> telemetría BT de cambio. |
 | Alternativas | Si falla persistencia y modo estricto activo: transición a `FAULT`. |
 
+_Tabla 2.3 — Caso de uso: control local de luz._<br><br>
+
 ### 2.2.2 Ajuste local de ventilador
+
+La Tabla 2.4 describe el caso de uso de ajuste local del ventilador mediante el potenciómetro.
 
 | Elemento | Definición |
 | --- | --- |
@@ -249,7 +262,11 @@ tabla modificada a principio de febrero para llegar con el tiempo:
 | Flujo básico | Muestreo ADC -> mapeo a porcentaje -> cálculo de `fan_delay_us` -> actualización de temporización de disparo TRIAC. |
 | Alternativas | Si potenciómetro fuera de rango calibrado: saturación a límites definidos. |
 
+_Tabla 2.4 — Caso de uso: ajuste local de ventilador._<br><br>
+
 ### 2.2.3 Telemetría Bluetooth hacia app
+
+La Tabla 2.5 describe el caso de uso de telemetría Bluetooth, utilizada para informar estado hacia la aplicación móvil.
 
 | Elemento | Definición |
 | --- | --- |
@@ -258,7 +275,11 @@ tabla modificada a principio de febrero para llegar con el tiempo:
 | Flujo básico | Firmware arma trama binaria de 2 bytes y transmite por USART1 para que la app informe el estado del sistema. |
 | Alternativas | Si BT deshabilitado, no se transmite. |
 
+_Tabla 2.5 — Caso de uso: telemetría Bluetooth hacia app._<br><br>
+
 ### 2.2.4 Recuperación tras falla
+
+La Tabla 2.6 describe el caso de uso de recuperación ante falla, incluyendo el modo `FAULT` y su salida controlada.
 
 | Elemento | Definición |
 | --- | --- |
@@ -266,6 +287,8 @@ tabla modificada a principio de febrero para llegar con el tiempo:
 | Precondiciones | Sistema energizado. |
 | Flujo básico | Corte de salidas de potencia, alarma visual/sonora según DIP, reintento de inicialización luego de timeout. |
 | Alternativas | Si DIP4 vuelve a 0, salida de `FAULT` y retorno a `NORMAL`. |
+
+_Tabla 2.6 — Caso de uso: recuperación tras falla._<br><br>
 
 Nota de trazabilidad de alcance:
 - El informe de avances redefinió el alcance Bluetooth para visualización de estado (sin control remoto completo de actuadores).
@@ -441,6 +464,8 @@ _Figura 3.16 — Placa fabricada._<br><br>
 
 ### 3.2.7 Pinout del sistema (STM32F103RB)
 
+La Tabla 3.1 lista el pinout relevante del sistema para entradas, salidas, DIP switches y comunicaciones.
+
 | Pin | Función |
 | --- | --- |
 | `PA0` | Potenciómetro (ADC) |
@@ -458,6 +483,8 @@ _Figura 3.16 — Placa fabricada._<br><br>
 | `PA9/PA10` | USART1 (HC-06) |
 | `PA2/PA3` | USART2 (consola ST-Link VCP) |
 | `PC8` | Onda de prueba 100 Hz (modo test) |
+
+_Tabla 3.1 — Pinout relevante del sistema (STM32F103RB)._<br><br>
 
 ### 3.2.8 Cableado e imágenes del montaje
 
@@ -599,6 +626,8 @@ _Figura 3.29 — Bloques MIT App Inventor (parte 3)._<br><br>
 
 ## 4.1 Pruebas funcionales de hardware
 
+La Tabla 4.1 resume los ensayos funcionales de hardware realizados y su estado de validación.
+
 | Ensayo | Resultado | Estado |
 | --- | --- | :---: |
 | Integridad de placas (continuidad) | Validación previa a energización | ✅ |
@@ -606,7 +635,11 @@ _Figura 3.29 — Bloques MIT App Inventor (parte 3)._<br><br>
 | Integración con 24 VAC | Prueba inicial de etapa integrada | ✅ |
 | Observar integridad de dimming en 24 VAC (osciloscopio) | Se verificó por medio de osciloscopio | ✅ |
 
+_Tabla 4.1 — Ensayos funcionales de hardware._<br><br>
+
 ## 4.2 Pruebas funcionales de firmware
+
+La Tabla 4.2 resume los ensayos funcionales de firmware realizados y su estado de validación.
 
 | Ensayo | Resultado | Estado |
 | --- | --- | :---: |
@@ -615,6 +648,8 @@ _Figura 3.29 — Bloques MIT App Inventor (parte 3)._<br><br>
 | FSM de sistema (`INIT/NORMAL/FAULT`) | Transiciones válidas en logs | ✅ |
 | Persistencia flash | Lectura/escritura de estado y calibración | ✅ |
 | Telemetría BT (2 bytes) | Trama enviada en forma periódica (`APP_BT_TELEMETRY_PERIOD_MS`) | ✅ |
+
+_Tabla 4.2 — Ensayos funcionales de firmware._<br><br>
 
 ## 4.3 Pruebas de integración
 
@@ -654,12 +689,16 @@ Alcance de la medición:
 - Esta medición representa el consumo total a `5V` del conjunto montado.
 - El riel de `3.3V` queda incluido indirectamente, ya que se genera desde `5V` mediante el regulador de la placa. Además, registrar el consumo de 3.3V solo no tiene sentido para un sistema que se alimenta com 5V. 
 
+La Tabla 4.3 resume los valores pico de corriente y potencia medidos en distintos modos de operación del sistema.
+
 | Modo | I pico @5V [mA] | P pico @5V [W] | Observaciones |
 | --- | ---: | ---: | --- |
 | Normal sin módulo BT (desconectado) | 64 | 0.320 | Escenario de menor consumo; representa una forma válida de uso sin telemetría Bluetooth. |
 | Normal con módulo BT conectado y desactivado | 104 | 0.520 | Aumento de consumo por presencia/alimentación del módulo Bluetooth. |
 | Normal con BT activo enviando datos | 107 | 0.535 | Incremento leve respecto al modo BT desactivado. |
 | Fault (buzzer + LED activos) | 145 | 0.725 | Peor caso medido en operación. |
+
+_Tabla 4.3 — Consumo total medido a 5 V (valores pico)._<br><br>
 
 Análisis:
 - Potencia calculada como `P = V * I`, usando `V = 5V` y corriente pico medida en cada modo.
@@ -712,11 +751,15 @@ Es muy importante destacar que el uso de la consola eleva masivamente los WCET, 
 
 **Resultados medidos (estado idle/estable, 15 ventanas):**
 
+La Tabla 4.4 resume los resultados consolidados de tiempo de ejecución por tarea (promedio y peor caso en ventana).
+
 | Tarea | Período asumido [us] | Cavg típico [us] | WCETw máx observado [us] |
 | --- | ---: | ---: | ---: |
 | `task_adc_update` | 1000 | 64..66 | 268 |
 | `task_system_update` | 1000 | 26 | 125 |
 | `task_pwm_update` | 1000 | 46..48 | 292 |
+
+_Tabla 4.4 — Resultados de WCET por tarea (ventanas en idle/estable)._<br><br>
 
 **Observaciones:**
 - No se observaron overruns (`ov=0`) en ninguna ventana.
@@ -732,7 +775,7 @@ $$U = \sum_{i=1}^{n} \frac{C_i}{T_i}$$
 
 donde (C_i) representa el WCET de la tarea (i), medido a partir de ventanas de ejecución en régimen estacionario, y (T_i) su período de activación.
 
-La Tabla siguiente resume los valores utilizados para el cálculo:
+La Tabla 4.5 resume los valores utilizados para el cálculo:
 
 | Tarea                                   | (C_i) (WCET) [µs] | (T_i) [µs] | (C_i/T_i) |
 | --------------------------------------- | ----------------: | ---------: | --------: |
@@ -740,6 +783,8 @@ La Tabla siguiente resume los valores utilizados para el cálculo:
 | `task_system_update`                    |               125 |       1000 |     0.125 |
 | `task_pwm_update`                       |               292 |       1000 |     0.292 |
 | **Total (U) (WCET-based, conservador)** |                 – |          – | **0.685** |
+
+_Tabla 4.5 — Parámetros utilizados para el cálculo de U (cota conservadora)._<br><br>
 
 El valor total obtenido, ($U = 0.685$), corresponde a una cota conservadora, ya que se construyó combinando los máximos tiempos de ejecución observados para cada tarea en ventanas temporales distintas y no a partir de una ocurrencia simultánea real de dichos máximos.
 
@@ -768,6 +813,8 @@ Conclusión: para el alcance académico de esta entrega, el consumo observado es
 
 ## 4.9 Cumplimiento de requisitos
 
+La Tabla 4.6 resume el cumplimiento final de los requisitos (versión ajustada del informe de avances), discriminando el aporte de hardware y firmware.
+
 | ID | Requisito (versión final) | Hardware | Software | Estado final |
 | --- | --- | :---: | :---: | :---: |
 | 1.1 | El sistema permitirá encender y apagar las luces mediante un botón físico. | 🟢 | 🟢 | ✅ |
@@ -782,6 +829,8 @@ Conclusión: para el alcance académico de esta entrega, el consumo observado es
 | 5.1 | El sistema deberá operar de forma segura sobre cargas de 220 VAC. | 🟡 | N/A | 🟡 |
 | 6.1 | La aplicación dará información sobre los estados disponibles, que incluyen la velocidad del ventilador y el estado de luces. | N/A | 🟢 | ✅ |
 | 6.2 | El sistema deberá evitar conflictos entre el control físico y la comunicación Bluetooth, incluyendo conflictos de timings. | N/A | 🟢 | ✅ |
+
+_Tabla 4.6 — Cumplimiento final de requisitos (versión final)._<br><br>
 
 Leyenda:
 - 🟢 implementado
@@ -799,6 +848,8 @@ Observación sobre el requisito 2.2 (canales/configuración Bluetooth):
 
 ## 4.10 Comparación con sistemas similares
 
+La Tabla 4.7 presenta una comparación sintética de esta solución frente a alternativas típicas (control básico IR/RF y soluciones comerciales Wi‑Fi).
+
 | Característica | Control IR/RF básico | Solución Wi-Fi comercial | Este proyecto |
 | --- | :---: | :---: | :---: |
 | Interfaz local de pared | No | Generalmente no | Sí |
@@ -806,6 +857,8 @@ Observación sobre el requisito 2.2 (canales/configuración Bluetooth):
 | Personalización firmware | No | No | Sí |
 | Persistencia local | Variable | Sí | Sí |
 | Costo de prototipo académico | N/A | Alto | Medio |
+
+_Tabla 4.7 — Comparación con sistemas similares._<br><br>
 
 ## 4.11 Documentación del desarrollo realizado
 
