@@ -5,8 +5,6 @@ Control de ventilador y luces de línea (220 V) desde pared y vía Bluetooth
 
 <img width="535"  alt="image" src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/08290a7a62c8a7d3fcd22fc57871dafbbf35ab15/logo-fiuba.png" />
 
-<p><b>Figura 0.1 - Logo FIUBA</b><br/><i>Epígrafe: Logo institucional utilizado en portada.</i></p>
-
 **UNIVERSIDAD DE BUENOS AIRES**  
 **Facultad de Ingeniería**  
 **TA134 – Sistemas Embebidos**  
@@ -142,10 +140,10 @@ Se analizaron dos tipos de soluciones comerciales disponibles en la Argentina:
    - No guarda configuraciones ni estados previos del ventilador.  
    - El producto encontrado solo tiene 3 velocidades de ventilador (low, med, high). 
 
+En la Figura 1.1 se observa el kit típico: un control remoto dedicado con soporte de pared y un módulo receptor que se instala en la caja de techo. Esta solución resuelve el control a distancia, pero no integra telemetría hacia el celular ni una interfaz fija de pared.
 
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/fbef0ce288a5bfc7994dd3f4e93a5714879ebca2/Memoria%20t%C3%A9cnica/imgs/solucion%20control%20remoto%201.png)
-
-La imagen de arriba muestra el producto en sí. Tiene un control remoto con el soporte para colgarlo en la pared, y la caja negra es la que se instala en la caja de luz en el techo y realiza el control. 
+_Figura 1.1 — Ventilador con control remoto IR/RF (referencia comercial)._
 
 
 2. **Controladores disponibles internacionalmente (Amazon)**  
@@ -154,9 +152,10 @@ La imagen de arriba muestra el producto en sí. Tiene un control remoto con el s
    - Tienen costos significativamente más altos o no cuentan con disponibilidad local inmediata. 
    - En general los que usan wi-fi no tienen tecla y representan una amenaza a la seguridad de la red doméstica del usuario.  
 
-![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/fbef0ce288a5bfc7994dd3f4e93a5714879ebca2/Memoria%20t%C3%A9cnica/imgs/solucion%20completa%202.jpg)
+La Figura 1.2 muestra un producto más completo: combina control local (teclas de pared) con control remoto y/o aplicación móvil, normalmente mediante conectividad Wi‑Fi. Si bien aporta más funciones, su integración típica depende de red doméstica y puede no ofrecer una interfaz cableada simple para pared en todos los casos.
 
-La foto de arriba muestra el producto recien explicado. Es como el otro pero viene con un control remoto y teclas de pared o, en algunas veriones, se intercambia el control remoto por una aplicación de celular y conectividad WI-FI.
+![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/fbef0ce288a5bfc7994dd3f4e93a5714879ebca2/Memoria%20t%C3%A9cnica/imgs/solucion%20completa%202.jpg)
+_Figura 1.2 — Controlador integrado con teclas de pared y conectividad (referencia internacional)._
 
 Para este proyecto se optó por utilizar una interfaz local combinada con un módulo Bluetooth clásico HC-06. Esta solución híbrida prioriza la simplicidad de integración, combinando la comodidad del control de pared con la telemetría inalámbrica por medio de bleutooth. La siguiente sección brinda más detalles sobre estas decisiones de diseño. 
 
@@ -279,10 +278,10 @@ El sistema se organiza en dos dominios:
 - Dominio lógico de 3.3 V (STM32 + entradas + comunicaciones).
 - Dominio de potencia AC (TRIAC + ZCD + protecciones).
 
-**Figura 3.1 - Diagrama en bloques general**  
-![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/imgs/diagrama%20en%20bloques.jpg)
+En la Figura 3.1 se presenta el diagrama en bloques general, donde se identifica la separación entre el dominio de baja tensión (3.3 V) y el dominio de potencia en AC, junto con los principales enlaces de interconexión (ZCD, drivers de TRIAC y comunicación Bluetooth).
 
-*Epígrafe: Diagrama de bloques general.*
+![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/imgs/diagrama%20en%20bloques.jpg)
+_Figura 3.1 — Diagrama en bloques general._
 
 
 
@@ -298,17 +297,19 @@ Se usaron dos placas:
 
 ### 3.2.2 Etapa de conversión de niveles
 
-**Figura 3.2 - Esquemático del conversor de niveles**
+La Figura 3.2 muestra el conversor de niveles utilizado para adaptar señales entre la NUCLEO-F103RB (3.3 V) y la placa diseñada (5 V), evitando sobrevoltajes en entradas digitales.
+
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/esquema%20niveles.png)
-*Epígrafe: Esquemático del conversor de niveles.*
+_Figura 3.2 — Esquemático del conversor de niveles._
 
 Se requirió para unir la placa F103RB (3.3 V) con la placa diseñada (5 V). 
 
 ### 3.2.3 Etapa de TRIACs
 
-**Figura 3.3 - Esquemático de driver de TRIAC**
+La Figura 3.3 presenta el driver de disparo de TRIAC basado en optoacoplador, elegido para aislar el dominio lógico y permitir el control de cargas de 220 VAC con disparos sincronizados.
+
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/esquem%20triac.png)
-*Epígrafe: Esquemático de driver de TRIAC.*
+_Figura 3.3 — Esquemático de driver de TRIAC._
 
 Diseño tomado de las notas de aplicación que se encuentran en este mismo repositorio en la sección de hardware. 
 
@@ -318,42 +319,43 @@ La etapa de ZCD fue validada progresivamente en banco antes de integrar potencia
 - la salida detectada requiere compensación temporal aproximada de 500 us para ubicar el cruce real.
 - las simulaciones resultaron consistentes con la tendencia medida.
 
-**Figura 3.4 - Esquemático del ZCD**
+En la Figura 3.4 se observa el circuito del detector de cruce por cero (ZCD), cuya salida se utiliza como referencia temporal para disparar los TRIACs con un retardo controlado.
 
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/esquematico%20ZCD.png)
-*Epígrafe: Esquemático del ZCD.*
+_Figura 3.4 — Esquemático del ZCD._
 
 
 
-**Figura 3.5 - Banco inicial de pruebas ZCD**  
+La Figura 3.5 documenta el banco de pruebas inicial del ZCD, usado para validar el acondicionamiento y la forma de onda antes de integrar la etapa de potencia.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/banco%20de%20trabajo%20inicial.jpeg)
-*Epígrafe: Banco de trabajo durante las verificaciones del ZCD con osciloscopio.*
+_Figura 3.5 — Banco inicial de pruebas ZCD._
 
 
-**Figura 3.6 - Mediciones de pulsos ZCD (osciloscopio)**  
+La Figura 3.6 muestra la señal de salida del ZCD medida con osciloscopio; se verifica que se genera un pulso por cada cruce por cero, resultando en una frecuencia de 100 Hz para red de 50 Hz.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/mediciones%20pulsos.jpeg)
-*Epígrafe: Pulsos de salida del ZCD - cursor midiendo tiempo entre pulsos.*
+_Figura 3.6 — Mediciones de pulsos ZCD (osciloscopio)._
 
-Nótese que el ZCD actúa en cada cruce por cero, generando una señal de 100 Hz.
+En la Figura 3.6 también se aprecia el espaciamiento entre pulsos, que permite estimar la estabilidad temporal del detector.
 
-**Figura 3.7 - Medición de ancho de pulso del ZCD**
+En la Figura 3.7 se mide el ancho de pulso del ZCD, dato relevante para definir la lógica de captura por interrupción y la inmunidad a ruido en el acondicionamiento.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/mediciones%20pulsos%201.jpeg)
-*Epígrafe: Salida del ZCD con la senoidal aplicada - cursor midiendo ancho de pulso.*
+_Figura 3.7 — Medición de ancho de pulso del ZCD._
 
-**Figura 3.8 - Disparo previo al cruce real (senoidal negativa)**
+La Figura 3.8 evidencia el adelantamiento del pulso respecto del cruce por cero real para la semionda negativa, permitiendo estimar el retardo fijo de compensación.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/mediciones%20pulsos%202.jpeg)
-*Epígrafe: Salida del ZCD con la senoidal aplicada - cursor midiendo tiempo de disparo previo al cruce por cero real con senoidal negativa.*
+_Figura 3.8 — Disparo previo al cruce real (senoidal negativa)._
 
-**Figura 3.9 - Disparo previo al cruce real (senoidal positiva)**
+La Figura 3.9 muestra el mismo fenómeno para la semionda positiva; ambas mediciones se utilizaron para fijar una compensación temporal conservadora.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/mediciones%20pulsos%204.jpeg)
-*Epígrafe: Salida del ZCD con la senoidal aplicada - cursor midiendo tiempo de disparo previo al cruce por cero real con senoidal positiva.*
+_Figura 3.9 — Disparo previo al cruce real (senoidal positiva)._
 
 El retardo fijo de disparo de los triacs se estimó tomando de referencia los tiempos de disparo del ZCD respecto del cruce real mostrados en estas imágenes. 
 
 
 ### 3.2.5 Etapa de potencia y protecciones
 
-Según esquemático principal (`Hardware/placa dimmer/dimmer.kicad_sch`), el canal de potencia integra:
+El esquemático principal (Hardware/placa dimmer/dimmer.kicad_sch) fue diseñado por el equipo para integrar en un único canal de potencia los componentes necesarios para el control por TRIAC y sus protecciones. En particular, el canal de potencia incluye:
+
 - TRIAC de potencia (`BTA06-600C`).
 - Optoacoplador de disparo (`MOC3023M`).
 - Elementos de protección (varistor, fusible, red RC/snubber opcional).
@@ -362,19 +364,19 @@ Notas de fabricación y prueba:
 - Primero se validó el correcto funcionamiento del ZCD, luego se integraron TRIACs.
 - Las primeras pruebas integradas se hicieron en 24 VAC. Esto conllevó una ligera y reversible modificación del circuito de ZCD. 
 
-**Figura 3.10 - Ensayo de salida de optoacoplador**  
+La Figura 3.10 muestra la señal a la salida del 4N25 (emisor común/negador) durante ensayo, confirmando niveles y forma de onda compatibles con el acondicionamiento digital.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/salida%20real%20del%20opto.jpeg)
-*Epígrafe: Señal a la salida del 4N25 en configuración de emisor común/negador.*
+_Figura 3.10 — Ensayo de salida de optoacoplador._
 
-**Figura 3.11 - Simulación de ZCD y salida de opto**  
+La Figura 3.11 presenta la simulación de la entrada/salida del ZCD y la etapa de opto, utilizada como referencia para contrastar con las mediciones.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/simu%20ZCD%20proper.jpeg)
-*Epígrafe: Simulación de la entrada y salida ideal del ZCD.*
+_Figura 3.11 — Simulación de ZCD y salida de opto._
 
 Nótese que es muy parecida a la medida. 
 
-**Figura 3.12 - Salida simulada del 4N25**
+En la Figura 3.12 se observa la salida simulada del 4N25; aunque difiere de la señal real, alcanza el umbral requerido por los Schmitt triggers, por lo que el diseño resultó funcional.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/simu%20salida%20del%20optoacoplador.jpeg)
-*Epígrafe: Salida simulada del 4N25.*
+_Figura 3.12 — Salida simulada del 4N25._
 
 No se parece mucho a la real, pero funcionó igual: la tensión alcanzó el umbral para disparar los Schmitt triggers.
 
@@ -392,21 +394,21 @@ Lecciones aprendidas para próxima iteración:
 - Simplificar topología de ZCD.
 - Evaluar integración de control de dimming en una etapa dedicada.
 
-**Figura 3.13 - Papel de transferencia con diseño impreso**  
+La Figura 3.13 muestra el papel de transferencia con el diseño impreso, paso previo al copiado del patrón a la placa cobreada.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/1030475e09d21a3204b19eb7996e9f11bb688033/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/p%20n%20p%20blue.jpeg)
-*Epígrafe: Papel de transferencia con el diseño impreso.*
+_Figura 3.13 — Papel de transferencia con diseño impreso._
 
-**Figura 3.14 - Transferencia previa a correcciones**
+La Figura 3.14 registra la primera transferencia sobre cobre, donde se identificaron defectos a corregir antes del ataque químico.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/1030475e09d21a3204b19eb7996e9f11bb688033/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/trasferencia%20a%20cobre.jpeg)
-*Epígrafe: Transferencia previa a correcciones.*
+_Figura 3.14 — Transferencia previa a correcciones._
 
-**Figura 3.15 - Transferencia corregida**
+La Figura 3.15 muestra la transferencia luego de correcciones manuales, mejorando continuidad y separación de pistas.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/1030475e09d21a3204b19eb7996e9f11bb688033/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/correci%C3%B3n%20de%20desperfectos%20de%20trasnferencia.jpeg)
-*Epígrafe: Transferencia corregida.*
+_Figura 3.15 — Transferencia corregida._
 
-**Figura 3.16 - Placa fabricada**
+La Figura 3.16 presenta la placa fabricada tras el ataque y limpieza, lista para perforado, soldado y pruebas de continuidad.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/cobre%20etched.jpeg)
-*Epígrafe: Placa fabricada.*
+_Figura 3.16 — Placa fabricada._
 
 
 ### 3.2.7 Pinout del sistema (STM32F103RB)
@@ -431,30 +433,22 @@ Lecciones aprendidas para próxima iteración:
 
 ### 3.2.8 Cableado e imágenes del montaje
 
-**Figura 3.17 - Cableado final del prototipo**  
-
+La Figura 3.17 muestra el cableado final del prototipo en banco; se destaca el uso de conexiones soldadas y el montaje sin protoboard en la integración objetivo.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/banco%20de%20trabajo%20desprolijo/banco%20final.jpeg)
+_Figura 3.17 — Cableado final del prototipo._
 
-*Epígrafe: Montaje final del prototipo durante ensayo integrado.*
 
-
-**Figura 3.18 - Diagrama de conexión entre placas simplificado**  
-
+La Figura 3.18 resume el conexionado simplificado entre placas, útil como referencia de integración (señales de control, alimentación y retornos).
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/00693ac864a65b0389699a47c52606a88d0adbb9/Diagrama%20de%20conexi%C3%B3n%20simplificado/conexionado.png)
+_Figura 3.18 — Diagrama de conexión entre placas simplificado._
 
-*Epígrafe: Diagrama simplificado de conexión entre placas.*
-
-**Figura 3.19 - Overview de placa shield y conexionado**  
-
+En la Figura 3.19 se observa la shield (NUCLEO-F103RB) y su conexionado, donde se distinguen entradas (DIP, botones, ADC) y salidas hacia potencia.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Diagrama%20de%20conexi%C3%B3n%20simplificado/f103rb.jpg)
+_Figura 3.19 — Overview de placa shield y conexionado._
 
-*Epígrafe: Vista general y conexionado de la shield para F103RB.*
-
-**Figura 3.20 - Conexionado de placa de TRIACs**
-
+La Figura 3.20 muestra el conexionado de la placa de TRIACs y las cargas, con especial atención a la separación entre el dominio de 220 VAC y el de control.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Diagrama%20de%20conexi%C3%B3n%20simplificado/triacs.jpg)
-
-*Epígrafe: Conexionado de la placa de TRIACs y cargas.*
+_Figura 3.20 — Conexionado de placa de TRIACs._
 
 
 ## 3.3 Diseño de firmware
@@ -484,20 +478,25 @@ En `FAULT`:
 - se activa patrón de alarma.
 - se reintenta inicialización por timeout.
 
-**Figura 3.21 - Statechart general (Harel/Itemis)**  
+La Figura 3.21 presenta el statechart general del sistema; define el flujo de inicialización, operación normal y transición a falla segura.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/Statechart.png)
+_Figura 3.21 — Statechart general (Harel/Itemis)._
 
-**Figura 3.22 - Subestados de inicialización**  
+En la Figura 3.22 se detallan los subestados de inicialización, donde se leen DIP, se verifican condiciones y se restaura configuración persistida.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/169b5aabae5e8c5a7af391914271a01397db4f61/Memoria%20t%C3%A9cnica/imgs/State%20Init.png)
+_Figura 3.22 — Subestados de inicialización._
 
-**Figura 3.23 - Estado normal**  
+La Figura 3.23 muestra el estado normal, responsable de atender eventos de usuario, control de TRIAC y telemetría BT.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/State%20Normal.png)
+_Figura 3.23 — Estado normal._
 
-**Figura 3.24 - Estado de falla**  
+La Figura 3.24 describe el estado de falla, en el que se corta potencia y se señaliza la condición mientras se gestiona recuperación.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/State%20Fault_ST.png)
+_Figura 3.24 — Estado de falla._
 
-**Figura 3.25 - FSM de debounce de botón**  
+La Figura 3.25 muestra la FSM de debounce utilizada para los botones, evitando rebotes y generando eventos limpios hacia la lógica del sistema.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/imgs/ST_BTN.png)
+_Figura 3.25 — FSM de debounce de botón._
 
 ### 3.3.3 Entradas y acondicionamiento lógico
 
@@ -549,30 +548,22 @@ Nota: actualmente la app se usa como receptor de estado, no como control remoto 
 
 La app fue desarrollada en MIT App Inventor. Se documentan interfaz y bloques de procesamiento de bytes.
 
-**Figura 3.26 - Pantalla principal app**  
-
+La Figura 3.26 muestra la pantalla principal de la app, donde se visualiza el porcentaje del ventilador y el estado de luz recibido por telemetría.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/566a7314061481abbec17f240388ee198cea82ee/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/captura%20app.jpeg)
+_Figura 3.26 — Pantalla principal app._
 
-*Epígrafe: Pantalla principal de la App.*
 
-
-**Figura 3.27 - Bloques MIT App Inventor (parte 1)**  
-
+La Figura 3.27 presenta los bloques de inicialización, incluyendo configuración de Bluetooth y preparación de variables.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/65b6a1be5b7a1b68e959d041707e17e00ebe5659/Memoria%20t%C3%A9cnica/imgs/mit%20app%20bloque%201.png)
+_Figura 3.27 — Bloques MIT App Inventor (parte 1)._
 
-*Epígrafe: Bloques de inicialización de la pantalla principal.*
-
-**Figura 3.28 - Bloques MIT App Inventor (parte 2)**  
-
+La Figura 3.28 muestra la lógica de decodificación/actualización de los 2 bytes de telemetría y el refresco de UI.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/65b6a1be5b7a1b68e959d041707e17e00ebe5659/Memoria%20t%C3%A9cnica/imgs/mit%20app%20bloque%202.png)
+_Figura 3.28 — Bloques MIT App Inventor (parte 2)._
 
-*Epígrafe: Lógica de actualización de datos y pantalla.*
-
-**Figura 3.29 - Bloques MIT App Inventor (parte 3)**  
-
+La Figura 3.29 detalla la lógica de selección del dispositivo Bluetooth, utilizada para vincularse al HC-06.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/65b6a1be5b7a1b68e959d041707e17e00ebe5659/Memoria%20t%C3%A9cnica/imgs/mit%20app%20bloque%203.png)
-
-*Epígrafe: Lógica de selección de dispositivo bluetooth.*
+_Figura 3.29 — Bloques MIT App Inventor (parte 3)._
 
 ---
 
@@ -652,11 +643,9 @@ Análisis:
 
 Resultado consolidado de herramientas de análisis de consola y build.
 
-**Figura 4.1 - Console and Build Analyzer**  
-
+La Figura 4.1 muestra el reporte de uso de memoria del build; se observa un uso bajo de RAM y FLASH (≈10.31% y ≈16.11%), dejando margen para futuras extensiones.
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/build%20console%20y%20analyzer.png)
-
-*Epígrafe: Build console y build analyzer. Dice RAM: 10.31% y FLASH: 16.11% *
+_Figura 4.1 — Console and Build Analyzer._
 
 
 
