@@ -300,7 +300,7 @@ Los casos de uso y la app se modificaron respecto de los del "Readme" en base a 
 
 ## 2.3 Descripción de módulos principales
 
-En las siguientes subsecciones se detallan los módulos del sistema. 
+En las siguientes subsecciones se detallan los múltiples módulos del sistema. 
 
 ### 2.3.1 Módulo de control (NUCLEO-F103RB)
 - Ejecuta scheduler cooperativo con tick de 1 ms.
@@ -340,8 +340,7 @@ En la Figura 3.1 se presenta el diagrama en bloques general, donde se identifica
 
 ## 3.2 Diseño de hardware
 
-
-Esta sección detalla la solución de Hardware diseñada. 
+Esta sección detalla la solución de Hardware diseñada en sus varias facetas, desde los esquemáticos hasta la verificación por mediciones. 
 
 ### 3.2.1 Criterio de interconexión y montaje
 
@@ -353,21 +352,20 @@ Se usaron dos placas:
 
 ### 3.2.2 Etapa de conversión de niveles
 
-La Figura 3.2 muestra el conversor de niveles utilizado para adaptar señales entre la NUCLEO-F103RB (3.3 V) y la placa diseñada (5 V), evitando sobrevoltajes en entradas digitales.
+La Figura 3.2 muestra el conversor de niveles utilizado para adaptar señales entre la NUCLEO-F103RB (3.3 V) y la placa diseñada (5 V), evitando sobrevoltajes en entradas digitales. 
 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/esquema%20niveles.png" width="600" /> 
 <em>Figura 3.2 — Esquemático del conversor de niveles.</em><br><br>
 
-Se requirió para unir la placa F103RB (3.3 V) con la placa diseñada (5 V). 
 
 ### 3.2.3 Etapa de TRIACs
 
-La Figura 3.3 presenta el driver de disparo de TRIAC basado en optoacoplador, elegido para aislar el dominio lógico y permitir el control de cargas de 220 VAC con disparos sincronizados.
+La Figura 3.3 presenta el driver de disparo de TRIAC basado en optoacoplador, elegido para aislar el dominio lógico y permitir el control de cargas de 220 VAC con disparos sincronizados. El diseño fue tomado de las notas de aplicación que se encuentran en este mismo repositorio en la sección de hardware. 
+
 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/esquem%20triac.png" width="600" />
 <em>Figura 3.3 — Esquemático de driver de TRIAC.</em><br><br>
 
-Diseño tomado de las notas de aplicación que se encuentran en este mismo repositorio en la sección de hardware. 
 
 ### 3.2.4 Etapa ZCD (detección de cruce por cero)
 
@@ -381,19 +379,19 @@ En la Figura 3.4 se observa el circuito del detector de cruce por cero (ZCD), cu
 <em>Figura 3.4 — Esquemático del ZCD.</em><br><br>
 
 
-
 La Figura 3.5 documenta el banco de pruebas inicial del ZCD, usado para validar el acondicionamiento y la forma de onda antes de integrar la etapa de potencia.
+
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/banco%20de%20trabajo%20inicial.jpeg" width="600" /> 
 <em>Figura 3.5 — Banco inicial de pruebas ZCD.</em><br><br>
 
 
-La Figura 3.6 muestra la señal de salida del ZCD medida con osciloscopio; se verifica que se genera un pulso por cada cruce por cero, resultando en una frecuencia de 100 Hz para red de 50 Hz.
+La Figura 3.6 muestra la señal de salida del ZCD medida con osciloscopio; se verifica que se genera un pulso por cada cruce por cero, resultando en una frecuencia de 100 Hz para red de 50 Hz. También se aprecia el espaciamiento entre pulsos medido con cursores del osciloscopio, que permite estimar la estabilidad temporal del detector.
+
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/mediciones%20pulsos.jpeg" width="600" /> 
 <em>Figura 3.6 — Mediciones de pulsos ZCD (osciloscopio).</em><br><br>
 
-En la Figura 3.6 también se aprecia el espaciamiento entre pulsos, que permite estimar la estabilidad temporal del detector.
 
-En la Figura 3.7 se mide el ancho de pulso del ZCD, dato relevante para definir la lógica de captura por interrupción y la inmunidad a ruido en el acondicionamiento.
+En la Figura 3.7 se mide el ancho de pulso del ZCD, que sirve para hacerse una idea de la simetría del disparo entre curces por cero consecutivos. En este caso se observa buena simetría entre pulsos, 
 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/mediciones%20pulsos%201.jpeg" width="600" /> 
 <em>Figura 3.7 — Medición de ancho de pulso del ZCD.</em><br><br>
@@ -403,12 +401,11 @@ La Figura 3.8 evidencia el adelantamiento del pulso respecto del cruce por cero 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/mediciones%20pulsos%202.jpeg" width="600" /> 
 <em>Figura 3.8 — Disparo previo al cruce real (senoidal negativa).</em><br><br>
 
-La Figura 3.9 muestra el mismo fenómeno para la semionda positiva; ambas mediciones se utilizaron para fijar una compensación temporal conservadora.
+La Figura 3.9 muestra el mismo fenómeno que la imagen 3.8 pero para la semionda positiva; ambas mediciones se utilizaron para fijar una compensación temporal conservadora para el disparo de los Triacs. En el código esto se ve reflejado en un tiempo invariante que siempre debe esperar antes de disparar. 
 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/mediciones%20pulsos%204.jpeg" width="600" /> 
 <em>Figura 3.9 — Disparo previo al cruce real (senoidal positiva).</em><br><br>
 
-El retardo fijo de disparo de los triacs se estimó tomando de referencia los tiempos de disparo del ZCD respecto del cruce real mostrados en estas imágenes. 
 
 
 ### 3.2.5 Etapa de potencia y protecciones
@@ -424,16 +421,18 @@ Notas de fabricación y prueba:
 - Las primeras pruebas integradas se hicieron en 24 VAC. Esto conllevó una ligera y reversible modificación del circuito de ZCD. 
 
 La Figura 3.10 muestra la señal a la salida del 4N25 (emisor común/negador) durante ensayo, confirmando niveles y forma de onda compatibles con el acondicionamiento digital.
+
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/salida%20real%20del%20opto.jpeg" width="600" /> 
 <em>Figura 3.10 — Ensayo de salida de optoacoplador.</em><br><br>
 
-La Figura 3.11 presenta la simulación de la entrada/salida del ZCD y la etapa de opto, utilizada como referencia para contrastar con las mediciones.
-<img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/simu%20ZCD%20proper.jpeg" width="600" /> 
+La Figura 3.11 presenta la simulación de la entrada/salida del ZCD y la etapa de opto, utilizada como referencia para contrastar con las mediciones. 
+
+<img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/30fe670b3a0bb71f531d25c21496764f675e7d96/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/simu%20ZCD%20proper.jpeg" width="600" /> 
 <em>Figura 3.11 — Simulación de ZCD y salida de opto.</em><br><br>
 
-Nótese que es muy parecida a la medida. 
 
 En la Figura 3.12 se observa la salida simulada del 4N25; aunque difiere de la señal real, alcanza el umbral requerido por los Schmitt triggers, por lo que el diseño resultó funcional.
+
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/simu%20salida%20del%20optoacoplador.jpeg" width="600" /> 
 <em>Figura 3.12 — Salida simulada del 4N25.</em><br><br>
 
