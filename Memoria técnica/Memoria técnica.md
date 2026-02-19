@@ -184,9 +184,14 @@ Alcance implementado:
 Fuera de alcance actual:
 - Control remoto completo de actuadores desde app. 
 
+Este tema se vuelve a detallar en la sección "4.9 Cumplimiento de requisitos", en la que se explica cada ítem y, la razón de no haberse implemetado si corresponde. 
+
+
 ---
 
 # Capítulo 2: Introducción específica
+
+Esta sección contiene los requisitos ya mencionados en el informe de avances, además de los casos de uso. 
 
 ## 2.1 Requisitos (versión final del informe de avances)
 
