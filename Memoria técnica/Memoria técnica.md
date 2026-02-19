@@ -140,10 +140,11 @@ Se analizaron dos tipos de soluciones comerciales disponibles en la Argentina:
    - No guarda configuraciones ni estados previos del ventilador.  
    - El producto encontrado solo tiene 3 velocidades de ventilador (low, med, high). 
 
-En la Figura 1.1 se observa el kit típico: un control remoto dedicado con soporte de pared y un módulo receptor que se instala en la caja de techo. Esta solución resuelve el control a distancia, pero no integra telemetría hacia el celular ni una interfaz fija de pared.
 
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/fbef0ce288a5bfc7994dd3f4e93a5714879ebca2/Memoria%20t%C3%A9cnica/imgs/solucion%20control%20remoto%201.png)
 _Figura 1.1 — Ventilador con control remoto IR/RF (referencia comercial)._
+
+En la Figura 1.1 se observa el kit típico: un control remoto dedicado con soporte de pared y un módulo receptor que se instala en la caja de techo. Esta solución resuelve el control a distancia, pero no integra telemetría hacia el celular ni una interfaz fija de pared. Si se pierde el control remoto, o se olvida  en otro ambiente, el usuario tiene que buscarlo para poder controlar el ventilador y luz. 
 
 
 2. **Controladores disponibles internacionalmente (Amazon)**  
