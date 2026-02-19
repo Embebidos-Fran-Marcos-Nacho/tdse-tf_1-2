@@ -269,7 +269,7 @@ _Tabla 2.4 — Caso de uso: ajuste local de ventilador._<br><br>
 
 ### 2.2.3 Telemetría Bluetooth hacia app
 
-La Tabla 2.5 describe el caso de uso de telemetría Bluetooth, utilizada para informar estado hacia la aplicación móvil.
+La Tabla 2.5 detallada a continuación describe el caso de uso de telemetría Bluetooth, utilizada para informar estado hacia la aplicación móvil.
 
 | Elemento | Definición |
 | --- | --- |
@@ -282,7 +282,7 @@ _Tabla 2.5 — Caso de uso: telemetría Bluetooth hacia app._<br><br>
 
 ### 2.2.4 Recuperación tras falla
 
-La Tabla 2.6 describe el caso de uso de recuperación ante falla, incluyendo el modo `FAULT` y su salida controlada.
+La Tabla 2.6 de abajo describe el caso de uso de recuperación ante falla, incluyendo el modo `FAULT` y su salida controlada.
 
 | Elemento | Definición |
 | --- | --- |
@@ -294,8 +294,7 @@ La Tabla 2.6 describe el caso de uso de recuperación ante falla, incluyendo el 
 _Tabla 2.6 — Caso de uso: recuperación tras falla._<br><br>
 
 Nota de trazabilidad de alcance:
-- El informe de avances redefinió el alcance Bluetooth para visualización de estado (sin control remoto completo de actuadores).
-- Los casos de uso y la app se documentan en consecuencia: recepción de telemetría y presentación de estado.
+Los casos de uso y la app se modificaron respecto de los del "Readme" en base a los alcances/requisitos alterados en el informe de avances.
 
 ## 2.3 Descripción de módulos principales
 
@@ -333,7 +332,6 @@ En la Figura 3.1 se presenta el diagrama en bloques general, donde se identifica
 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/imgs/diagrama%20en%20bloques.jpg" width="600" />
 _Figura 3.1 — Diagrama en bloques general._<br><br>
-
 
 
 ## 3.2 Diseño de hardware
