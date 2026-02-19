@@ -143,7 +143,7 @@ Se analizaron dos tipos de soluciones comerciales disponibles en la Argentina:
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/fbef0ce288a5bfc7994dd3f4e93a5714879ebca2/Memoria%20t%C3%A9cnica/imgs/solucion%20control%20remoto%201.png" width="600" />
 _Figura 1.1 — Ventilador con control remoto IR/RF (referencia comercial)._
 
-
+<br>
 En la Figura 1.1 se observa el kit típico: un control remoto dedicado con soporte de pared y un módulo receptor que se instala en la caja de techo. Esta solución (encontrada en [Kit Corebay Fan-3 – Mercado Libre](https://www.mercadolibre.com.ar/kit-de-control-remoto-para-ventilador-de-techo-corebay-fan-3/p/MLA2061924708)) resuelve el control a distancia, pero no integra telemetría hacia el celular ni una interfaz fija de pared. Si se pierde el control remoto, o se olvida  en otro ambiente, el usuario tiene que buscarlo para poder controlar el ventilador y luz. 
 
 
@@ -158,6 +158,7 @@ La Figura 1.2 muestra un producto más completo: combina control local (teclas d
 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/fbef0ce288a5bfc7994dd3f4e93a5714879ebca2/Memoria%20t%C3%A9cnica/imgs/solucion%20completa%202.jpg" width="600" />
 _Figura 1.2 — Controlador integrado con teclas de pared y conectividad (referencia internacional)._
+<br>
 
 Para este proyecto se optó por utilizar una interfaz local combinada con un módulo Bluetooth clásico HC-06. Esta solución híbrida prioriza la simplicidad de integración, combinando la comodidad del control de pared con la telemetría inalámbrica por medio de bleutooth. La siguiente sección brinda más detalles sobre estas decisiones de diseño. 
 
