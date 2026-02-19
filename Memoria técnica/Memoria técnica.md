@@ -391,7 +391,7 @@ La Figura 3.6 muestra la señal de salida del ZCD medida con osciloscopio; se ve
 <em>Figura 3.6 — Mediciones de pulsos ZCD (osciloscopio).</em><br><br>
 
 
-En la Figura 3.7 se mide el ancho de pulso del ZCD, que sirve para hacerse una idea de la simetría del disparo entre curces por cero consecutivos. En este caso se observa buena simetría entre pulsos, 
+En la Figura 3.7 se mide el ancho de pulso del ZCD, que sirve para hacerse una idea de la simetría del disparo entre cruces por cero consecutivos. En este caso se observa buena simetría entre pulsos, 
 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/mediciones%20pulsos%201.jpeg" width="600" /> 
 <em>Figura 3.7 — Medición de ancho de pulso del ZCD.</em><br><br>
@@ -448,7 +448,7 @@ Se documentó el proceso de fabricación con transferencia y ataque químico:
 
 Lecciones aprendidas para la próxima iteración:
 - Revisar diámetros de agujeros para componentes de potencia (varistores y componentes grandes): los componentes de _leads_ de mayor diámetro quedaron con _pads_ demasiado chicos. Esto no es un problema en un prototipo, donde el agujero se agranda con un torno de mano, pero es inaceptable en un producto final. 
-- Simplificar topología de ZCD: se puede cambiar por un detector de 1 solo diodo, que actue cada ciclo y no por semiciclo. EL segundo disparo se puede resover por software estimando el período de la señal con un filtro de media móvil (o complementario). 
+- Simplificar topología de ZCD: se puede cambiar por un detector de 1 solo diodo, que actúe cada ciclo y no por semiciclo. El segundo disparo se puede resover por software estimando el período de la señal con un filtro de media móvil (o complementario). 
 - Evaluar integración de control de dimming en una etapa dedicada: En un futuro la idea es que la solución comercial tenga su propio microcontrolador en la placa, y que solo requiera 220 VAC para funcionar.<br><br>
 
 La Figura 3.13 muestra el papel de transferencia _p n p blue_ con el diseño impreso, paso previo al copiado del patrón a la placa cobreada.
@@ -551,6 +551,7 @@ En `FAULT`:
 - se reintenta inicialización por timeout.
 
 La Figura 3.21 presenta el statechart general del sistema; define el flujo de inicialización, operación normal y transición a falla segura.
+
 <img src="imgs/Statechart.png" width="500" /> 
 
 <em>Figura 3.21 — Statechart general (Harel/Itemis).</em><br><br>
