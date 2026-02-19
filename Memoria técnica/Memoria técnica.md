@@ -607,7 +607,7 @@ Nota: actualmente la app se usa como receptor de estado, no como control remoto 
 La app fue desarrollada en MIT App Inventor. Se documentan interfaz y bloques de procesamiento de bytes.
 
 La Figura 3.26 muestra la pantalla principal de la app, donde se visualiza el porcentaje del ventilador y el estado de luz recibido por telemetría.
-> <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/566a7314061481abbec17f240388ee198cea82ee/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/captura%20app.jpeg" width="600" />
+> <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/566a7314061481abbec17f240388ee198cea82ee/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/captura%20app.jpeg" width="400" />
 <em>Figura 3.26 — Pantalla principal app.</em><br><br>
 
 
@@ -714,7 +714,7 @@ Análisis:
 Resultado consolidado de herramientas de análisis de consola y build.
 
 La Figura 4.1 muestra el reporte de uso de memoria del build; se observa un uso bajo de RAM y FLASH (≈10.31% y ≈16.11%), dejando margen para futuras extensiones.
-> <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/build%20console%20y%20analyzer.png" width="600" />
+> <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/build%20console%20y%20analyzer.png" width="800" />
 <em>Figura 4.1 — Console and Build Analyzer.</em><br><br>
 
 
