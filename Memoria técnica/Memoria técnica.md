@@ -153,12 +153,12 @@ En la Figura 1.1 se observa el kit típico: un control remoto dedicado con sopor
    - Tienen costos significativamente más altos o no cuentan con disponibilidad local inmediata. 
    - En general los que usan wi-fi no tienen tecla y representan una amenaza a la seguridad de la red doméstica del usuario.  
 
-La Figura 1.2 muestra un producto más completo: combina control local (teclas de pared) con control remoto y/o aplicación móvil, normalmente mediante conectividad Wi‑Fi. Si bien aporta más funciones, su integración típica depende de red doméstica y puede no ofrecer una interfaz cableada simple para pared en todos los casos.<br>
+La Figura 1.2 muestra un producto más completo: combina control local (teclas de pared) con control remoto y/o aplicación móvil, normalmente mediante conectividad Wi‑Fi. Si bien aporta más funciones, su integración típica depende de la red WI-FI doméstica, excepto en el caso del control remoto, que nos parece el mejor.<br>
 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/fbef0ce288a5bfc7994dd3f4e93a5714879ebca2/Memoria%20t%C3%A9cnica/imgs/solucion%20completa%202.jpg" width="600" />
 _Figura 1.2 — Controlador integrado con teclas de pared y conectividad (referencia internacional)._<br><br>
 
-Para este proyecto se optó por utilizar una interfaz local combinada con un módulo Bluetooth clásico HC-06. Esta solución híbrida prioriza la simplicidad de integración, combinando la comodidad del control de pared con la telemetría inalámbrica por medio de bleutooth. La siguiente sección brinda más detalles sobre estas decisiones de diseño. 
+Para este proyecto se optó por utilizar una interfaz local combinada con un módulo Bluetooth clásico HC-06. Esta solución híbrida prioriza la simplicidad de integración, combinando la comodidad del control de pared con la telemetría inalámbrica por medio de bluetooth. La siguiente sección brinda más detalles sobre estas decisiones de diseño. 
 
 ## 1.3 Justificación del enfoque técnico
 
