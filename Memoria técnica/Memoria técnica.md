@@ -329,10 +329,10 @@ En las siguientes subsecciones se detallan los múltiples módulos del sistema.
 ## 3.1 Arquitectura general
 
 El sistema se organiza en dos dominios:
-- Dominio lógico de 3.3 V (STM32 + entradas + comunicaciones).
+- Dominio lógico de 3,3 V (STM32 + entradas + comunicaciones).
 - Dominio de potencia AC (TRIAC + ZCD + protecciones).
 
-En la Figura 3.1 se presenta el diagrama en bloques general, donde se identifica la separación entre el dominio de baja tensión (3.3 V) y el dominio de potencia en AC, junto con los principales enlaces de interconexión (ZCD, drivers de TRIAC y comunicación Bluetooth).
+En la Figura 3.1 se presenta el diagrama en bloques general, donde se identifica la separación entre el dominio de baja tensión (3,3 V) y el dominio de potencia en AC, junto con los principales enlaces de interconexión (ZCD, drivers de TRIAC y comunicación Bluetooth).
 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/imgs/diagrama%20en%20bloques.jpg" width="600" />
 <em>Figura 3.1 — Diagrama en bloques general.</em><br><br>
@@ -352,7 +352,7 @@ Se usaron dos placas:
 
 ### 3.2.2 Etapa de conversión de niveles
 
-La Figura 3.2 muestra el conversor de niveles utilizado para adaptar señales entre la NUCLEO-F103RB (3.3 V) y la placa diseñada (5 V), evitando sobrevoltajes en entradas digitales. 
+La Figura 3.2 muestra el conversor de niveles utilizado para adaptar señales entre la NUCLEO-F103RB (3,3 V) y la placa diseñada (5 V), evitando sobrevoltajes en entradas digitales. 
 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/esquema%20niveles.png" width="600" /> 
 <em>Figura 3.2 — Esquemático del conversor de niveles.</em><br><br>
@@ -425,49 +425,54 @@ La Figura 3.10 muestra la señal a la salida del 4N25 (emisor común/negador) du
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/salida%20real%20del%20opto.jpeg" width="600" /> 
 <em>Figura 3.10 — Ensayo de salida de optoacoplador.</em><br><br>
 
-La Figura 3.11 presenta la simulación de la entrada/salida del ZCD y la etapa de opto, utilizada como referencia para contrastar con las mediciones. 
+La Figura 3.11 presenta la simulación de la entrada/salida del ZCD y la etapa de opto, utilizada como referencia para contrastar con las mediciones. En este caso las simualciones concuerdan con los fenómenos medidos en las figuras 3.7 a 3.9. 
 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/30fe670b3a0bb71f531d25c21496764f675e7d96/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/simu%20ZCD%20proper.jpeg" width="600" /> 
 <em>Figura 3.11 — Simulación de ZCD y salida de opto.</em><br><br>
 
 
-En la Figura 3.12 se observa la salida simulada del 4N25; aunque difiere de la señal real, alcanza el umbral requerido por los Schmitt triggers, por lo que el diseño resultó funcional.
+En la Figura 3.12 se observa la salida simulada del 4N25. Aunque difiere de la señal real, alcanza los umbrales de funcionamiento por el clico de histéresis de los Schmitt triggers, y el diseño resultó funcional.
 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/ZCD/simu%20salida%20del%20optoacoplador.jpeg" width="600" /> 
 <em>Figura 3.12 — Salida simulada del 4N25.</em><br><br>
-
-No se parece mucho a la real, pero funcionó igual: la tensión alcanzó el umbral para disparar los Schmitt triggers.
 
 
 ### 3.2.6 Fabricación de placas
 
 Se documentó el proceso de fabricación con transferencia y ataque químico:
-- Primero se imprimió el diseño sobre un papel PnP Blue.
-- Luego se transfirió por medio de calor. 
-- Se hicieron las correcciones manuales de transferencia.
-- Por último, se realizó un control de continuidad previo a energizar.
+1. Primero se imprimió el diseño sobre un papel PnP Blue.
+2. Luego se transfirió por medio de calor. 
+3. Se hicieron las correcciones manuales de transferencia.
+4. Por último, se realizó un control de continuidad previo a energizar. Esto permite evitar un cortocircuito o arreglar una pista faltante. 
 
-Lecciones aprendidas para próxima iteración:
-- Revisar diámetros de agujeros para componentes de potencia (varistores y componentes grandes).
-- Simplificar topología de ZCD.
-- Evaluar integración de control de dimming en una etapa dedicada.
+Lecciones aprendidas para la próxima iteración:
+- Revisar diámetros de agujeros para componentes de potencia (varistores y componentes grandes): los componentes de _leads_ de mayor diámetro quedaron con _pads_ demasiado chicos. Esto no es un problema en un prototipo, donde el agujero se agranda con un torno de mano, pero es inaceptable en un producto final. 
+- Simplificar topología de ZCD: se puede cambiar por un detector de 1 solo diodo, que actue cada ciclo y no por semiciclo. EL segundo disparo se puede resover por software estimando el período de la señal con un filtro de media móvil (o complementario). 
+- Evaluar integración de control de dimming en una etapa dedicada: En un futuro la idea es que la solución comercial tenga su propio microcontrolador en la placa, y que solo requiera 220 VAC para funcionar.<br><br>
 
-La Figura 3.13 muestra el papel de transferencia con el diseño impreso, paso previo al copiado del patrón a la placa cobreada.
+
+
+La Figura 3.13 muestra el papel de transferencia _p n p blue_ con el diseño impreso, paso previo al copiado del patrón a la placa cobreada.
+
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/1030475e09d21a3204b19eb7996e9f11bb688033/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/p%20n%20p%20blue.jpeg" width="600" /> 
 <em>Figura 3.13 — Papel de transferencia con diseño impreso.</em><br><br>
 
 La Figura 3.14 registra la primera transferencia sobre cobre, donde se identificaron defectos a corregir antes del ataque químico.
+
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/1030475e09d21a3204b19eb7996e9f11bb688033/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/trasferencia%20a%20cobre.jpeg" width="600" /> 
 <em>Figura 3.14 — Transferencia previa a correcciones.</em><br><br>
 
 La Figura 3.15 muestra la transferencia luego de correcciones manuales, mejorando continuidad y separación de pistas.
+
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/1030475e09d21a3204b19eb7996e9f11bb688033/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/correci%C3%B3n%20de%20desperfectos%20de%20trasnferencia.jpeg" width="600" /> 
 <em>Figura 3.15 — Transferencia corregida.</em><br><br>
 
 La Figura 3.16 presenta la placa fabricada tras el ataque y limpieza, lista para perforado, soldado y pruebas de continuidad.
+
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/663d795450e29c452e59a7ecae6f23108cb3e22d/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/cobre%20etched.jpeg" width="600" /> 
 <em>Figura 3.16 — Placa fabricada.</em><br><br>
 
+El soldado de la placa se dió en etapas, lo que permitió asegurarse de que cada etapa funcione previo a soldar la siguiente. En nuestro caso todo funcionó a la primera, excepto por una resistencia mal soldada que se corregió fácilmente.
 
 ### 3.2.7 Pinout del sistema (STM32F103RB)
 
