@@ -207,7 +207,7 @@ Fuera de alcance actual:
 
 ## 2.2 Casos de uso
 
-### Caso de uso 1: Control local de luz
+### 2.2.1 Control local de luz
 
 | Elemento | Definición |
 | --- | --- |
@@ -216,7 +216,7 @@ Fuera de alcance actual:
 | Flujo básico | Debounce de botón -> evento -> actualización de estado de luz -> actualización de salida TRIAC -> solicitud de guardado en flash -> telemetría BT de cambio. |
 | Alternativas | Si falla persistencia y modo estricto activo: transición a `FAULT`. |
 
-### Caso de uso 2: Ajuste local de ventilador
+### 2.2.2 Ajuste local de ventilador
 
 | Elemento | Definición |
 | --- | --- |
@@ -225,7 +225,7 @@ Fuera de alcance actual:
 | Flujo básico | Muestreo ADC -> mapeo a porcentaje -> cálculo de `fan_delay_us` -> actualización de temporización de disparo TRIAC. |
 | Alternativas | Si potenciómetro fuera de rango calibrado: saturación a límites definidos. |
 
-### Caso de uso 3: Telemetría Bluetooth hacia app
+### 2.2.3 Telemetría Bluetooth hacia app
 
 | Elemento | Definición |
 | --- | --- |
@@ -234,7 +234,7 @@ Fuera de alcance actual:
 | Flujo básico | Firmware arma trama binaria de 2 bytes y transmite por USART1 para que la app informe el estado del sistema. |
 | Alternativas | Si BT deshabilitado, no se transmite. |
 
-### Caso de uso 4: Recuperación tras falla
+### 2.2.4 Recuperación tras falla
 
 | Elemento | Definición |
 | --- | --- |
@@ -296,7 +296,7 @@ Se usaron dos placas:
 - placa shield para interfaz y conexión con NUCLEO.
 - placa dimmer para potencia, ZCD y protecciones.
 
-### Etapa de conversión de niveles
+### 3.2.2 Etapa de conversión de niveles
 
 **Figura 3.2 - Esquemático del conversor de niveles**
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/esquema%20niveles.png)
@@ -304,7 +304,7 @@ Se usaron dos placas:
 
 Se requirió para unir la placa F103RB (3.3 V) con la placa diseñada (5 V). 
 
-### Etapa de Triacs 
+### 3.2.3 Etapa de TRIACs
 
 **Figura 3.3 - Esquemático de driver de TRIAC**
 ![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/esquem%20triac.png)
@@ -312,7 +312,7 @@ Se requirió para unir la placa F103RB (3.3 V) con la placa diseñada (5 V).
 
 Diseño tomado de las notas de aplicación que se encuentran en este mismo repositorio en la sección de hardware. 
 
-### 3.2.2 Etapa ZCD (detección de cruce por cero)
+### 3.2.4 Etapa ZCD (detección de cruce por cero)
 
 La etapa de ZCD fue validada progresivamente en banco antes de integrar potencia. Se observó que:
 - la salida detectada requiere compensación temporal aproximada de 500 us para ubicar el cruce real.
@@ -351,7 +351,7 @@ Nótese que el ZCD actúa en cada cruce por cero, generando una señal de 100 Hz
 El retardo fijo de disparo de los triacs se estimó tomando de referencia los tiempos de disparo del ZCD respecto del cruce real mostrados en estas imágenes. 
 
 
-### 3.2.3 Etapa de potencia y protecciones
+### 3.2.5 Etapa de potencia y protecciones
 
 Según esquemático principal (`Hardware/placa dimmer/dimmer.kicad_sch`), el canal de potencia integra:
 - TRIAC de potencia (`BTA06-600C`).
@@ -379,7 +379,7 @@ Nótese que es muy parecida a la medida.
 No se parece mucho a la real, pero funcionó igual: la tensión alcanzó el umbral para disparar los Schmitt triggers.
 
 
-### 3.2.4 Fabricación de placas
+### 3.2.6 Fabricación de placas
 
 Se documentó el proceso de fabricación con transferencia y ataque químico:
 - Primero se imprimió el diseño sobre un papel PnP Blue.
@@ -409,7 +409,7 @@ Lecciones aprendidas para próxima iteración:
 *Epígrafe: Placa fabricada.*
 
 
-### 3.2.5 Pinout del sistema (STM32F103RB)
+### 3.2.7 Pinout del sistema (STM32F103RB)
 
 | Pin | Función |
 | --- | --- |
@@ -429,7 +429,7 @@ Lecciones aprendidas para próxima iteración:
 | `PA2/PA3` | USART2 (consola ST-Link VCP) |
 | `PC8` | Onda de prueba 100 Hz (modo test) |
 
-### 3.2.6 Cableado e imágenes del montaje
+### 3.2.8 Cableado e imágenes del montaje
 
 **Figura 3.17 - Cableado final del prototipo**  
 
@@ -828,11 +828,11 @@ El proyecto permitió conocer los Triacs como componentes de control de potencia
 
 ---
 
-# Uso de herramientas de IA
+# Capítulo 6: Uso de herramientas de IA
 
 Se documenta el uso de IA según requerimiento docente y archivo `listado de cosas hechas con IA.txt`.
 
-## Uso individual y conjunto
+## 6.1 Uso individual y conjunto
 
 - Ignacio:
   - asistencia para extraer estructura de memoria técnica.
@@ -851,7 +851,7 @@ Se documenta el uso de IA según requerimiento docente y archivo `listado de cos
 
 ---
 
-# Bibliografía y referencias
+# Capítulo 7: Bibliografía y referencias
 
 1. STMicroelectronics, *UM1724 - STM32 Nucleo-64 boards user manual*.  
 2. STMicroelectronics, *MB1136 - Electrical Schematic - STM32 Nucleo-64 boards*.  
