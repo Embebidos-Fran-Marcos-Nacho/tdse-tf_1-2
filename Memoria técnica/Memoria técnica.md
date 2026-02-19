@@ -501,7 +501,7 @@ La Tabla 3.1 lista el pinout relevante del sistema para entradas, salidas, DIP s
 
 En esta parte del documento se detalla el montaje y conexionado de las placas. 
 
-La Figura 3.17 muestra el cableado final del prototipo en banco; se destaca el uso de conexiones soldadas y el montaje sin protoboard en la integración objetivo.
+La Figura 3.17 muestra el cableado final del prototipo en banco; se destaca el uso de conexiones soldadas y el montaje sin protoboard en la integración objetivo. La excepción es el uso de LEDs como indicadores luminosos, conectados en paralelo a las lámparas. 
 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/3cb04d32ab982e06ec97e47ec6184a648ebf46cf/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/banco%20de%20trabajo%20desprolijo/banco%20final.jpeg" width="600" /> 
 <em>Figura 3.17 — Cableado final del prototipo.</em><br><br>
