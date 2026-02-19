@@ -179,7 +179,7 @@ En una futura versión, el producto debería permitir el control por medio de la
 Alcance implementado:
 - Encendido/apagado de luz por botones físicos.
 - Ajuste de velocidad del ventilador por potenciómetro.
-- Envío de telemetría por HC-06 (2 bytes).
+- Envío de telemetría por HC-06.
 - Estado de falla segura y persistencia básica en flash.
 
 Fuera de alcance actual:
