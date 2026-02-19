@@ -155,7 +155,7 @@ En la Figura 1.1 se observa el kit típico: un control remoto dedicado con sopor
    En el mercado internacional existen productos más avanzados, capaces de integrar control de luces y ventilador, conectividad Wi-Fi, y aplicaciones móviles.  
    Sin embargo:
    - Tienen costos significativamente más altos o no cuentan con disponibilidad local inmediata. 
-   - En general los que usan wi-fi no tienen tecla y representan una amenaza a la seguridad de la red doméstica del usuario.  
+   - En general los que usan wi-fi no tienen tecla y representan una amenaza a la seguridad de la red doméstica del usuario (si no está bien configurada).  
 
 La Figura 1.2 muestra un producto más completo: combina control local (teclas de pared) con control remoto y/o aplicación móvil, normalmente mediante conectividad Wi‑Fi. Si bien aporta más funciones, su integración típica depende de la red WI-FI doméstica, excepto en el caso del control remoto, que nos parece el mejor.<br>
 
