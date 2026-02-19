@@ -714,7 +714,7 @@ Alcance de la medición:
 
 La Tabla 4.3 resume los valores pico de corriente y potencia medidos en distintos modos de operación del sistema.
 
-| Modo | $I_{pico}$ @ 5 V (mA) | $P_{pico}$ @ 5 V (W) | Observaciones |
+| Modo | $I_{pico}$ @ 5 V [mA] | $P_{pico}$ @ 5 V [W] | Observaciones |
 | --- | ---: | ---: | --- |
 | Normal sin módulo BT (desconectado) | 64 | 0.320 | Escenario de menor consumo; representa una forma válida de uso sin telemetría Bluetooth. |
 | Normal con módulo BT conectado y desactivado | 104 | 0.520 | Aumento de consumo por presencia/alimentación del módulo Bluetooth. |
@@ -940,6 +940,7 @@ Se documenta el uso de IA según requerimiento docente y archivo `listado de cos
   - apoyo en redacción y ajuste de memoria técnica.
   - apoyo extensivo en programación STM32 (estructura, módulos y ajustes).
   - apoyo para redacción de descripciones de PR.
+  - apoyo en la redacción y corrección de typos en la memoria técnica.
 
 
 ---
