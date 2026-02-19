@@ -347,8 +347,8 @@ Esta sección detalla la solución de Hardware diseñada en sus varias facetas, 
 Se trabajó con placas y conexiones soldadas para la integración funcional final (sin protoboard ni cables Dupont en el montaje objetivo), en línea con las pautas de entrega.
 
 Se usaron dos placas:
-- placa shield para interfaz y conexión con NUCLEO.
-- placa dimmer para potencia, ZCD y protecciones.
+- Placa shield para interfaz y conexión con NUCLEO.
+- Placa dimmer para potencia, ZCD y protecciones.
 
 ### 3.2.2 Etapa de Conversión de niveles
 
@@ -370,8 +370,8 @@ La Figura 3.3 presenta el driver de disparo de TRIAC basado en un TRIAC optoacop
 ### 3.2.4 Etapa ZCD (detección de cruce por cero)
 
 La sección de ZCD fue validada progresivamente en banco antes de integrar potencia. Se observó que:
-- la salida detectada requiere compensación temporal aproximada de 500 $\mu s$ para ubicar el cruce real.
-- las simulaciones resultaron consistentes con la tendencia medida.
+- La salida detectada requiere compensación temporal aproximada de 500 $\mu s$ para ubicar el cruce real.
+- Las simulaciones resultaron consistentes con la tendencia medida.
 
 En la Figura 3.4 se observa el circuito del detector de cruce por cero (ZCD), cuya salida se utiliza como referencia temporal para disparar los TRIACs con un retardo controlado. La foto fue tomada del esquemático de la placa.
 
