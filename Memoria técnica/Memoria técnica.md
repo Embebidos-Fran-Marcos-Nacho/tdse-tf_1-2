@@ -300,6 +300,8 @@ Los casos de uso y la app se modificaron respecto de los del "Readme" en base a 
 
 ## 2.3 Descripción de módulos principales
 
+En las siguientes subsecciones se detallan los módulos del sistema. 
+
 ### 2.3.1 Módulo de control (NUCLEO-F103RB)
 - Ejecuta scheduler cooperativo con tick de 1 ms.
 - Corre tres tareas: `task_adc`, `task_system`, `task_pwm`.
@@ -337,6 +339,9 @@ En la Figura 3.1 se presenta el diagrama en bloques general, donde se identifica
 
 
 ## 3.2 Diseño de hardware
+
+
+Esta sección detalla la solución de Hardware diseñada. 
 
 ### 3.2.1 Criterio de interconexión y montaje
 
