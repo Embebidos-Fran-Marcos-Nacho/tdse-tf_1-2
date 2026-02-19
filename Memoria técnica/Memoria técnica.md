@@ -193,8 +193,27 @@ Este tema se vuelve a detallar en la sección "4.9 Cumplimiento de requisitos", 
 
 Esta sección contiene los requisitos ya mencionados en el informe de avances, además de los casos de uso. 
 
-## 2.1 Requisitos (versión final del informe de avances)
+## 2.1 Requisitos originales y modificados en la versión final del informe de avances
 
+
+tabla original:
+| Grupo | ID | Descripción |
+|-------|-----|-------------|
+| Control | 1.1 | El sistema permitirá encender y apagar las **luces** mediante un botón físico. |
+|  | 1.2 | El sistema permitirá ajustar la **velocidad del ventilador** mediante un potenciómetro. |
+|  | 1.3 | El sistema permitirá controlar el ventilador y las luces vía **Bluetooth**. |
+| Bluetooth | 2.1 | El sistema contará con un DIP switch para habilitar o deshabilitar el Bluetooth. |
+|  | 2.2 | El DIP switch permitirá seleccionar diferentes **configuraciones o canales** del módulo BT. |
+| Indicadores | 3.1 | El sistema contará con **LEDs** que indiquen el estado de conexión del Bluetooth. |
+|  | 3.2 | El sistema contará con un **buzzer** para señalizar eventos del Bluetooth. |
+| Memoria | 4.1 | El sistema deberá guardar en **memoria flash interna** el último valor de PWM utilizado. |
+|  | 4.2 | El sistema deberá restaurar automáticamente el último valor guardado al encender. |
+| Seguridad | 5.1 | El sistema deberá operar de forma segura sobre cargas de **220 V**. |
+| Aplicación | 6.1 | La aplicación móvil deberá permitir realizar todas las acciones disponibles desde los controles físicos (encendido/apagado de luces y ajuste de velocidad del ventilador). |
+|  | 6.2 | El sistema deberá garantizar que el control físico y el control desde la aplicación sean intercambiables: cuando se utilice uno, el otro deberá quedar temporalmente inhabilitado para evitar conflictos de comando. |
+---
+
+tabla modificada a principio de febrero para llegar con el tiempo:
 | Grupo | ID | Descripción |
 | --- | --- | --- |
 | Control | 1.1 | El sistema permitirá encender y apagar las luces mediante un botón físico. |
