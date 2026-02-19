@@ -551,19 +551,19 @@ En `FAULT`:
 - se reintenta inicialización por timeout.
 
 La Figura 3.21 presenta el statechart general del sistema; define el flujo de inicialización, operación normal y transición a falla segura.
-<img src="imgs/Statechart.png" width="550" /> 
+<img src="imgs/Statechart.png" width="500" /> 
 <em>Figura 3.21 — Statechart general (Harel/Itemis).</em><br><br>
 
 En la Figura 3.22 se detallan los subestados de inicialización, donde se leen DIP, se verifican condiciones y se restaura configuración persistida.
-> <img src="imgs/State Init.png" width="600" />
+> <img src="imgs/State Init.png" width="700" />
 <em>Figura 3.22 — Subestados de inicialización.</em><br><br>
 
 La Figura 3.23 muestra el estado normal, responsable de atender eventos de usuario, control de TRIAC y telemetría BT.
-> <img src="imgs/State Normal.png" width="600" />
+> <img src="imgs/State Normal.png" width="700" />
 <em>Figura 3.23 — Estado normal.</em><br><br>
 
 La Figura 3.24 describe el estado de falla, en el que se corta potencia y se señaliza la condición mientras se gestiona recuperación.
-> <img src="imgs/State Fault_ST.png" width="600" />
+> <img src="imgs/State Fault_ST.png" width="400" />
 <em>Figura 3.24 — Estado de falla.</em><br><br>
 
 La Figura 3.25 muestra la FSM de debounce utilizada para los botones, evitando rebotes y generando eventos limpios hacia la lógica del sistema.
