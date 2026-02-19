@@ -350,7 +350,7 @@ Se usaron dos placas:
 - placa shield para interfaz y conexión con NUCLEO.
 - placa dimmer para potencia, ZCD y protecciones.
 
-### 3.2.2 $\mu s$ conversión de niveles
+### 3.2.2 Conversión de niveles
 
 La Figura 3.2 muestra el conversor de niveles utilizado para adaptar señales entre la NUCLEO-F103RB (3,3 V) y la placa diseñada (5 V), evitando sobrevoltajes en entradas digitales. 
 
@@ -358,7 +358,7 @@ La Figura 3.2 muestra el conversor de niveles utilizado para adaptar señales en
 <em>Figura 3.2 — Esquemático del conversor de niveles.</em><br><br>
 
 
-### 3.2.3 $\mu s$ TRIACs
+### 3.2.3 TRIACs
 
 La Figura 3.3 presenta el driver de disparo de TRIAC basado en optoacoplador, elegido para aislar el dominio lógico y permitir el control de cargas de 220 VAC con disparos sincronizados. El diseño fue tomado de las notas de aplicación que se encuentran en este mismo repositorio en la sección de hardware. 
 
@@ -369,7 +369,7 @@ La Figura 3.3 presenta el driver de disparo de TRIAC basado en optoacoplador, el
 
 ### 3.2.4 Etapa ZCD (detección de cruce por cero)
 
-La $\mu s$ ZCD fue validada progresivamente en banco antes de integrar potencia. Se observó que:
+La sección de ZCD fue validada progresivamente en banco antes de integrar potencia. Se observó que:
 - la salida detectada requiere compensación temporal aproximada de 500 $\mu s$ para ubicar el cruce real.
 - las simulaciones resultaron consistentes con la tendencia medida.
 
