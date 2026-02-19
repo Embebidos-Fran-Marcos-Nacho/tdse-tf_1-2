@@ -187,8 +187,11 @@ Alcance implementado:
 
 Fuera de alcance actual:
 - Control remoto completo de actuadores desde app. 
+- Las pruebas de integración de potencia se realizaron con 24 VAC (banco), no con 220 VAC.
+- La validación final sobre red de 220 VAC queda planificada como etapa posterior a la aprobación académica del trabajo, para reducir el riesgo durante la entrega.
 
-Este tema se vuelve a detallar en la sección "4.9 Cumplimiento de requisitos", en la que se explica cada ítem y, la razón de no haberse implemetado si corresponde. 
+
+Este tema se vuelve a detallar en la sección "4.9 Cumplimiento de requisitos", en la que se explica cada ítem y la razón de no haberse implementado, si corresponde. 
 
 
 ---
@@ -198,7 +201,9 @@ Este tema se vuelve a detallar en la sección "4.9 Cumplimiento de requisitos", 
 Esta sección contiene los requisitos originales y los modificados en el informe de avances, además de los casos de uso. 
 
 ## 2.1 Requisitos
-En la Tabla 2.1 se listan los requisitos originalmente definidos al inicio del proyecto (versión base, incluida también en `README.md`). Durante la elaboración del informe de avances (primera semana de febrero de 2026), el alcance se ajustó para asegurar una integración completa a tiempo para la entrega; dichos cambios se resumen en la Tabla 2.2. En el Capítulo 4, sección "4.9 Cumplimiento de requisitos", se detalla para cada requisito si se implementó o no, y la justificación correspondiente.
+En la Tabla 2.1 se listan los requisitos originalmente definidos al inicio del proyecto (versión base, incluida también en `README.md`). Durante la elaboración del informe de avances (primera semana de febrero de 2026), el alcance se ajustó para asegurar una integración completa a tiempo para la entrega; dichos cambios se resumen en la Tabla 2.2, y se resumen a cambios en el control local, telemetría y persistencia, reduciendo el alcance de funciones no críticas para la entrega.
+
+Más adelante, en la sección "4.9 Cumplimiento de requisitos", se detalla si se cumplieron o no, y se da la razón en caso de no haberse implementado.
 
 | Grupo | ID | Descripción |
 |-------|-----|-------------|
@@ -217,7 +222,6 @@ En la Tabla 2.1 se listan los requisitos originalmente definidos al inicio del p
 
 _Tabla 2.1 — Requisitos iniciales del proyecto (versión original)._<br><br>
 
-En el informe de avances se redefinieron algunos requisitos para priorizar la integración completa del prototipo (control local, telemetría y persistencia), reduciendo el alcance de funciones no críticas para la entrega.
 
 | Grupo | ID | Descripción |
 | --- | --- | --- |
