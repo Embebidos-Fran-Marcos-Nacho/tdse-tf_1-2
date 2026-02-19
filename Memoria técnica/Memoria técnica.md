@@ -352,7 +352,7 @@ Se usaron dos placas:
 
 ### 3.2.2 Etapa de Conversión de niveles
 
-La Figura 3.2 muestra el conversor de niveles utilizado para adaptar señales entre la NUCLEO-F103RB (3,3 V) y la placa diseñada (5 V), evitando sobrevoltajes en entradas digitales. 
+La Figura 3.2 muestra el conversor de niveles utilizado para adaptar señales entre la NUCLEO-F103RB (3,3 V) y la placa diseñada (5 V), evitando sobrevoltajes en entradas digitales. La imagen fue tomada del esquemático de la placa.
 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/esquema%20niveles.png" width="600" /> 
 <em>Figura 3.2 — Esquemático del conversor de niveles.</em><br><br>
@@ -360,7 +360,7 @@ La Figura 3.2 muestra el conversor de niveles utilizado para adaptar señales en
 
 ### 3.2.3 Etapa de TRIACs
 
-La Figura 3.3 presenta el driver de disparo de TRIAC basado en optoacoplador, elegido para aislar el dominio lógico y permitir el control de cargas de 220 VAC con disparos sincronizados. El diseño fue tomado de las notas de aplicación que se encuentran en este mismo repositorio en la sección de hardware. 
+La Figura 3.3 presenta el driver de disparo de TRIAC basado en un TRIAC optoacoplado MOC3023, elegido para aislar el dominio lógico y permitir el control de cargas de 220 VAC con disparos sincronizados. El diseño fue tomado de las notas de aplicación que se encuentran en este mismo repositorio en la sección de hardware.  La imagen fue tomada del esquemático de la placa.
 
 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/esquem%20triac.png" width="600" />
@@ -373,7 +373,7 @@ La sección de ZCD fue validada progresivamente en banco antes de integrar poten
 - la salida detectada requiere compensación temporal aproximada de 500 $\mu s$ para ubicar el cruce real.
 - las simulaciones resultaron consistentes con la tendencia medida.
 
-En la Figura 3.4 se observa el circuito del detector de cruce por cero (ZCD), cuya salida se utiliza como referencia temporal para disparar los TRIACs con un retardo controlado.
+En la Figura 3.4 se observa el circuito del detector de cruce por cero (ZCD), cuya salida se utiliza como referencia temporal para disparar los TRIACs con un retardo controlado. La foto fue tomada del esquemático de la placa.
 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/c2fc7354b11ef4655cebe90b4b788acc5695045a/Memoria%20t%C3%A9cnica/imgs/esquematico%20ZCD.png" width="600" />
 <em>Figura 3.4 — Esquemático del ZCD.</em><br><br>
