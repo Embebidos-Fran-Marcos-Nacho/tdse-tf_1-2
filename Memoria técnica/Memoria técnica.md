@@ -5,6 +5,8 @@ Control de ventilador y luces de línea (220 V) desde pared y vía Bluetooth
 
 <img width="535"  alt="image" src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/08290a7a62c8a7d3fcd22fc57871dafbbf35ab15/logo-fiuba.png" />
 
+<p><b>Figura 0.1 - Logo FIUBA</b><br/><i>Epígrafe: Logo institucional utilizado en portada.</i></p>
+
 **UNIVERSIDAD DE BUENOS AIRES**  
 **Facultad de Ingeniería**  
 **TA134 – Sistemas Embebidos**  
@@ -41,26 +43,79 @@ Esta memoria documenta los requisitos, el diseño de hardware y firmware, los en
 
 ## Registro de versiones
 
+*Historial de revisiones del documento.*
+
 | Revisión | Cambios realizados | Fecha |
 | :---: | --- | :---: |
 | 1.0 | Reescritura integral de la memoria, alineada a pautas de entrega final | 17/02/2026 |
 | 1.1 | Completar con mediciones de consumo, WCET y factor de uso CPU | 17/02/2026 |
 | 1.2 | Completar con permalinks definitivos de imágenes y link de video | 17/02/2026 |
 | 1.2 | Entrega N°1 | 17/02/2026 |
+| 1.3 | Correcciones| 19/02/2026 |
+| 1.4 | Entrega N°2 | 19/02/2026 |
 
 ---
+
+
 
 # Índice General
 
 - [Capítulo 1: Introducción general](#capítulo-1-introducción-general)
+  - [1.1 Análisis de necesidad y objetivo](#11-análisis-de-necesidad-y-objetivo)
+  - [1.2 Productos comparables](#12-productos-comparables)
+  - [1.3 Justificación del enfoque técnico](#13-justificación-del-enfoque-técnico)
+  - [1.4 Alcance y limitaciones](#14-alcance-y-limitaciones)
 - [Capítulo 2: Introducción específica](#capítulo-2-introducción-específica)
-- [2.1 Requisitos (versión final)](#21-requisitos-versión-final)
+  - [2.1 Requisitos (versión final del informe de avances)](#21-requisitos-versión-final-del-informe-de-avances)
+  - [2.2 Casos de uso](#22-casos-de-uso)
+    - [2.2.1 Control local de luz](#221-control-local-de-luz)
+    - [2.2.2 Ajuste local de ventilador](#222-ajuste-local-de-ventilador)
+    - [2.2.3 Telemetría Bluetooth hacia app](#223-telemetría-bluetooth-hacia-app)
+    - [2.2.4 Recuperación tras falla](#224-recuperación-tras-falla)
+  - [2.3 Descripción de módulos principales](#23-descripción-de-módulos-principales)
+    - [2.3.1 Módulo de control (NUCLEO-F103RB)](#231-módulo-de-control-nucleo-f103rb)
+    - [2.3.2 Módulo de potencia (dimmer)](#232-módulo-de-potencia-dimmer)
+    - [2.3.3 Módulo de detección de cruce por cero (ZCD)](#233-módulo-de-detección-de-cruce-por-cero-zcd)
+    - [2.3.4 Módulo Bluetooth (HC-06)](#234-módulo-bluetooth-hc-06)
+    - [2.3.5 Aplicación móvil (MIT App Inventor)](#235-aplicación-móvil-mit-app-inventor)
 - [Capítulo 3: Diseño e implementación](#capítulo-3-diseño-e-implementación)
+  - [3.1 Arquitectura general](#31-arquitectura-general)
+  - [3.2 Diseño de hardware](#32-diseño-de-hardware)
+    - [3.2.1 Criterio de interconexión y montaje](#321-criterio-de-interconexión-y-montaje)
+    - [3.2.2 Etapa de conversión de niveles](#322-etapa-de-conversión-de-niveles)
+    - [3.2.3 Etapa de TRIACs](#323-etapa-de-triacs)
+    - [3.2.4 Etapa ZCD (detección de cruce por cero)](#324-etapa-zcd-detección-de-cruce-por-cero)
+    - [3.2.5 Etapa de potencia y protecciones](#325-etapa-de-potencia-y-protecciones)
+    - [3.2.6 Fabricación de placas](#326-fabricación-de-placas)
+    - [3.2.7 Pinout del sistema (STM32F103RB)](#327-pinout-del-sistema-stm32f103rb)
+    - [3.2.8 Cableado e imágenes del montaje](#328-cableado-e-imágenes-del-montaje)
+  - [3.3 Diseño de firmware](#33-diseño-de-firmware)
+    - [3.3.1 Arquitectura de ejecución](#331-arquitectura-de-ejecución)
+    - [3.3.2 Máquina de estados del sistema](#332-máquina-de-estados-del-sistema)
+    - [3.3.3 Entradas y acondicionamiento lógico](#333-entradas-y-acondicionamiento-lógico)
+    - [3.3.4 Control de TRIAC y sincronización AC](#334-control-de-triac-y-sincronización-ac)
+    - [3.3.5 Persistencia en flash](#335-persistencia-en-flash)
+    - [3.3.6 Bluetooth HC-06](#336-bluetooth-hc-06)
+    - [3.3.7 Aplicación móvil](#337-aplicación-móvil)
 - [Capítulo 4: Ensayos y resultados](#capítulo-4-ensayos-y-resultados)
-- [4.9 Cumplimiento de requisitos](#49-cumplimiento-de-requisitos)
+  - [4.1 Pruebas funcionales de hardware](#41-pruebas-funcionales-de-hardware)
+  - [4.2 Pruebas funcionales de firmware](#42-pruebas-funcionales-de-firmware)
+  - [4.3 Pruebas de integración](#43-pruebas-de-integración)
+  - [4.4 Medición y análisis de consumo](#44-medición-y-análisis-de-consumo)
+  - [4.5 Console and Build Analyzer](#45-console-and-build-analyzer)
+  - [4.6 Medición y análisis de WCET por tarea](#46-medición-y-análisis-de-wcet-por-tarea)
+  - [4.7 Cálculo del factor de uso de CPU (U)](#47-cálculo-del-factor-de-uso-de-cpu-u)
+  - [4.8 Gestión de bajo consumo y justificación](#48-gestión-de-bajo-consumo-y-justificación)
+  - [4.9 Cumplimiento de requisitos](#49-cumplimiento-de-requisitos)
+  - [4.10 Comparación con sistemas similares](#410-comparación-con-sistemas-similares)
+  - [4.11 Documentación del desarrollo realizado](#411-documentación-del-desarrollo-realizado)
 - [Capítulo 5: Conclusiones](#capítulo-5-conclusiones)
-- [Uso de herramientas de IA](#uso-de-herramientas-de-ia)
-- [Bibliografía y referencias](#bibliografía-y-referencias)
+  - [5.1 Resultados obtenidos](#51-resultados-obtenidos)
+  - [5.2 Lecciones aprendidas](#52-lecciones-aprendidas)
+  - [5.3 Próximos pasos](#53-próximos-pasos)
+- [Capítulo 6: Uso de herramientas de IA](#capítulo-6-uso-de-herramientas-de-ia)
+  - [6.1 Uso individual y conjunto](#61-uso-individual-y-conjunto)
+- [Capítulo 7: Bibliografía y referencias](#capítulo-7-bibliografía-y-referencias)
 
 ---
 
@@ -85,7 +140,12 @@ Se analizaron dos tipos de soluciones comerciales disponibles en la Argentina:
    - Solo tiene control remoto, no tiene control fijo. 
    - No ofrece conectividad con el celular.  
    - No guarda configuraciones ni estados previos del ventilador.  
-   - Solo tiene 3 velocidades de ventilador. 
+   - El producto encontrado solo tiene 3 velocidades de ventilador (low, med, high). 
+
+
+![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/fbef0ce288a5bfc7994dd3f4e93a5714879ebca2/Memoria%20t%C3%A9cnica/imgs/solucion%20control%20remoto%201.png)
+
+La imagen de arriba muestra el producto en sí. Tiene un control remoto con el soporte para colgarlo en la pared, y la caja negra es la que se instala en la caja de luz en el techo y realiza el control. 
 
 
 2. **Controladores disponibles internacionalmente (Amazon)**  
@@ -94,7 +154,11 @@ Se analizaron dos tipos de soluciones comerciales disponibles en la Argentina:
    - Tienen costos significativamente más altos o no cuentan con disponibilidad local inmediata. 
    - En general los que usan wi-fi no tienen tecla y representan una amenaza a la seguridad de la red doméstica del usuario.  
 
-Ante la gran brecha de funcionalidad entre estos dos dispositivos, se optó por utilizar una interfaz local combinada con un módulo Bluetooth clásico HC-06. Esta solución híbrida prioriza la simplicidad de integración, combinando la comodidad del control de pared con la telemetría inalámbrica por medio de bleutooth. La siguiente sección brinda más detalles sobre estas decisiones de diseño. 
+![Imagen](https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/fbef0ce288a5bfc7994dd3f4e93a5714879ebca2/Memoria%20t%C3%A9cnica/imgs/solucion%20completa%202.jpg)
+
+La foto de arriba muestra el producto recien explicado. Es como el otro pero viene con un control remoto y teclas de pared o, en algunas veriones, se intercambia el control remoto por una aplicación de celular y conectividad WI-FI.
+
+Para este proyecto se optó por utilizar una interfaz local combinada con un módulo Bluetooth clásico HC-06. Esta solución híbrida prioriza la simplicidad de integración, combinando la comodidad del control de pared con la telemetría inalámbrica por medio de bleutooth. La siguiente sección brinda más detalles sobre estas decisiones de diseño. 
 
 ## 1.3 Justificación del enfoque técnico
 
