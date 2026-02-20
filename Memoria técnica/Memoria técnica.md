@@ -448,7 +448,7 @@ Se documentó el proceso de fabricación con transferencia y ataque químico:
 Lecciones aprendidas para la próxima iteración:
 - Revisar diámetros de agujeros para componentes de potencia (varistores y componentes grandes): los componentes de _leads_ de mayor diámetro quedaron con _pads_ demasiado chicos. Esto no es un problema en un prototipo, donde el agujero se agranda con un torno de mano, pero es inaceptable en un producto final. 
 - Simplificar topología de ZCD: se puede cambiar por un detector de 1 solo diodo, que actúe cada ciclo y no por semiciclo. El segundo disparo se puede resover por software estimando el período de la señal con un filtro de media móvil (o complementario). 
-- Evaluar integración de control de dimming en una etapa dedicada: En un futuro la idea es que la solución comercial tenga su propio microcontrolador en la placa, y que solo requiera 220 VAC para funcionar.<br><br>
+- Evaluar integración de control de dimming en una etapa dedicada: en un futuro la idea es que la solución comercial tenga su propio microcontrolador en la placa, y que solo requiera 220 VAC para funcionar.<br><br>
 
 La Figura 3.13 muestra el papel de transferencia _p n p blue_ con el diseño impreso, paso previo al copiado del patrón a la placa cobreada.
 
