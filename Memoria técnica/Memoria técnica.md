@@ -11,8 +11,8 @@ Curso 1 – Grupo 2
 Control de ventilador y luces de línea (220 V) desde pared y vía Bluetooth
 
 ## Autores
-- Ignacio Ezequiel Cavicchioli — Legajo 109428  
-- Francisco Javier Moya — Legajo 109899  
+Ignacio Ezequiel Cavicchioli — Legajo 109428  
+Francisco Javier Moya — Legajo 109899  
 
 **Fecha:** 25/01/2026  
 **Cuatrimestre de cursada:** 2do cuatrimestre 2025  
