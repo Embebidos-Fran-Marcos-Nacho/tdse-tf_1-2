@@ -124,7 +124,7 @@ La Tabla 0.1 resume el historial de revisiones y entregas de esta memoria.
 
 ## 1.1 Análisis de necesidad y objetivo
 
-El proyecto busca resolver una necesidad concreta de control de cargas de 220 VAC (luz y ventilador) desde una interfaz de pared, agregando telemetría inalámbrica sin depender de la red Wi-Fi doméstica.
+El proyecto busca resolver una necesidad concreta de control de cargas de 220 VAC (luz y ventilador) desde una interfaz de pared, agregando telemetría inalámbrica sin depender de la red WI-FI doméstica.
 
 Objetivos principales:
 - Implementar un prototipo funcional y seguro de control de luz/ventilador.
@@ -151,10 +151,10 @@ En la Figura 1.1 se observa el kit típico: un control remoto dedicado con sopor
 
 2. **Controladores disponibles internacionalmente
 )**  
-   En el mercado internacional existen productos más avanzados, capaces de integrar control de luces y ventilador, conectividad Wi-Fi, y aplicaciones móviles.  
+   En el mercado internacional existen productos más avanzados, capaces de integrar control de luces y ventilador, conectividad WI-FI, y aplicaciones móviles.  
    Sin embargo:
    - Tienen costos significativamente más altos o no cuentan con disponibilidad local inmediata. 
-   - En general los que usan wi-fi no tienen tecla y representan una amenaza a la seguridad de la red doméstica del usuario (si no está bien configurada).  
+   - En general los que usan WI-FI no tienen tecla y representan una amenaza a la seguridad de la red doméstica del usuario (si no está bien configurada).  
 
 La Figura 1.2 muestra un producto más completo: combina control local (teclas de pared) con control remoto y/o aplicación móvil, normalmente mediante conectividad Wi‑Fi. Si bien aporta más funciones, su integración típica depende de la red WI-FI doméstica, excepto en el caso del control remoto, que nos parece el mejor. El producto se puede encontrar en: [Kit universal – Amazon](https://www.amazon.com/-/es/Control-universal-ventilador-interruptor-atenuador/dp/B0D95Y3Z11)<br>
 
@@ -166,7 +166,7 @@ Para este proyecto se optó por utilizar una interfaz local combinada con un mó
 ## 1.3 Justificación del enfoque técnico
 
 Se eligió Bluetooth clásico (HC-06) por:
-- Menor complejidad de despliegue que Wi-Fi.
+- Menor complejidad de despliegue que WI-FI.
 - Facilidad de integración con la app realizada en MIT App Inventor.
 - Disponibilidad de herramientas de depuración por UART.
 
@@ -869,7 +869,7 @@ Los requisitos cumplidos no requieren de mayor explicación, por lo que nos cent
 
 La Tabla 4.7 presenta una comparación sintética de esta solución frente a alternativas típicas (control básico IR/RF y soluciones comerciales Wi‑Fi).
 
-| Característica | Control IR/RF básico | Solución Wi-Fi comercial | Este proyecto |
+| Característica | Control IR/RF básico | Solución WI-FI comercial | Este proyecto |
 | --- | :---: | :---: | :---: |
 | Interfaz local de pared | No | Generalmente no | Sí |
 | App móvil | No | Sí | Sí (telemetría) |
