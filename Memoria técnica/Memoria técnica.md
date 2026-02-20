@@ -450,7 +450,7 @@ Lecciones aprendidas para la próxima iteración:
 - Simplificar topología de ZCD: se puede cambiar por un detector de 1 solo diodo, que actúe cada ciclo y no por semiciclo. El segundo disparo se puede resover por software estimando el período de la señal con un filtro de media móvil (o complementario). 
 - Evaluar integración de control de dimming en una etapa dedicada: en un futuro la idea es que la solución comercial tenga su propio microcontrolador en la placa, y que solo requiera 220 VAC para funcionar.<br><br>
 
-La Figura 3.13 muestra el papel de transferencia _p n p blue_ con el diseño impreso, paso previo al copiado del patrón a la placa cobreada.
+La Figura 3.13 muestra el papel de transferencia PnP Blue con el diseño impreso, paso previo al copiado del patrón a la placa cobreada.
 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/1030475e09d21a3204b19eb7996e9f11bb688033/Memoria%20t%C3%A9cnica/cosas%20e%20imagenes%20para%20memoria%20t%C3%A9cnica%20-%20hardware/fab%20placa/p%20n%20p%20blue.jpeg" width="600" /> 
 <em>Figura 3.13 — Papel de transferencia con diseño impreso.</em><br><br>
