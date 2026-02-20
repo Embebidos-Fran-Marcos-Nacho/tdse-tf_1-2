@@ -10,12 +10,6 @@ Curso 1 – Grupo 2
 # Dimmer + Switch (Ventilador & Luces)  
 Control de ventilador y luces de línea (220 V) desde pared y vía Bluetooth
 
-
-</div>
-
-
-
-
 ## Autores
 - Ignacio Ezequiel Cavicchioli — Legajo 109428  
 - Francisco Javier Moya — Legajo 109899  
@@ -24,6 +18,7 @@ Control de ventilador y luces de línea (220 V) desde pared y vía Bluetooth
 **Cuatrimestre de cursada:** 2do cuatrimestre 2025  
 
 *Trabajo realizado entre diciembre 2025 y febrero 2026.*
+</div>
 
 ---
 
