@@ -52,6 +52,8 @@ La Tabla 0.1 resume el historial de revisiones y entregas de esta memoria.
 | 1.2 | Entrega N°1 | 17/02/2026 |
 | 1.3 | Correcciones según devolución de primer entrega| 19/02/2026 |
 | 1.4 | Entrega N°2 | 19/02/2026 |
+| 1.5 | Correcciones según devolución de segunda entrega | 20/02/2026 |
+
 
 <em>Tabla 0.1 — Registro de versiones del documento.</em><br><br>
 
