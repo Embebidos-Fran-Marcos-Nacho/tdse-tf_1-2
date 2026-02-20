@@ -200,7 +200,7 @@ Este tema se vuelve a detallar en la sección "4.9 Cumplimiento de requisitos", 
 Esta sección contiene los requisitos originales y los modificados en el informe de avances, además de los casos de uso. 
 
 ## 2.1 Requisitos
-En la Tabla 2.1 se listan los requisitos originalmente definidos al inicio del proyecto (versión base, incluida también en `README.md`). Durante la elaboración del informe de avances (primera semana de febrero de 2026), el alcance se ajustó para asegurar una integración completa a tiempo para la entrega; dichos cambios se pueden ver en la Tabla 2.2, y se resumen a cambios en el control local, telemetría y persistencia, reduciendo el alcance de funciones no críticas para la entrega.
+En la Tabla 2.1 se listan los requisitos originalmente definidos al inicio del proyecto (versión base, incluida también en `README.md`). Durante la elaboración del informe de avances (primera semana de febrero de 2026), el alcance se ajustó para asegurar una integración completa a tiempo para la entrega; dichos cambios se pueden ver en la Tabla 2.2, y se resumen a cambios en el control local y telemetría, reduciendo el alcance de funciones no críticas para la entrega. Particularmente, los requisitos alcanzados por las modificaciones son los 1.3, 6.1 y 6.2. 
 
 Más adelante, en la sección "4.9 Cumplimiento de requisitos", se detalla si se cumplieron o no, y se da la razón en caso de no haberse implementado.
 
