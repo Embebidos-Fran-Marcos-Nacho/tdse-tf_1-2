@@ -149,14 +149,14 @@ Se analizaron dos tipos de soluciones comerciales disponibles en la Argentina:
 En la Figura 1.1 se observa el kit típico: un control remoto dedicado con soporte de pared y un módulo receptor que se instala en la caja de techo. Esta solución (encontrada en [Kit Corebay Fan-3 – Mercado Libre](https://www.mercadolibre.com.ar/kit-de-control-remoto-para-ventilador-de-techo-corebay-fan-3/p/MLA2061924708)) resuelve el control a distancia, pero no integra telemetría hacia el celular ni una interfaz fija de pared. Si se pierde el control remoto, o se olvida  en otro ambiente, el usuario tiene que buscarlo para poder controlar el ventilador y luz. 
 
 
-2. **Controladores disponibles internacionalmente ([Kit universal – Amazon](https://www.amazon.com/-/es/Control-universal-ventilador-interruptor-atenuador/dp/B0D95Y3Z11)
+2. **Controladores disponibles internacionalmente
 )**  
    En el mercado internacional existen productos más avanzados, capaces de integrar control de luces y ventilador, conectividad Wi-Fi, y aplicaciones móviles.  
    Sin embargo:
    - Tienen costos significativamente más altos o no cuentan con disponibilidad local inmediata. 
    - En general los que usan wi-fi no tienen tecla y representan una amenaza a la seguridad de la red doméstica del usuario (si no está bien configurada).  
 
-La Figura 1.2 muestra un producto más completo: combina control local (teclas de pared) con control remoto y/o aplicación móvil, normalmente mediante conectividad Wi‑Fi. Si bien aporta más funciones, su integración típica depende de la red WI-FI doméstica, excepto en el caso del control remoto, que nos parece el mejor.<br>
+La Figura 1.2 muestra un producto más completo: combina control local (teclas de pared) con control remoto y/o aplicación móvil, normalmente mediante conectividad Wi‑Fi. Si bien aporta más funciones, su integración típica depende de la red WI-FI doméstica, excepto en el caso del control remoto, que nos parece el mejor. El producto se puede encontrar en: [Kit universal – Amazon](https://www.amazon.com/-/es/Control-universal-ventilador-interruptor-atenuador/dp/B0D95Y3Z11)<br>
 
 <img src="https://github.com/Embebidos-Fran-Marcos-Nacho/tdse-tf_1-2/blob/fbef0ce288a5bfc7994dd3f4e93a5714879ebca2/Memoria%20t%C3%A9cnica/imgs/solucion%20completa%202.jpg" width="600" />
 <em>Figura 1.2 — Controlador integrado con teclas de pared y conectividad (referencia internacional).</em><br><br>
